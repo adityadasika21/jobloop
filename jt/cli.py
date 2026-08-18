@@ -26,12 +26,21 @@ from .store import (
     write_yaml,
 )
 
-OK, BAD, WARN = "\033[32m", "\033[31m", "\033[33m"
-DIM, BOLD, OFF = "\033[2m", "\033[1m", "\033[0m"
+# Colour only when a human is watching. _c() already checked isatty, but
+# DIM/BOLD/OFF were interpolated into f-strings directly and bypassed it — so
+# piping `jt status` into Discord posted raw escape codes ("[1mSTATUS").
+# Blanking the constants themselves fixes every call site at once.
+_TTY = sys.stdout.isatty()
+OK = "\033[32m" if _TTY else ""
+BAD = "\033[31m" if _TTY else ""
+WARN = "\033[33m" if _TTY else ""
+DIM = "\033[2m" if _TTY else ""
+BOLD = "\033[1m" if _TTY else ""
+OFF = "\033[0m" if _TTY else ""
 
 
 def _c(text: str, color: str) -> str:
-    return text if not sys.stdout.isatty() else f"{color}{text}{OFF}"
+    return f"{color}{text}{OFF}" if _TTY else text
 
 
 # --------------------------------------------------------------------------- #
