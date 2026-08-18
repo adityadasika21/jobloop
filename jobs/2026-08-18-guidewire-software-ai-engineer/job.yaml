@@ -26,3 +26,9 @@ events:
   detail: Thank you for your application for AI Engineer , at Guidewire Software. — from guidewire@myworkday.com
   source: gmail:19fb993a98bd6db3
   ref: 19fb993a98bd6db3
+- ts: '2026-07-31T05:33:52Z'
+  kind: email
+  detail: You've Been Referred To Guidewire Software! Please Complete your Application — from
+    guidewire@myworkday.com
+  source: gmail:19fb6aa2a5777cc8
+  ref: 19fb6aa2a5777cc8

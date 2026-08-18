@@ -31,3 +31,19 @@ events:
   detail: Help us improve - your feedback matters — from no-reply@backbase.com
   source: gmail:19fd6cc2a7dfafde
   ref: 19fd6cc2a7dfafde
+- ts: '2026-08-04T05:59:54Z'
+  kind: interview
+  detail: 'Notification: Interview with Backbase @ Tue Aug 4, 2026 12pm - 1pm (IST) — from
+    calendar-notification@google.com'
+  source: gmail:19fcb5b6e59129f8
+  ref: 19fcb5b6e59129f8
+- ts: '2026-08-01T11:02:31Z'
+  kind: email
+  detail: Job Description - AI Engineering - Backbase, Hyderabad — from nehaa@backbase.com
+  source: gmail:19fbcfd973d95d9e
+  ref: 19fbcfd973d95d9e
+- ts: '2026-07-28T10:32:35Z'
+  kind: email
+  detail: GDPR Notification from Backbase — from no-reply@backbase.com
+  source: gmail:19fa84899a9cf365
+  ref: 19fa84899a9cf365
