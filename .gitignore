@@ -17,3 +17,6 @@ jobs.db-shm
 __pycache__/
 *.pyc
 .env
+
+# Local routine log (scripts/run-routine.sh)
+.routine.log
