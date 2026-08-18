@@ -31,24 +31,44 @@ REQ_SECTION_RE = re.compile(
     r"who you are|must have|skills|experience|you should have|about you)"
 )
 NICE_RE = re.compile(r"(?i)\b(nice to have|preferred|bonus|plus|desirable)\b")
+# Responsibilities are neither hard requirements nor nice-to-haves: they say
+# what the job IS. They belong in keyword coverage but must not be counted as
+# unmet qualifications, which would make every fit score look worse than it is.
+RESP_RE = re.compile(
+    r"(?i)^(what you.{0,6}(?:will |ll )?do|responsibilities|the role|"
+    r"in this role|day to day|what the job)")
 YEARS_RE = re.compile(r"(?i)(\d{1,2})\s*\+?\s*(?:-\s*\d{1,2}\s*)?year")
 
 
-def unit_tokens(u: dict) -> set[str]:
+def unit_tokens(u: dict, role_domains: dict[str, list] | None = None) -> set[str]:
+    """Tokens an evidence unit legitimately answers to.
+
+    A unit inherits its role's domain: work done at an HR-tech company IS
+    HR-tech experience, even when the bullet never says the word. Without
+    this, "experience in the recruitment domain" scored as a gap for someone
+    whose day job is building a hiring-integrity platform.
+    """
     parts = [str(u.get("claim", "")), str(u.get("name", ""))]
     parts += [str(x) for x in (u.get("skills") or [])]
     parts += [str(x) for x in (u.get("keywords") or [])]
     parts += [str(x) for x in (u.get("stack") or [])]
+    if role_domains and u.get("role") in role_domains:
+        parts += [str(d).replace("-", " ") for d in role_domains[u["role"]]]
     return tokenize(" ".join(parts)) | {norm_skill(x) for x in (u.get("skills") or [])}
+
+
+def domain_map(prof: dict) -> dict[str, list]:
+    return {r["id"]: (r.get("domain") or []) for r in prof.get("roles", [])}
 
 
 def rank_evidence(prof: dict, jd_text: str) -> list[tuple[dict, float, list[str]]]:
     """Score each evidence unit against the JD. Returns (unit, score, hits)."""
     jd_tok = tokenize(jd_text)
     strength_w = {"core": 1.15, "strong": 1.0, "supporting": 0.85}
+    doms = domain_map(prof)
     ranked = []
     for u in prof.get("evidence", []):
-        utok = unit_tokens(u)
+        utok = unit_tokens(u, doms)
         hits = sorted(jd_tok & utok)
         if not utok:
             continue
@@ -66,13 +86,24 @@ def extract_requirements(jd_text: str) -> list[dict]:
     """Pull requirement bullets out of a JD, flagging required vs nice-to-have."""
     lines = jd_text.splitlines()
     reqs: list[dict] = []
-    in_nice = False
+    in_nice = in_resp = False
     for i, line in enumerate(lines):
-        if REQ_SECTION_RE.search(line) and len(line) < 120:
-            in_nice = bool(NICE_RE.search(line))
+        stripped = line.strip()
+        is_bullet = bool(REQ_LINE_RE.match(line))
+        # A heading is a SHORT, non-bullet line. Without the bullet guard,
+        # "- 3+ years of software engineering experience..." matches
+        # REQ_SECTION_RE on the word "experience" and the entire requirements
+        # block gets skipped as if it were a heading.
+        is_heading = (not is_bullet and len(stripped) < 60
+                      and stripped.endswith((":", "")) is not None)
+        if is_heading and REQ_SECTION_RE.search(stripped):
+            in_nice, in_resp = bool(NICE_RE.search(stripped)), False
             continue
-        if NICE_RE.search(line) and len(line) < 120:
-            in_nice = True
+        if is_heading and NICE_RE.search(stripped):
+            in_nice, in_resp = True, False
+            continue
+        if is_heading and RESP_RE.search(stripped):
+            in_nice, in_resp = False, True
             continue
         m = REQ_LINE_RE.match(line)
         if not m:
@@ -80,9 +111,20 @@ def extract_requirements(jd_text: str) -> list[dict]:
         text = m.group(1).strip()
         if len(text) < 12 or text.endswith(":"):
             continue
+        # Absorb indented wrapped continuation lines so a requirement isn't
+        # truncated mid-sentence ("...at least 2 years building" / "production
+        # machine learning or LLM-powered systems").
+        for nxt in lines[i + 1:i + 4]:
+            if not nxt.strip() or REQ_LINE_RE.match(nxt):
+                break
+            if nxt.startswith(("  ", "\t")) and len(nxt.strip()) > 3:
+                text += " " + nxt.strip()
+            else:
+                break
         reqs.append({
             "text": text,
-            "kind": "nice_to_have" if (in_nice or NICE_RE.search(text)) else "required",
+            "kind": ("nice_to_have" if (in_nice or NICE_RE.search(text))
+                     else "responsibility" if in_resp else "required"),
         })
     # Dedupe, cap — long JDs otherwise produce an unreadable matrix.
     seen, out = set(), []
@@ -99,9 +141,10 @@ def match_requirement(req_text: str, prof: dict,
                       threshold_full: int = 2) -> dict:
     """Classify one requirement as met / partial / gap against the evidence."""
     rtok = tokenize(req_text)
+    doms = domain_map(prof)
     best, best_hits, best_score = None, [], 0.0
     for u in prof.get("evidence", []):
-        hits = sorted(rtok & unit_tokens(u))
+        hits = sorted(rtok & unit_tokens(u, doms))
         if len(hits) > best_score:
             best, best_hits, best_score = u, hits, len(hits)
 
@@ -113,19 +156,32 @@ def match_requirement(req_text: str, prof: dict,
         None,
     )
 
-    if named_gap:
-        status = "gap"
-    elif best_score >= threshold_full:
+    # Evidence decides the status; a named gap only downgrades it.
+    # A requirement phrased as alternatives ("LangChain, LangGraph, or DSPy")
+    # is MET when the evidence covers some of them, even though DSPy is a
+    # known gap -- letting the gap term veto real evidence understated fit
+    # badly and would push tailoring toward inventing the missing item.
+    if best_score >= threshold_full:
         status = "met"
     elif best_score >= 1:
         status = "partial"
     else:
+        status = "gap"
+    if named_gap and status == "met":
+        # Strong evidence stands, but the caveat is still worth carrying into
+        # the report so it can be spoken to in an interview.
+        pass
+    elif named_gap and status == "partial":
+        status = "partial"
+    elif named_gap:
         status = "gap"
 
     return {
         "requirement": req_text,
         "status": status,
         "evidence": best["id"] if (best and status != "gap") else None,
+        "caveat": (f"{named_gap['topic']}: {named_gap['note']}"
+                   if named_gap and status == "met" else None),
         "matched_terms": best_hits[:8],
         "known_gap": named_gap["topic"] if named_gap else None,
         "gap_note": named_gap["note"] if named_gap else None,
@@ -226,7 +282,10 @@ def screen(root: Path, slug: str) -> dict:
         "requirements": matrix,
         "summary": {"required_total": len(req_only), "met": met,
                     "partial": partial, "gap": gap,
-                    "nice_to_have": len(matrix) - len(req_only)},
+                    "nice_to_have": sum(1 for m in matrix
+                                        if m["kind"] == "nice_to_have"),
+                    "responsibilities": sum(1 for m in matrix
+                                            if m["kind"] == "responsibility")},
         "seniority": {"years_required": yrs, "years_have": have,
                       "stretch": stretch},
         "scan_checks": checks,
@@ -264,7 +323,11 @@ def render_report(rep: dict, job: dict) -> str:
         icon = {"met": "✅ met", "partial": "🟡 partial", "gap": "❌ gap"}[m["status"]]
         if m["kind"] == "nice_to_have":
             icon += " *(nice-to-have)*"
+        elif m["kind"] == "responsibility":
+            icon += " *(responsibility)*"
         ev = m["evidence"] or (f"_{m['gap_note']}_" if m["gap_note"] else "—")
+        if m.get("caveat"):
+            ev += f" ⚠️ _{m['caveat']}_"
         req = m["requirement"].replace("|", "\\|")[:140]
         L.append(f"| {req} | {icon} | {ev} |")
 

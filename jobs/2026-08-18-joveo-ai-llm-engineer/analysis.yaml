@@ -1,0 +1,199 @@
+fit_score: 78
+keyword_coverage: 0.686
+summary:
+  required_total: 8
+  met: 6
+  partial: 2
+  gap: 0
+  nice_to_have: 4
+  responsibilities: 3
+seniority:
+  years_required: 3
+  years_have: 4.3
+  stretch: false
+requirements:
+- requirement: 3+ years of software engineering experience, with at least 2 years building
+    production machine learning or LLM-powered systems
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - machine
+  - production
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Strong Python skills and experience with FastAPI or similar frameworks
+  status: partial
+  evidence: ev-blueleaves-analytics
+  caveat: null
+  matched_terms:
+  - python
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Hands-on experience building RAG pipelines, including vector search and embeddings
+    (FAISS, Pinecone, or similar)
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - faiss
+  - pipelines
+  - rag
+  - search
+  - vector
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience with agentic frameworks such as LangChain, LangGraph, or DSPy
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: 'dspy: Seen in JDs alongside LangChain. Evaluated, not shipped.'
+  matched_terms:
+  - agentic
+  - langgraph
+  known_gap: dspy
+  gap_note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+  kind: required
+- requirement: Experience with LLM evaluation and observability — building eval harnesses,
+    LLM-as-judge rubrics, tracing and monitoring in production
+  status: met
+  evidence: ev-phenom-eval-framework
+  caveat: null
+  matched_terms:
+  - eval
+  - evaluation
+  - harnesses
+  - llm
+  - llm-as-judge
+  - monitoring
+  - observability
+  - tracing
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Familiarity with prompt engineering, structured output, and function calling
+  status: met
+  evidence: ev-phenom-toolcalling-guardrails
+  caveat: null
+  matched_terms:
+  - calling
+  - function
+  - output
+  - structured
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience deploying and serving models (vLLM, TGI, or hosted APIs)
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - deploying
+  - hosted
+  - models
+  - serving
+  - vllm
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Comfortable with Docker and cloud infrastructure (AWS or GCP)
+  status: partial
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - aws
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience fine-tuning open-source models (LoRA, QLoRA)
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - fine-tuning
+  - lora
+  - models
+  - open-source
+  - qlora
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Knowledge graph or Neo4j experience
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - graph
+  - neo4j
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Experience in HR tech or recruitment domain
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - hr
+  - recruitment
+  - tech
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Kubernetes experience
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: kubernetes
+  gap_note: Docker in production; orchestration was not owned.
+  kind: nice_to_have
+- requirement: Design and ship multi-agent workflows and tool-calling systems
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - multi-agent
+  - workflows
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: 'Own model quality: build evaluation pipelines that gate releases'
+  status: met
+  evidence: ev-phenom-eval-framework
+  caveat: null
+  matched_terms:
+  - evaluation
+  - gate
+  - model
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Reduce inference cost and latency across the serving stack
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - cost
+  - inference
+  - latency
+  - serving
+  - stack
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+scan_checks:
+- check: Headline names the JD's own role language
+  pass: true
+- check: Top experience bullet answers a required item
+  pass: true
+- check: Every bullet carries a metric or a concrete system
+  pass: true
+- check: Keyword coverage of stated requirements >= 60%
+  pass: true
+- check: No required item is an unacknowledged gap
+  pass: true
+- check: Fits one page (<= 14 experience bullets)
+  pass: true
+screened_at: '2026-08-18T04:21:00+00:00'

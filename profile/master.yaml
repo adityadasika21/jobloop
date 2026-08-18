@@ -32,7 +32,8 @@ roles:
     location: Hyderabad, Telangana
     start: 2025-04
     end: present
-    domain: [hr-tech, talent-intelligence, enterprise-saas]
+    domain: [hr-tech, hr, talent-intelligence, recruitment, hiring,
+             talent-acquisition, enterprise-saas]
 
   - id: blueleaves-fullstack
     title: Full Stack Engineer
@@ -40,7 +41,7 @@ roles:
     location: Hyderabad, Telangana
     start: 2022-05
     end: 2025-02
-    domain: [retail, agritech, operations]
+    domain: [retail, agritech, e-commerce, operations, supply-chain]
 
 education:
   - id: edu-aliet
@@ -81,7 +82,8 @@ evidence:
     metrics: {orchestrated_nodes: "12"}
     keywords: [agentic ai, multi-agent, agent orchestration, conversational ai,
                chatbot, state machine, retrieval augmented generation, knowledge graph,
-               semantic search, grounding, llm application, production ml]
+               semantic search, grounding, llm application, production ml,
+               agent workflows, workflows, rag pipelines, orchestration]
     strength: core
     probe: "Why 12 nodes? How does dialogue state survive a tool failure mid-turn?
             Why a graph alongside vectors instead of vectors alone?"
@@ -139,7 +141,8 @@ evidence:
     metrics: {nodes_covered: "12"}
     keywords: [llm evaluation, evals, benchmarking, model monitoring, observability,
                tracing, guardrails, quality gates, ci/cd for ml, hallucination,
-               responsible ai, llmops, cost optimization]
+               responsible ai, llmops, cost optimization, evaluation harness,
+               eval harnesses, release gate, machine learning]
     strength: core
     probe: "What does your judge rubric look like and how did you validate the judge
             itself? What happens on a release that regresses one node out of twelve?"
@@ -156,8 +159,9 @@ evidence:
     metrics: {throughput: "10.98 RPS", success_rate: "98.6%",
               cost: "~50% of hosted GPT-4.1 inference cost", hardware: "AWS g5.xlarge (A10G)"}
     keywords: [fine-tuning, lora, qlora, peft, model serving, inference optimization,
-               quantization, open source llm, self-hosted llm, gpu, throughput, latency,
-               cost reduction, mlops, model deployment]
+               quantization, open source llm, open-source models, self-hosted llm, gpu,
+               throughput, latency, cost reduction, mlops, model deployment, deploying,
+               serving stack, machine learning]
     strength: core
     probe: "What batch size and context length at 10.98 RPS? What was the 1.4% failure
             mode? How did you construct the QLoRA training set?"

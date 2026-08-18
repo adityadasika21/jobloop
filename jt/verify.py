@@ -88,10 +88,32 @@ def _evidence_haystack(units: list[dict]) -> tuple[str, set[str], set[str]]:
     return hay, skills, numbers
 
 
+def profile_vocab(prof: dict) -> set[str]:
+    """Terms that are true by virtue of the profile itself, not of any one
+    evidence unit: real job titles, employers, schools, degrees.
+
+    Without this, a headline saying "LLM Engineer" fails because no evidence
+    unit's claim text contains the word "Engineer" -- even though it is his
+    actual title. Seniority words stay policed: "Staff" or "Principal" are
+    only allowed if a role really carries them.
+    """
+    vocab: set[str] = set()
+    for r in prof.get("roles", []) or []:
+        for field in ("title", "company", "location"):
+            for tok in re.findall(r"[A-Za-z][A-Za-z0-9+#.\-]*", str(r.get(field, ""))):
+                vocab.add(norm_skill(tok))
+    for e in prof.get("education", []) or []:
+        for field in ("institution", "degree", "location"):
+            for tok in re.findall(r"[A-Za-z][A-Za-z0-9+#.\-]*", str(e.get(field, ""))):
+                vocab.add(norm_skill(tok))
+    return vocab
+
+
 def verify_bullets(bullets: list[dict], evidence: dict[str, dict],
-                   label: str = "bullet") -> list[str]:
+                   label: str = "bullet", vocab: set[str] | None = None) -> list[str]:
     """Return a list of violation strings. Empty means clean."""
     problems: list[str] = []
+    vocab = vocab or set()
 
     for i, b in enumerate(bullets, 1):
         text = str(b.get("text", "")).strip()
@@ -131,7 +153,8 @@ def verify_bullets(bullets: list[dict], evidence: dict[str, dict],
         # (3) technologies
         for m in TECH_RE.finditer(text):
             tok = norm_skill(m.group(1))
-            if not tok or len(tok) < 3 or tok in TECH_ALLOW or tok in allowed_skills:
+            if not tok or len(tok) < 3 or tok in TECH_ALLOW \
+                    or tok in allowed_skills or tok in vocab:
                 continue
             if tok in norm_skill(hay):
                 continue
@@ -156,6 +179,7 @@ def verify_job(root: Path, slug: str) -> list[str]:
     """Verify a job's tailored.yaml. Returns violations."""
     prof = load_profile(root)
     evidence = evidence_index(prof)
+    vocab = profile_vocab(prof)
     d = job_dir(root, slug)
     tpath = d / "tailored.yaml"
     if not tpath.exists():
@@ -169,12 +193,14 @@ def verify_job(root: Path, slug: str) -> list[str]:
     for role in tailored.get("experience", []) or []:
         rid = role.get("role_id", "?")
         problems += verify_bullets(
-            role.get("bullets", []) or [], evidence, label=f"experience[{rid}]"
+            role.get("bullets", []) or [], evidence,
+            label=f"experience[{rid}]", vocab=vocab,
         )
     for proj in tailored.get("projects", []) or []:
         pid = proj.get("name", "?")
         problems += verify_bullets(
-            proj.get("bullets", []) or [], evidence, label=f"project[{pid}]"
+            proj.get("bullets", []) or [], evidence,
+            label=f"project[{pid}]", vocab=vocab,
         )
 
     # (4) skills section against the master inventory
@@ -193,12 +219,16 @@ def verify_job(root: Path, slug: str) -> list[str]:
 
     # Headline must not invent seniority or a domain.
     hl = tailored.get("headline", "")
-    if hl:
+    if hl and tailored.get("headline_provenance"):
         problems += verify_bullets(
-            [{"text": hl, "provenance": tailored.get("headline_provenance")
-              or [e["id"] for e in prof["evidence"][:0]] or None}],
-            evidence, label="headline",
-        ) if tailored.get("headline_provenance") else []
+            [{"text": hl, "provenance": tailored["headline_provenance"]}],
+            evidence, label="headline", vocab=vocab,
+        )
+    elif hl and hl != prof["identity"].get("headline"):
+        problems.append(
+            "headline: rewritten but has no `headline_provenance` — a headline "
+            "is a claim like any other"
+        )
 
     return problems
 
@@ -213,5 +243,5 @@ def verify_referral(root: Path, slug: str) -> list[str]:
     data = read_yaml(rpath)
     return verify_bullets(
         [{"text": data.get("pitch", ""), "provenance": data.get("provenance") or []}],
-        evidence, label="referral pitch",
+        evidence, label="referral pitch", vocab=profile_vocab(prof),
     )

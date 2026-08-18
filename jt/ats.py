@@ -24,7 +24,7 @@ import shutil
 import subprocess
 from pathlib import Path
 
-from .model import tokenize
+from .model import stem, stems, tokenize
 
 # Headings ATS parsers reliably map to their internal schema. Anything else
 # risks the whole block being dropped or filed as "additional information".
@@ -267,8 +267,18 @@ def audit(pdf: Path, profile: dict, jd_text: str = "",
         hit = sorted(req_tok & got)
         miss = sorted(req_tok - got)
         cov = len(hit) / len(req_tok) if req_tok else 0.0
-        kw = {"coverage": round(cov, 3), "matched": hit,
-              "missing": [m for m in miss if len(m) > 2][:40]}
+
+        # Split the misses: concept absent entirely vs. present under a
+        # different word form. Only the first kind is a real gap.
+        got_stems = stems(got)
+        form_only = sorted(m for m in miss if stem(m) in got_stems)
+        real_miss = sorted(m for m in miss if stem(m) not in got_stems)
+        loose = (len(req_tok) - len(real_miss)) / len(req_tok) if req_tok else 0.0
+
+        kw = {"coverage": round(cov, 3), "loose_coverage": round(loose, 3),
+              "matched": hit,
+              "missing": [m for m in real_miss if len(m) > 2][:40],
+              "wrong_form": [m for m in form_only if len(m) > 2][:20]}
         check("ats-keyword-coverage", cov >= 0.60, "high",
               f"{cov*100:.0f}% of JD requirement terms present in the "
               f"EXTRACTED text",
@@ -310,8 +320,11 @@ def render_audit(rep: dict) -> str:
          f"{rep['critical_failures']} critical, {rep['high_failures']} high · "
          f"{rep['extracted_chars']} chars extracted", ""]
     if rep.get("keywords"):
+        k = rep["keywords"]
         L += [f"Keyword coverage **on extracted text**: "
-              f"{rep['keywords']['coverage']*100:.0f}%", ""]
+              f"{k['coverage']*100:.0f}% exact"
+              + (f" · {k.get('loose_coverage', 0)*100:.0f}% allowing word-form "
+                 f"variants" if k.get("loose_coverage") else ""), ""]
     L += ["| | Check | Result |", "|---|---|---|"]
     for f in rep["findings"]:
         tag = "" if f["pass"] else f" _({sev[f['severity']]})_"
@@ -321,8 +334,15 @@ def render_audit(rep: dict) -> str:
         L += ["", "## Fixes", ""]
         for f in fails:
             L.append(f"- **{f['id']}** — {f['fix']}")
-    if rep.get("keywords", {}).get("missing"):
-        L += ["", "## JD terms the parser did not find", "",
-              "Add only what is true; the rest are gaps.", "",
-              ", ".join(f"`{t}`" for t in rep["keywords"]["missing"])]
+    k = rep.get("keywords", {})
+    if k.get("wrong_form"):
+        L += ["", "## Present, but in the wrong word form", "",
+              "The concept is on the resume under a different inflection. "
+              "Literal ATS matching misses these, so adopt the JD's exact "
+              "wording where the claim stays true.", "",
+              ", ".join(f"`{t}`" for t in k["wrong_form"])]
+    if k.get("missing"):
+        L += ["", "## JD terms genuinely absent", "",
+              "Add only what is true; the rest are gaps for the ledger.", "",
+              ", ".join(f"`{t}`" for t in k["missing"])]
     return "\n".join(L) + "\n"

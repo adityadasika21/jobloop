@@ -39,12 +39,30 @@ STAGES = {
 SEVERITIES = ["critical", "high", "medium", "low"]
 
 # Word-ish tokens we never count as JD "keywords" when scoring coverage.
+# Generic JD prose. These inflate the coverage denominator without being
+# anything an ATS actually scores, and chasing them pushes tailoring toward
+# stuffing filler words instead of real skills.
 STOPWORDS = frozenset("""
 a an and are as at be by for from has have in is it its of on or that the to
 with will you your we our their they this these those must should can able
 role team work working experience years year strong excellent good great
 plus preferred required requirements responsibilities qualifications about
 who what while across using use used help helps including etc via new
+comfortable familiarity familiar least such own build building built builds
+design designing designs ship shipping develop developing developer
+looking join company companies world class fast paced growing scale scaling
+opportunity opportunities benefits culture mission vision values equal
+candidate candidates applicant apply application ideal successful
+ability abilities skill skills knowledge understanding proficiency proficient
+solid deep hands hands-on demonstrated proven track record
+partner partners collaborate collaboration cross functional stakeholders
+drive driving deliver delivering delivery own owning ownership end
+quality best practices standards
+similar related relevant various multiple several
+more most other others any all both each every
+you'll we're it's don't
+day days week weeks month months
+please note position job posting
 """.split())
 
 
@@ -101,3 +119,38 @@ def status_rank(status: str) -> int:
         return STATUS_ORDER.index(status)
     except ValueError:
         return -1
+
+
+# Light suffix stemmer used ONLY for keyword-coverage reporting, never for
+# provenance checks. It separates "you never mention this concept" from "you
+# wrote 'pipeline' and the JD wrote 'pipelines'" -- a distinction that decides
+# whether the fix is a real gap or one word form. Strict (exact) coverage
+# stays the gate, because plenty of ATS keyword matching is literal.
+def stem(word: str) -> str:
+    """Crude but predictable. Plural/gerund folding only.
+
+    An earlier version stripped a blanket "es", which turned "pipelines" into
+    "pipelin" while "pipeline" stayed whole -- so the two never matched and
+    every plural looked like a missing keyword.
+    """
+    w = (word or "").lower()
+    if len(w) <= 4:
+        return w
+    if w.endswith(("ches", "shes", "sses", "xes", "zes")) and len(w) > 6:
+        return w[:-2]
+    if w.endswith("ies") and len(w) > 5:
+        return w[:-3] + "y"
+    if w.endswith("s") and not w.endswith(("ss", "us", "is")):
+        w = w[:-1]
+    if w.endswith("ing") and len(w) > 6:
+        base = w[:-3]
+        # "tracing" -> "trace", "gating" -> "gate": restore the dropped e so
+        # gerunds fold onto their base noun/verb.
+        return base if base.endswith(("e", "l", "r", "n", "t", "d")) else base
+    if w.endswith("ed") and len(w) > 5:
+        return w[:-2]
+    return w
+
+
+def stems(tokens) -> set[str]:
+    return {stem(t) for t in tokens}

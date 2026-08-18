@@ -1,0 +1,597 @@
+_instructions: 'Write tailored.yaml from this worksheet. RULES: (1) every bullet needs `provenance:
+  [evidence-id]`; (2) never state a number that is not in the cited unit''s claim/metrics;
+  (3) never name a technology the cited units don''t mention; (4) rephrase in the JD''s vocabulary
+  but do not upgrade scope, seniority, or ownership; (5) unmatched requirements stay gaps
+  — report them, don''t invent. Run `jt verify 2026-08-18-joveo-ai-llm-engineer` until clean.'
+job:
+  company: Joveo AI
+  role: LLM Engineer
+  url: https://in.linkedin.com/jobs/view/llm-engineer-remote-at-joveo-ai-4404314000
+  work_mode: remote
+requirements:
+- requirement: 3+ years of software engineering experience, with at least 2 years building
+    production machine learning or LLM-powered systems
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - machine
+  - production
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Strong Python skills and experience with FastAPI or similar frameworks
+  status: partial
+  evidence: ev-blueleaves-analytics
+  caveat: null
+  matched_terms:
+  - python
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Hands-on experience building RAG pipelines, including vector search and embeddings
+    (FAISS, Pinecone, or similar)
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - faiss
+  - rag
+  - search
+  - vector
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience with agentic frameworks such as LangChain, LangGraph, or DSPy
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: 'dspy: Seen in JDs alongside LangChain. Evaluated, not shipped.'
+  matched_terms:
+  - agentic
+  - langgraph
+  known_gap: dspy
+  gap_note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+  kind: required
+- requirement: Experience with LLM evaluation and observability — building eval harnesses,
+    LLM-as-judge rubrics, tracing and monitoring in production
+  status: met
+  evidence: ev-phenom-eval-framework
+  caveat: null
+  matched_terms:
+  - evaluation
+  - llm
+  - llm-as-judge
+  - monitoring
+  - observability
+  - tracing
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Familiarity with prompt engineering, structured output, and function calling
+  status: met
+  evidence: ev-phenom-toolcalling-guardrails
+  caveat: null
+  matched_terms:
+  - calling
+  - function
+  - output
+  - structured
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience deploying and serving models (vLLM, TGI, or hosted APIs)
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - hosted
+  - models
+  - serving
+  - vllm
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Comfortable with Docker and cloud infrastructure (AWS or GCP)
+  status: partial
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - aws
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience fine-tuning open-source models (LoRA, QLoRA)
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - fine-tuning
+  - lora
+  - models
+  - qlora
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Knowledge graph or Neo4j experience
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - graph
+  - knowledge
+  - neo4j
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Experience in HR tech or recruitment domain
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Kubernetes experience
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: kubernetes
+  gap_note: Docker in production; orchestration was not owned.
+  kind: nice_to_have
+- requirement: Design and ship multi-agent workflows and tool-calling systems
+  status: partial
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - multi-agent
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: 'Own model quality: build evaluation pipelines that gate releases'
+  status: met
+  evidence: ev-phenom-eval-framework
+  caveat: null
+  matched_terms:
+  - evaluation
+  - model
+  - quality
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Reduce inference cost and latency across the serving stack
+  status: met
+  evidence: ev-phenom-finetune-serving
+  caveat: null
+  matched_terms:
+  - cost
+  - inference
+  - latency
+  - serving
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+known_gaps:
+- topic: dspy
+  status: aware-not-used
+  note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+- topic: llamaindex
+  status: aware-not-used
+  note: Comparable to LangChain work but not used in production.
+- topic: gcp-vertex-ai
+  status: adjacent
+  note: AWS-based (EC2/S3/SageMaker/g5). Vertex is transferable but unused.
+- topic: kubernetes
+  status: adjacent
+  note: Docker in production; orchestration was not owned.
+- topic: cs-degree
+  status: structural
+  note: B.Tech Mechanical. Flag when a JD hard-requires CS/related degree.
+- topic: years-of-experience
+  status: structural
+  note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+evidence_ranked:
+- id: ev-phenom-finetune-serving
+  score: 2.374
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS g5.xlarge
+    (A10G), sustaining 10.98 RPS at 98.6% success under load at roughly half the inference
+    cost of hosted GPT-4.1.
+  metrics:
+    throughput: 10.98 RPS
+    success_rate: 98.6%
+    cost: ~50% of hosted GPT-4.1 inference cost
+    hardware: AWS g5.xlarge (A10G)
+  allowed_skills:
+  - fine-tuning
+  - qlora
+  - peft
+  - unsloth
+  - quantization
+  - nf4
+  - vllm
+  - qwen
+  - model-serving
+  - gpu-inference
+  - aws
+  - load-testing
+  - cost-optimization
+  - throughput-optimization
+  jd_overlap:
+  - aws
+  - cost
+  - fine-tuning
+  - hosted
+  - inference
+  - latency
+  - llm
+  - lora
+  - model
+  - models
+  - qlora
+  - serving
+  probe: What batch size and context length at 10.98 RPS? What was the 1.4% failure mode?
+    How did you construct the QLoRA training set?
+- id: ev-phenom-chatbotcx-architecture
+  score: 2.212
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  allowed_skills:
+  - langgraph
+  - multi-agent-systems
+  - agent-orchestration
+  - intent-recognition
+  - planning
+  - dialogue-state-management
+  - tool-routing
+  - graph-rag
+  - rag
+  - faiss
+  - neo4j
+  - vector-search
+  - production-systems
+  jd_overlap:
+  - agentic
+  - ai
+  - faiss
+  - graph
+  - knowledge
+  - langgraph
+  - llm
+  - machine
+  - multi-agent
+  - neo4j
+  - production
+  - rag
+  probe: Why 12 nodes? How does dialogue state survive a tool failure mid-turn? Why a graph
+    alongside vectors instead of vectors alone?
+- id: ev-phenom-eval-framework
+  score: 1.789
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  allowed_skills:
+  - llm-evaluation
+  - llm-as-judge
+  - pass-at-k
+  - eval-harness
+  - langfuse
+  - litellm
+  - observability
+  - tracing
+  - cost-monitoring
+  - latency-monitoring
+  - regression-testing
+  - hallucination-mitigation
+  - ci-gating
+  jd_overlap:
+  - ai
+  - cost
+  - evaluation
+  - latency
+  - llm
+  - llm-as-judge
+  - model
+  - monitoring
+  - observability
+  - quality
+  - tracing
+  probe: What does your judge rubric look like and how did you validate the judge itself?
+    What happens on a release that regresses one node out of twelve?
+- id: ev-proj-indexnotes
+  score: 1.474
+  strength: strong
+  role: project
+  claim: Built an automated Graph RAG pipeline ingesting research papers (PDF → local-LLM
+    extraction → structured JSON → Neo4j), creating 40+ concepts and 17+ typed relationships,
+    with quantized local models via Ollama for entity/relationship extraction.
+  metrics:
+    concepts: 40+
+    typed_relationships: 17+
+  allowed_skills:
+  - graph-rag
+  - neo4j
+  - ollama
+  - local-llm
+  - quantization
+  - pymupdf
+  - document-ingestion
+  - structured-extraction
+  - knowledge-graph
+  - python
+  - docker
+  - etl
+  jd_overlap:
+  - ai
+  - docker
+  - graph
+  - knowledge
+  - llm
+  - models
+  - neo4j
+  - python
+  - rag
+  - structured
+  probe: How do you keep a local quantized model's extractions consistent enough to build
+    a graph on?
+- id: ev-phenom-toolcalling-guardrails
+  score: 0.839
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Engineered tool-calling agents that execute governed actions — database queries and
+    structured extraction from unstructured documents — under XGrammar constrained decoding
+    and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+    malformed tool calls in live traffic.
+  metrics:
+    tool_routing_accuracy: 91.9%
+    malformed_tool_calls: eliminated in live traffic
+  allowed_skills:
+  - tool-calling
+  - function-calling
+  - constrained-decoding
+  - xgrammar
+  - json-schema
+  - schema-validation
+  - guardrails
+  - structured-extraction
+  - sql
+  - agent-reliability
+  jd_overlap:
+  - calling
+  - function
+  - output
+  - structured
+  - tool-calling
+  probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
+    JSON mode or retry-on-parse-failure?
+- id: ev-blueleaves-fullstack-delivery
+  score: 0.613
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
+    e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs — with role-based access
+    control and CI/CD — integrating multiple internal systems and cutting manual operational
+    errors by roughly 90%.
+  metrics:
+    manual_error_reduction: ~90%
+  allowed_skills:
+  - nodejs
+  - firebase
+  - cloud-functions
+  - rest-api
+  - rbac
+  - ci-cd
+  - system-integration
+  - full-stack
+  - serverless
+  - product-ownership
+  - e-commerce
+  - crm
+  jd_overlap:
+  - apis
+  - cloud
+  - production
+  - stack
+  - systems
+  probe: What did 'owned end-to-end' include — did you handle on-call and incidents?
+- id: ev-phenom-modernbert-nlu
+  score: 0.577
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
+    from 87% to 97%.
+  metrics:
+    nlu_accuracy_before: 87%
+    nlu_accuracy_after: 97%
+  allowed_skills:
+  - pytorch
+  - modernbert
+  - bert
+  - transformers
+  - multi-task-learning
+  - intent-classification
+  - named-entity-recognition
+  - nlu
+  - fine-tuning
+  - model-training
+  jd_overlap:
+  - fine-tuning
+  - model
+  - models
+  probe: Why multi-task over two separate heads? Where did the 10 points come from — data,
+    architecture, or labels?
+- id: ev-proj-indexnotes-schema
+  score: 0.57
+  strength: supporting
+  role: project
+  claim: Designed a Neo4j schema enabling multi-hop graph traversal and cross-document retrieval
+    across scientific domains.
+  metrics: {}
+  allowed_skills:
+  - neo4j
+  - graph-schema-design
+  - cypher
+  - multi-hop-retrieval
+  - data-modeling
+  jd_overlap:
+  - design
+  - graph
+  - neo4j
+  probe: What does a multi-hop query actually look like here?
+- id: ev-phenom-fraud-policy-plane
+  score: 0.542
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: 'Designed the configuration and policy plane for an enterprise hiring-integrity /
+    fraud-risk platform: a global fraud-signal registry with feature groups, tenant-scoped
+    overrides, and applicable-context gating, exposed through a resolve API consumed by the
+    reviewer console and the live detection pipeline — including a role-gated signal-lifecycle
+    state machine, versioned definitions that keep downstream consumers stable across config
+    changes, and CEL-evaluated decision policies (score / condition → action).'
+  metrics: {}
+  allowed_skills:
+  - system-design
+  - policy-engine
+  - multi-tenancy
+  - feature-flags
+  - cel
+  - api-design
+  - versioning
+  - rbac
+  - state-machine
+  - fraud-detection
+  - risk-scoring
+  - backend-architecture
+  jd_overlap:
+  - design
+  - engineering
+  - machine
+  - platform
+  probe: How do versioned definitions avoid breaking live consumers? Why CEL over a DSL you
+    own? How are tenant overrides resolved and cached?
+- id: ev-blueleaves-analytics
+  score: 0.256
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Built data-driven analytics on large-scale transactional and stock-movement data
+    — demand forecasting, sales-trend, and inventory models that surfaced discrepancies and
+    improved procurement/replenishment decisions across 5+ locations and 10,000+ monthly transactions.
+  metrics:
+    locations: 5+
+    monthly_transactions: 10,000+
+  allowed_skills:
+  - data-analytics
+  - demand-forecasting
+  - time-series
+  - inventory-modeling
+  - sql
+  - anomaly-detection
+  - business-intelligence
+  - python
+  jd_overlap:
+  - models
+  - python
+  probe: What forecasting method, and what did you measure it against?
+- id: ev-proj-northstar
+  score: 0.0
+  strength: strong
+  role: project
+  claim: Built and shipped a companion app for the Royal Enfield Tripper Dash, delivering
+    turn-by-turn navigation to the bike's connected instrument cluster and growing an organic
+    user base without paid distribution.
+  metrics:
+    distribution: organic, no paid acquisition
+  allowed_skills:
+  - android
+  - kotlin
+  - bluetooth-low-energy
+  - maps-sdk
+  - mobile-development
+  - reverse-engineering
+  - embedded-integration
+  - product-shipping
+  jd_overlap: []
+  probe: How did you talk to a cluster you had no spec for?
+- id: ev-proj-northstar-traction
+  score: 0.0
+  strength: strong
+  role: project
+  claim: Traction drew Royal Enfield's attention directly, leading to an on-site collaboration
+    visit at their HQ to discuss the work.
+  metrics: {}
+  allowed_skills:
+  - product-shipping
+  - stakeholder-communication
+  jd_overlap: []
+  probe: What came of the visit?
+skill_inventory:
+- name: Languages
+  items:
+  - Python
+  - JavaScript
+  - TypeScript
+  - SQL
+  - Bash
+- name: GenAI & Agentic
+  items:
+  - Agentic / Multi-Agent Systems
+  - LangGraph
+  - LangChain
+  - Tool/Function Calling
+  - Prompt Engineering
+  - Model Routing
+  - Context-Window Management
+  - RAG & Graph RAG
+  - LLM Fine-Tuning (QLoRA, SFT)
+- name: Eval, Observability & Guardrails
+  items:
+  - LLM Evaluation (LLM-as-judge, pass@k)
+  - Constrained Decoding (XGrammar)
+  - Schema Validation
+  - Langfuse
+  - LiteLLM
+  - Model Monitoring
+  - Hallucination Mitigation
+  - Role-Based Access Control
+- name: ML & Serving
+  items:
+  - PyTorch
+  - Transformers (BERT/ModernBERT)
+  - HuggingFace PEFT
+  - Unsloth
+  - vLLM
+  - Embeddings / Vector Search (FAISS)
+  - Neo4j
+  - Ollama
+  - Production MLOps
+- name: Backend & Infra
+  items:
+  - FastAPI
+  - Node.js
+  - Express.js
+  - REST APIs
+  - Microservices
+  - Docker
+  - AWS (EC2/S3/SageMaker)
+  - GitHub Actions
+  - CI/CD
+  - Linux
+- name: Databases
+  items:
+  - PostgreSQL
+  - Neo4j
+  - MongoDB
+  - Redis
+  - Firebase
