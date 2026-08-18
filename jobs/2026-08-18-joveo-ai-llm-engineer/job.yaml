@@ -4,7 +4,7 @@ url: https://in.linkedin.com/jobs/view/llm-engineer-remote-at-joveo-ai-440431400
 source: discord
 location: ''
 work_mode: remote
-status: interview
+status: ready
 priority: ''
 fit_score: 78
 keyword_coverage: 0.686
@@ -65,7 +65,3 @@ events:
   kind: referral
   detail: message generated
   source: jt
-- ts: '2026-08-18T04:23:21+00:00'
-  kind: interview
-  detail: round 1 — technical → pending
-  source: debrief

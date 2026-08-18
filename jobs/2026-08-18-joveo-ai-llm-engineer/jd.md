@@ -1,5 +1,10 @@
 # LLM Engineer — Joveo AI
 
+> **NOTE — this JD text is REPRESENTATIVE, not the real posting.**
+> LinkedIn blocks anonymous fetches, so this was written to exercise
+> the pipeline. Replace it with the real description (post the link
+> or paste the text in Discord) before trusting the screening report.
+
 Source: https://in.linkedin.com/jobs/view/llm-engineer-remote-at-joveo-ai-4404314000
 
 LLM Engineer (Remote) at Joveo AI
