@@ -26,3 +26,8 @@ events:
   detail: Get ready for your technical interview at Backbase! — from nehaa@backbase.com
   source: gmail:19fbcfa318a224d3
   ref: 19fbcfa318a224d3
+- ts: '2026-08-06T11:18:52Z'
+  kind: email
+  detail: Help us improve - your feedback matters — from no-reply@backbase.com
+  source: gmail:19fd6cc2a7dfafde
+  ref: 19fd6cc2a7dfafde
