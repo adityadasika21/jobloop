@@ -1,5 +1,5 @@
-company: unknown-company
-role: LLM Engineer (Remote) at Joveo AI
+company: Joveo AI
+role: LLM Engineer
 url: https://in.linkedin.com/jobs/view/llm-engineer-remote-at-joveo-ai-4404314000
 source: discord
 location: ''
@@ -10,14 +10,14 @@ fit_score: null
 keyword_coverage: null
 stretch: false
 posted_at: ''
-intake_at: '2026-08-18T04:14:29+00:00'
+intake_at: '2026-08-18T04:14:52+00:00'
 applied_at: ''
 closed_at: ''
 outcome: ''
 contacts: []
 notes: ''
 events:
-- ts: '2026-08-18T04:14:29+00:00'
+- ts: '2026-08-18T04:14:52+00:00'
   kind: intake
   detail: via discord — https://in.linkedin.com/jobs/view/llm-engineer-remote-at-joveo-ai-4404314000
   source: discord

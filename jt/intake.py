@@ -90,13 +90,30 @@ def guess_fields(text: str, url: str) -> dict:
         if m:
             out[key] = m.group(1).strip().strip(".,;")[:80]
 
-    # "<Role> at <Company>" — the most common phrasing in shared links.
+    # "<Role> at <Company>" — the most common phrasing in a shared posting.
+    # Scanned line-by-line over the top of the document, because the title
+    # line is what carries it and a document-wide regex picks up prose like
+    # "...experience at scale" instead.
     if not out["role"] or not out["company"]:
-        m = re.search(r"(?i)\b([\w /&+\-]{3,60}?)\s+(?:at|@)\s+([\w .&'\-]{2,40})",
-                      (text or "")[:600])
-        if m and any(h in m.group(1).lower() for h in ROLE_HINTS):
-            out["role"] = out["role"] or m.group(1).strip()
-            out["company"] = out["company"] or m.group(2).strip()
+        for line in [l.strip() for l in (text or "").splitlines() if l.strip()][:15]:
+            m = re.match(r"(?i)^(.{5,70}?)\s+(?:at|@|[-|\u2013])\s+([\w .&\'\-]{2,40})$",
+                         line)
+            if not m:
+                continue
+            role_part, company_part = m.group(1).strip(), m.group(2).strip()
+            if not any(h in role_part.lower() for h in ROLE_HINTS):
+                continue
+            # "(Remote)" / "[Hybrid]" ride along on the title; pull the work
+            # mode out of it and drop it from the role name.
+            paren = re.findall(r"[(\[]([^)\]]{2,20})[)\]]", role_part)
+            role_part = re.sub(r"\s*[(\[][^)\]]{2,20}[)\]]", "", role_part).strip()
+            for token in paren:
+                t = token.strip().lower()
+                if t in ("remote", "hybrid", "onsite", "on-site"):
+                    out["work_mode"] = t.replace("on-site", "onsite")
+            out["role"] = out["role"] or role_part.strip(" -\u2013|,")
+            out["company"] = out["company"] or company_part.strip(" -\u2013|,.")
+            break
 
     # Greenhouse/Lever URLs carry the company in the path.
     if not out["company"] and url:
