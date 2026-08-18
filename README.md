@@ -1,0 +1,127 @@
+# jobloop
+
+Post a JD from your phone → get back a tailored resume that survives ATS
+screening → the job tracks itself through your inbox → what went wrong in
+interviews becomes a drilled weakness list.
+
+```
+Discord ──▶ OpenClaw (local) ──▶ jt intake ──▶ git
+                                                │
+                        ┌───────────────────────┘
+                        ▼
+        scheduled Claude (cloud or Actions, every few hours)
+        tailor → verify → screen → Gmail sync → push
+                        │
+                        ▼
+        GitHub Actions: compile PDF → ATS audit → back to Discord
+```
+
+## The guarantee
+
+Nothing reaches a resume without **provenance** into `profile/master.yaml`.
+`jt verify` mechanically rejects any bullet that invents a number, names a
+technology the cited evidence doesn't support, or has no source at all.
+
+```
+$ jt verify 2026-08-18-joveo-ai-llm-engineer
+FAIL — 5 provenance violation(s)
+  x number '99.4%' is not supported by ['ev-phenom-toolcalling-guardrails']
+  x mentions 'Kubernetes' which the cited evidence does not support
+  x NO PROVENANCE — 'Built data-driven analytics on large-scale transact…'
+  x cites unknown evidence id(s) ['ev-i-led-a-team-of-ten']
+  x skills[Databases]: 'Snowflake' is not in the master skill inventory
+```
+
+Gaps between a JD and your history go into the screening report and the
+learning ledger. They never become bullets. A resume that passes screening on
+a lie just fails the interview instead.
+
+## ATS, specifically
+
+Keyword coverage measured against your YAML is meaningless — the ATS never
+sees it. `jt ats` compiles the PDF, extracts the text back out the way a
+parser does, and audits *that*:
+
+- text actually extractable, in reading order (not multi-column soup)
+- name / email / phone recoverable as text
+- contact URLs present as text — anchor text of "GitHub" loses the link
+- section headings a parser can map (`Experience`, `Education`, `Skills`)
+- employment date ranges it can build a timeline from
+- no ligature splits, no undecodable glyphs, no template leakage
+- **no visually overlapping lines** — these extract fine and are invisible to
+  every other check, but unreadable to a human
+- keyword coverage computed on the *extracted* text, split into real gaps vs.
+  word-form misses (`pipeline` vs `pipelines`), because literal matching is
+  common
+
+## Daily use
+
+```bash
+jt status                    # the pipeline, plus what's gone silent
+jt show joveo                # one job in full
+jt intake "<jd text or url>" # or just post it in Discord
+jt worksheet <slug>          # JD asks + your best TRUE evidence, ranked
+#   → Claude writes tailored.yaml
+jt verify <slug> && jt build <slug> && jt ats <slug> && jt screen <slug>
+```
+
+After an interview:
+
+```bash
+jt debrief <slug>            # template → tell Claude what happened
+jt debrief <slug> --apply -  # weaknesses open, drills generate
+jt learn list
+```
+
+Weaknesses escalate on repeat. Closing one **requires** recorded recovery in a
+later real interview — reading about a topic isn't resolution.
+
+Referral asks use one fixed format; only the pitch paragraph varies, and it's
+held to the same provenance bar as the resume:
+
+```bash
+jt referral <slug> --scaffold --name "Priya"
+jt verify <slug> --referral && jt referral <slug>
+```
+
+## Email
+
+The Gmail connector is a Claude-side tool, so `jt` never talks to Gmail.
+Claude fetches threads and pipes them in:
+
+```bash
+jt mail ingest - --auto-intake   # creates jobs from application confirmations
+jt mail needs-reply
+```
+
+Classification is deterministic and deduped, so an hourly cron is safe. Status
+only ever moves forward — a stray email can't demote a live process.
+
+## State
+
+Per-job YAML under `jobs/` is the source of truth. `jobs.db` is a derived
+SQLite index, gitignored, rebuilt by `jt reindex` — because the cloud routine
+and your laptop both write between pulls, and a committed SQLite binary would
+corrupt. Query it freely:
+
+```bash
+jt sql "SELECT * FROM pipeline"
+jt sql "SELECT * FROM open_weaknesses"
+```
+
+## Setup
+
+```bash
+uv venv && uv pip install -e .
+python -m pytest tests/ -q
+```
+
+`~/.local/bin/jt` pins `JOBLOOP_ROOT` so `jt` works from any directory.
+The Discord skill lives in `openclaw/jobloop/`; install with
+`openclaw skills install ./openclaw/jobloop --force`.
+
+Requires `pdflatex` and `pdftotext` locally (GitHub Actions covers both in
+CI). `moderncv`/`altacv` are **not** used — `templates/resume.cls` is
+self-contained.
+
+See `CLAUDE.md` for how Claude is meant to operate this.
