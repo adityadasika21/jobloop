@@ -1,0 +1,121 @@
+_instructions: 'Fill `pitch` with 2-4 sentences of real background mapping to this JD — specific
+  projects, numbers, technologies drawn from the evidence below. List every evidence id you
+  used in `provenance`. Do NOT change the surrounding message format. Then: jt verify 2026-08-18-joveo-ai-llm-engineer
+  --referral && jt referral 2026-08-18-joveo-ai-llm-engineer'
+contact_name: Priya
+company: Joveo AI
+role: LLM Engineer
+pitch: I'm an AI/LLM Engineer at Phenom People, where I architected a production multi-agent
+  system on LangGraph with 12 orchestrated nodes and Graph RAG retrieval over enterprise repositories
+  via FAISS and Neo4j. I built the evaluation harness that gates releases across all 12 nodes
+  using pass@k and LLM-as-judge rubrics, with LiteLLM and Langfuse tracing for per-node cost
+  and latency. I also fine-tuned and served Qwen models via QLoRA on vLLM, sustaining 10.98
+  RPS at 98.6% success at roughly half the inference cost of hosted GPT-4.1. That maps closely
+  to the RAG, agentic and eval work in the JD.
+provenance:
+- ev-phenom-chatbotcx-architecture
+- ev-phenom-eval-framework
+- ev-phenom-finetune-serving
+_candidate_evidence:
+- id: ev-phenom-finetune-serving
+  claim: Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS g5.xlarge
+    (A10G), sustaining 10.98 RPS at 98.6% success under load at roughly half the inference
+    cost of hosted GPT-4.1.
+  metrics:
+    throughput: 10.98 RPS
+    success_rate: 98.6%
+    cost: ~50% of hosted GPT-4.1 inference cost
+    hardware: AWS g5.xlarge (A10G)
+  jd_overlap:
+  - aws
+  - cost
+  - deploying
+  - fine-tuning
+  - hosted
+  - hr
+  - inference
+  - latency
+  - learning
+  - llm
+- id: ev-phenom-chatbotcx-architecture
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  jd_overlap:
+  - agentic
+  - ai
+  - faiss
+  - graph
+  - hr
+  - langgraph
+  - llm
+  - machine
+  - multi-agent
+  - neo4j
+- id: ev-phenom-eval-framework
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  jd_overlap:
+  - ai
+  - cost
+  - eval
+  - evaluation
+  - gate
+  - harnesses
+  - hr
+  - latency
+  - learning
+  - llm
+- id: ev-proj-indexnotes
+  claim: Built an automated Graph RAG pipeline ingesting research papers (PDF → local-LLM
+    extraction → structured JSON → Neo4j), creating 40+ concepts and 17+ typed relationships,
+    with quantized local models via Ollama for entity/relationship extraction.
+  metrics:
+    concepts: 40+
+    typed_relationships: 17+
+  jd_overlap:
+  - ai
+  - docker
+  - graph
+  - llm
+  - models
+  - neo4j
+  - python
+  - rag
+  - structured
+- id: ev-phenom-toolcalling-guardrails
+  claim: Engineered tool-calling agents that execute governed actions — database queries and
+    structured extraction from unstructured documents — under XGrammar constrained decoding
+    and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+    malformed tool calls in live traffic.
+  metrics:
+    tool_routing_accuracy: 91.9%
+    malformed_tool_calls: eliminated in live traffic
+  jd_overlap:
+  - calling
+  - function
+  - hr
+  - output
+  - recruitment
+  - structured
+  - tech
+  - tool-calling
+- id: ev-phenom-modernbert-nlu
+  claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
+    from 87% to 97%.
+  metrics:
+    nlu_accuracy_before: 87%
+    nlu_accuracy_after: 97%
+  jd_overlap:
+  - fine-tuning
+  - hr
+  - model
+  - models
+  - recruitment
+  - tech

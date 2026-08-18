@@ -1,4 +1,33 @@
-# Weakness ledger — opened by interview debriefs and screening gaps,
-# closed only by evidence of recovery in a later real interview.
-# Managed by `jt learn` and `jt debrief`; safe to read, avoid hand-editing.
-weaknesses: []
+weaknesses:
+- id: scaling-stateful-agent-systems-horizontally
+  topic: Scaling stateful agent systems horizontally
+  category: technical
+  severity: high
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-18T04:23:21+00:00'
+  last_seen: '2026-08-18T04:23:21+00:00'
+  notes: Need a concrete story on dialogue-state sharing across replicas.
+  evidence:
+  - ts: '2026-08-18T04:23:21+00:00'
+    kind: interview
+    job_slug: 2026-08-18-joveo-ai-llm-engineer
+    round: 1
+    quote: Walk me through how you'd scale the 12-node LangGraph system to 10x traffic
+    recovered: false
+- id: validating-an-llm-as-judge
+  topic: Validating an LLM-as-judge
+  category: technical
+  severity: medium
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-18T04:23:21+00:00'
+  last_seen: '2026-08-18T04:23:21+00:00'
+  notes: ''
+  evidence:
+  - ts: '2026-08-18T04:23:21+00:00'
+    kind: interview
+    job_slug: 2026-08-18-joveo-ai-llm-engineer
+    round: 1
+    quote: How do you validate that your LLM-as-judge is itself correct?
+    recovered: false

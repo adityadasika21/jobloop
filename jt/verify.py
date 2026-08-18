@@ -36,8 +36,33 @@ TECH_RE = re.compile(
     r")\b"
 )
 
+# A capitalized word that merely starts a sentence is not a technology.
+_SENTENCE_START_RE = re.compile(r"(?:^|[.!?;:\u2014\u2013-]\s+|\n\s*)$")
+
+
+def _is_sentence_initial(text: str, pos: int) -> bool:
+    return bool(_SENTENCE_START_RE.search(text[:pos]))
+
+
+def _looks_technical(tok: str) -> bool:
+    """True for camelCase, ALLCAPS and version-y tokens -- LangGraph, NER,
+    XGrammar, g5.xlarge, GPT-4.1. These are always policed regardless of
+    position, because that is where fabricated tooling actually shows up."""
+    body = tok[1:]
+    return (any(c.isupper() for c in body)      # internal caps
+            or tok.isupper()                     # acronym
+            or any(c.isdigit() for c in tok))    # version / instance type
+
+
 # Generic words that pass the TECH_RE shape but carry no claim.
 TECH_ALLOW = frozenset(norm_skill(w) for w in """
+That This These Those There Their They It Its We Our My I He She
+And But For With From Under Over Into Across While When Where Which
+Also Then Than Now Both Each Every All Any Some Most More Less
+Working Built Building Owned Owning Led Leading Used Using
+Recently Currently Previously Additionally However Separately
+Happy Would Open Thanks Hi Hope Came Wanted""".split()) | frozenset(
+    norm_skill(w) for w in """
 Built Designed Architected Engineered Owned Led Drove Shipped Delivered
 Created Developed Implemented Reduced Improved Raised Cut Scaled Automated
 Production Enterprise Live Multi Cross End Full Real Time Data Team Teams
@@ -152,14 +177,20 @@ def verify_bullets(bullets: list[dict], evidence: dict[str, dict],
 
         # (3) technologies
         for m in TECH_RE.finditer(text):
-            tok = norm_skill(m.group(1))
+            raw_tok = m.group(1)
+            tok = norm_skill(raw_tok)
             if not tok or len(tok) < 3 or tok in TECH_ALLOW \
                     or tok in allowed_skills or tok in vocab:
                 continue
             if tok in norm_skill(hay):
                 continue
-            if not any(c.isupper() or c.isdigit() for c in m.group(1)):
-                continue          # only police proper-noun-ish tech tokens
+            if not any(c.isupper() or c.isdigit() for c in raw_tok):
+                continue          # only police proper-noun-ish tokens
+            # A plain Capitalized word opening a sentence is grammar, not a
+            # claim. Distinctly technical shapes stay policed everywhere.
+            if not _looks_technical(raw_tok) \
+                    and _is_sentence_initial(text, m.start()):
+                continue
             problems.append(
                 f"{where}: mentions {m.group(1)!r} which the cited evidence "
                 f"{prov} does not support"
