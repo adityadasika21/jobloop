@@ -1,0 +1,332 @@
+# =============================================================================
+# MASTER PROFILE — the single source of truth for every claim about Aditya.
+#
+# RULE: Nothing may appear on a generated resume that is not traceable to an
+# evidence unit in this file. `jt verify` enforces this mechanically.
+#
+# An evidence unit is ONE atomic true fact. Tailoring selects, orders, and
+# rephrases these units in the JD's vocabulary — it never invents.
+#
+# Reconstructed 2026-08-18 from ~/Downloads/Aditya_Resume.pdf (1 page, letter,
+# Jake-Ryan-style LaTeX). Verified against pdftotext -layout output.
+# =============================================================================
+
+identity:
+  name: Aditya Dasika
+  headline: "AI/ML Engineer · Agentic & Multi-Agent Systems · RAG · LLM Eval, Observability & Guardrails"
+  email: akhil.dasika47@gmail.com
+  phone: "+91-96184-33030"
+  links:
+    portfolio: https://projectindex.online
+    github: https://github.com/adityadasika21
+    linkedin: https://www.linkedin.com/in/adityadasika21
+  location: Hyderabad, Telangana, India
+  # Used by `jt screen` to flag seniority mismatches honestly rather than hide them.
+  experience_start: 2022-05
+  degree_field: Mechanical Engineering
+
+roles:
+  - id: phenom-ai-llm-eng-ii
+    title: AI/LLM Engineer II
+    company: Phenom People
+    location: Hyderabad, Telangana
+    start: 2025-04
+    end: present
+    domain: [hr-tech, talent-intelligence, enterprise-saas]
+
+  - id: blueleaves-fullstack
+    title: Full Stack Engineer
+    company: Blueleaves Farms
+    location: Hyderabad, Telangana
+    start: 2022-05
+    end: 2025-02
+    domain: [retail, agritech, operations]
+
+education:
+  - id: edu-aliet
+    institution: Andhra Loyola Institute of Engineering and Technology
+    location: Vijayawada, Andhra Pradesh
+    degree: Bachelor of Technology in Mechanical Engineering
+    start: 2018-08
+    end: 2022-05
+
+# -----------------------------------------------------------------------------
+# EVIDENCE UNITS
+#
+# claim      — the canonical true statement, as it appears on the master resume
+# skills     — normalized tokens; a tailored bullet may NOT introduce a skill
+#              token that is absent from the units it cites (enforced by `jt verify`)
+# metrics    — hard numbers, quoted verbatim; never round or inflate these
+# keywords   — JD-side vocabulary this unit legitimately answers to. These are
+#              synonyms for what was ACTUALLY done, not aspirational adjacencies.
+# strength   — core | strong | supporting. Drives selection under space pressure.
+# probe      — what an interviewer will ask if this bullet earns a screen pass.
+#              If you can't answer the probe, the bullet is too aggressive.
+# -----------------------------------------------------------------------------
+
+evidence:
+
+  # ---- Phenom People : agentic systems -------------------------------------
+  - id: ev-phenom-chatbotcx-architecture
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Architected chatbotCXAgent, a production multi-agent system on LangGraph
+      (12 orchestrated nodes) spanning intent recognition, planning,
+      dialogue-state management, and tool routing — with Graph RAG retrieval over
+      enterprise knowledge and document repositories via FAISS vector search and a
+      Neo4j graph for multi-hop, policy-aware grounding.
+    skills: [langgraph, multi-agent-systems, agent-orchestration, intent-recognition,
+             planning, dialogue-state-management, tool-routing, graph-rag, rag,
+             faiss, neo4j, vector-search, production-systems]
+    metrics: {orchestrated_nodes: "12"}
+    keywords: [agentic ai, multi-agent, agent orchestration, conversational ai,
+               chatbot, state machine, retrieval augmented generation, knowledge graph,
+               semantic search, grounding, llm application, production ml]
+    strength: core
+    probe: "Why 12 nodes? How does dialogue state survive a tool failure mid-turn?
+            Why a graph alongside vectors instead of vectors alone?"
+
+  - id: ev-phenom-toolcalling-guardrails
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Engineered tool-calling agents that execute governed actions — database
+      queries and structured extraction from unstructured documents — under
+      XGrammar constrained decoding and schema-validated JSON guardrails, raising
+      tool-routing accuracy to 91.9% and eliminating malformed tool calls in live
+      traffic.
+    skills: [tool-calling, function-calling, constrained-decoding, xgrammar,
+             json-schema, schema-validation, guardrails, structured-extraction,
+             sql, agent-reliability]
+    metrics: {tool_routing_accuracy: "91.9%", malformed_tool_calls: "eliminated in live traffic"}
+    keywords: [function calling, tool use, structured output, json mode,
+               constrained generation, guardrails, agent reliability, data extraction,
+               document understanding, text-to-sql]
+    strength: core
+    probe: "How did you measure routing accuracy? What was the baseline?
+            Why XGrammar over plain JSON mode or retry-on-parse-failure?"
+
+  - id: ev-phenom-fraud-policy-plane
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Designed the configuration and policy plane for an enterprise
+      hiring-integrity / fraud-risk platform: a global fraud-signal registry with
+      feature groups, tenant-scoped overrides, and applicable-context gating,
+      exposed through a resolve API consumed by the reviewer console and the live
+      detection pipeline — including a role-gated signal-lifecycle state machine,
+      versioned definitions that keep downstream consumers stable across config
+      changes, and CEL-evaluated decision policies (score / condition → action).
+    skills: [system-design, policy-engine, multi-tenancy, feature-flags, cel,
+             api-design, versioning, rbac, state-machine, fraud-detection,
+             risk-scoring, backend-architecture]
+    metrics: {}
+    keywords: [platform engineering, policy engine, rules engine, multi-tenant,
+               configuration management, api design, trust and safety, fraud detection,
+               risk platform, backward compatibility, access control, enterprise saas]
+    strength: core
+    probe: "How do versioned definitions avoid breaking live consumers?
+            Why CEL over a DSL you own? How are tenant overrides resolved and cached?"
+
+  - id: ev-phenom-eval-framework
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every
+      release across all 12 nodes, instrumented with LiteLLM + Langfuse for
+      per-node cost, latency, and full-trace auditability — continuously monitoring
+      agent behaviour and curbing hallucinations.
+    skills: [llm-evaluation, llm-as-judge, pass-at-k, eval-harness, langfuse,
+             litellm, observability, tracing, cost-monitoring, latency-monitoring,
+             regression-testing, hallucination-mitigation, ci-gating]
+    metrics: {nodes_covered: "12"}
+    keywords: [llm evaluation, evals, benchmarking, model monitoring, observability,
+               tracing, guardrails, quality gates, ci/cd for ml, hallucination,
+               responsible ai, llmops, cost optimization]
+    strength: core
+    probe: "What does your judge rubric look like and how did you validate the judge
+            itself? What happens on a release that regresses one node out of twelve?"
+
+  - id: ev-phenom-finetune-serving
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
+      AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under load at
+      roughly half the inference cost of hosted GPT-4.1.
+    skills: [fine-tuning, qlora, peft, unsloth, quantization, nf4, vllm, qwen,
+             model-serving, gpu-inference, aws, load-testing, cost-optimization,
+             throughput-optimization]
+    metrics: {throughput: "10.98 RPS", success_rate: "98.6%",
+              cost: "~50% of hosted GPT-4.1 inference cost", hardware: "AWS g5.xlarge (A10G)"}
+    keywords: [fine-tuning, lora, qlora, peft, model serving, inference optimization,
+               quantization, open source llm, self-hosted llm, gpu, throughput, latency,
+               cost reduction, mlops, model deployment]
+    strength: core
+    probe: "What batch size and context length at 10.98 RPS? What was the 1.4% failure
+            mode? How did you construct the QLoRA training set?"
+
+  - id: ev-phenom-modernbert-nlu
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU
+      accuracy from 87% to 97%.
+    skills: [pytorch, modernbert, bert, transformers, multi-task-learning,
+             intent-classification, named-entity-recognition, nlu, fine-tuning,
+             model-training]
+    metrics: {nlu_accuracy_before: "87%", nlu_accuracy_after: "97%"}
+    keywords: [nlp, natural language understanding, intent classification, ner,
+               entity extraction, transformers, bert, encoder models, multi-task,
+               model training, classification]
+    strength: strong
+    probe: "Why multi-task over two separate heads? Where did the 10 points come from —
+            data, architecture, or labels?"
+
+  # ---- Blueleaves Farms : full stack ---------------------------------------
+  - id: ev-blueleaves-analytics
+    role: blueleaves-fullstack
+    claim: >-
+      Built data-driven analytics on large-scale transactional and stock-movement
+      data — demand forecasting, sales-trend, and inventory models that surfaced
+      discrepancies and improved procurement/replenishment decisions across
+      5+ locations and 10,000+ monthly transactions.
+    skills: [data-analytics, demand-forecasting, time-series, inventory-modeling,
+             sql, anomaly-detection, business-intelligence, python]
+    metrics: {locations: "5+", monthly_transactions: "10,000+"}
+    keywords: [data analysis, forecasting, predictive modeling, time series,
+               supply chain, inventory optimization, analytics, reporting,
+               anomaly detection, business impact]
+    strength: supporting
+    probe: "What forecasting method, and what did you measure it against?"
+
+  - id: ev-blueleaves-fullstack-delivery
+    role: blueleaves-fullstack
+    claim: >-
+      Owned end-to-end delivery of production systems (POS, CRM, inventory,
+      procurement, e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs
+      — with role-based access control and CI/CD — integrating multiple internal
+      systems and cutting manual operational errors by roughly 90%.
+    skills: [nodejs, firebase, cloud-functions, rest-api, rbac, ci-cd,
+             system-integration, full-stack, serverless, product-ownership,
+             e-commerce, crm]
+    metrics: {manual_error_reduction: "~90%"}
+    keywords: [full stack, backend, api development, serverless, microservices,
+               system integration, access control, ci/cd, end-to-end ownership,
+               production systems, saas]
+    strength: supporting
+    probe: "What did 'owned end-to-end' include — did you handle on-call and incidents?"
+
+  # ---- Projects -------------------------------------------------------------
+  - id: ev-proj-northstar
+    kind: project
+    name: NorthStar — Motorcycle Navigation Companion App
+    stack: [Android, BLE, Maps SDK]
+    claim: >-
+      Built and shipped a companion app for the Royal Enfield Tripper Dash,
+      delivering turn-by-turn navigation to the bike's connected instrument cluster
+      and growing an organic user base without paid distribution.
+    skills: [android, kotlin, bluetooth-low-energy, maps-sdk, mobile-development,
+             reverse-engineering, embedded-integration, product-shipping]
+    metrics: {distribution: "organic, no paid acquisition"}
+    keywords: [mobile, android, embedded, iot, bluetooth, navigation, consumer product,
+               shipped product, side project, ownership]
+    strength: strong
+    probe: "How did you talk to a cluster you had no spec for?"
+
+  - id: ev-proj-northstar-traction
+    kind: project
+    parent: ev-proj-northstar
+    claim: >-
+      Traction drew Royal Enfield's attention directly, leading to an on-site
+      collaboration visit at their HQ to discuss the work.
+    skills: [product-shipping, stakeholder-communication]
+    metrics: {}
+    keywords: [impact, recognition, traction, industry validation, initiative]
+    strength: strong
+    probe: "What came of the visit?"
+
+  - id: ev-proj-indexnotes
+    kind: project
+    name: IndexNotes — AI Knowledge Graph for Scientific Papers
+    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
+    claim: >-
+      Built an automated Graph RAG pipeline ingesting research papers
+      (PDF → local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
+      and 17+ typed relationships, with quantized local models via Ollama for
+      entity/relationship extraction.
+    skills: [graph-rag, neo4j, ollama, local-llm, quantization, pymupdf,
+             document-ingestion, structured-extraction, knowledge-graph, python,
+             docker, etl]
+    metrics: {concepts: "40+", typed_relationships: "17+"}
+    keywords: [knowledge graph, graph rag, retrieval, document processing, pdf parsing,
+               information extraction, entity extraction, relationship extraction,
+               local llm, on-device, pipeline, etl]
+    strength: strong
+    probe: "How do you keep a local quantized model's extractions consistent enough
+            to build a graph on?"
+
+  - id: ev-proj-indexnotes-schema
+    kind: project
+    parent: ev-proj-indexnotes
+    claim: >-
+      Designed a Neo4j schema enabling multi-hop graph traversal and
+      cross-document retrieval across scientific domains.
+    skills: [neo4j, graph-schema-design, cypher, multi-hop-retrieval, data-modeling]
+    metrics: {}
+    keywords: [graph database, schema design, data modeling, multi-hop reasoning,
+               cross-document retrieval, cypher]
+    strength: supporting
+    probe: "What does a multi-hop query actually look like here?"
+
+# -----------------------------------------------------------------------------
+# SKILLS — the master inventory, grouped as on the current resume.
+# `jt tailor` reorders groups and prunes within them to match the JD.
+# It may NEVER add an entry that is not listed here.
+# -----------------------------------------------------------------------------
+
+skill_groups:
+  - name: Languages
+    items: [Python, JavaScript, TypeScript, SQL, Bash]
+  - name: GenAI & Agentic
+    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
+            "Tool/Function Calling", "Prompt Engineering", "Model Routing",
+            "Context-Window Management", "RAG & Graph RAG",
+            "LLM Fine-Tuning (QLoRA, SFT)"]
+  - name: "Eval, Observability & Guardrails"
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)",
+            "Constrained Decoding (XGrammar)", "Schema Validation", Langfuse,
+            LiteLLM, "Model Monitoring", "Hallucination Mitigation",
+            "Role-Based Access Control"]
+  - name: ML & Serving
+    items: [PyTorch, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT", Unsloth,
+            vLLM, "Embeddings / Vector Search (FAISS)", Neo4j, Ollama,
+            "Production MLOps"]
+  - name: Backend & Infra
+    items: [FastAPI, Node.js, Express.js, "REST APIs", Microservices, Docker,
+            "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux]
+  - name: Databases
+    items: [PostgreSQL, Neo4j, MongoDB, Redis, Firebase]
+
+# -----------------------------------------------------------------------------
+# KNOWN GAPS — things JDs ask for that are NOT in the evidence above.
+# `jt screen` reads this so a gap is reported honestly instead of quietly
+# becoming a fabricated bullet. Move an entry into `evidence` only when it
+# becomes genuinely true.
+# -----------------------------------------------------------------------------
+
+known_gaps:
+  - topic: dspy
+    status: aware-not-used
+    note: "Seen in JDs alongside LangChain. Evaluated, not shipped."
+  - topic: llamaindex
+    status: aware-not-used
+    note: "Comparable to LangChain work but not used in production."
+  - topic: gcp-vertex-ai
+    status: adjacent
+    note: "AWS-based (EC2/S3/SageMaker/g5). Vertex is transferable but unused."
+  - topic: kubernetes
+    status: adjacent
+    note: "Docker in production; orchestration was not owned."
+  - topic: cs-degree
+    status: structural
+    note: "B.Tech Mechanical. Flag when a JD hard-requires CS/related degree."
+  - topic: years-of-experience
+    status: structural
+    note: "~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled.
+           Flag JDs requiring 6+ yrs so the application is a deliberate stretch."

@@ -1,0 +1,19 @@
+# Derived index — rebuilt by `jt reindex`, never committed.
+# A committed SQLite binary corrupts when the cloud routine and this machine
+# both write between pulls.
+jobs.db
+jobs.db-wal
+jobs.db-shm
+
+# LaTeX build noise
+*.aux
+*.log
+*.out
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+.venv/
+__pycache__/
+*.pyc
+.env
