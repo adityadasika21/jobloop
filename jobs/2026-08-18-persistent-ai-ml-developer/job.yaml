@@ -26,3 +26,8 @@ events:
   detail: Application received for AI/ML Developer — from careers2@persistent.com
   source: gmail:19fa8254f3d4cfca
   ref: 19fa8254f3d4cfca
+- ts: '2026-07-31T11:01:31Z'
+  kind: email
+  detail: 'Application Rejected : Persistent Systems : AI/ML Developer — from careers1@persistent.com'
+  source: gmail:19fb7d62edf8fab4
+  ref: 19fb7d62edf8fab4
