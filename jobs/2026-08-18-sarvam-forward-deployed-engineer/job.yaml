@@ -1,0 +1,28 @@
+company: Sarvam
+role: Forward Deployed Engineer
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: applied
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-08-07T09:31:27Z'
+applied_at: '2026-08-07T09:31:27Z'
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-08-07T09:31:27Z'
+  kind: applied
+  detail: Thank You for Your Application — from no-reply@ashbyhq.com
+  source: gmail:19fdb90314f62eb8
+  ref: 19fdb90314f62eb8

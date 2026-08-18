@@ -1,0 +1,28 @@
+company: Qualcomm
+role: Engineer- ML tools - 3083570
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: applied
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-05-08T11:30:00Z'
+applied_at: '2026-05-08T11:30:00Z'
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-05-08T11:30:00Z'
+  kind: applied
+  detail: Successfully submitted application for Aditya Dasika — from qualcomm@myworkday.com
+  source: gmail:19e075a04fb5fa18
+  ref: 19e075a04fb5fa18

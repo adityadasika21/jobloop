@@ -1,0 +1,28 @@
+company: Cenna Systems
+role: Founding Engineer
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: applied
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-07-28T03:38:14Z'
+applied_at: '2026-07-28T03:38:14Z'
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-07-28T03:38:14Z'
+  kind: applied
+  detail: Thank you for your application to Cenna Systems, Inc — from no-reply@hire.lever.co
+  source: gmail:19fa6cd69084d30b
+  ref: 19fa6cd69084d30b

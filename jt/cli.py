@@ -189,6 +189,22 @@ def cmd_status(root: Path, a) -> int:
         if a.verbose:
             print(f"{DIM}            {r['slug']}{OFF}")
 
+    closed = db_mod.query(root, """
+        SELECT status, COUNT(*) n FROM jobs
+        WHERE status IN ('rejected','withdrawn','offer','ghosted')
+        GROUP BY status""")
+    if closed:
+        print("\n" + DIM + "closed: " +
+              " · ".join(f"{r['n']} {r['status']}" for r in closed) + OFF)
+
+    stale = [r for r in rows if r["days_since_activity"] is not None
+             and r["days_since_activity"] >= 14
+             and r["status"] in ("applied", "screening", "interview")]
+    if stale:
+        print(f"\n{BOLD}SILENT 14+ DAYS{OFF}  {DIM}(chase or mark ghosted){OFF}")
+        for r in stale:
+            print(f"  {r['days_since_activity']:>3}d  {r['company']} — {r['role']}")
+
     weak = db_mod.query(root, "SELECT * FROM open_weaknesses LIMIT 8")
     if weak:
         print(f"\n{BOLD}OPEN WEAKNESSES{OFF}")
@@ -225,10 +241,13 @@ def cmd_sql(root: Path, a) -> int:
 def cmd_mail(root: Path, a) -> int:
     if a.mail_cmd == "ingest":
         msgs = mail_mod.load_messages(a.source)
-        res = mail_mod.ingest(root, msgs, apply_status=not a.no_status)
+        res = mail_mod.ingest(root, msgs, apply_status=not a.no_status,
+                              auto_intake=a.auto_intake)
         print(f"{_c('mail', OK)} matched {res['matched']} · "
-              f"events +{res['events_added']} · noise {res['noise']} · "
-              f"unmatched {len(res['unmatched'])}")
+              f"created {len(res['created'])} · events +{res['events_added']} · "
+              f"noise {res['noise']} · unmatched {len(res['unmatched'])}")
+        for c in res["created"]:
+            print(f"  {_c('+', OK)} {c['company']} — {c['role']}  ({c['slug']})")
         for c in res["status_changes"]:
             print(f"  {_c('→', OK)} {c['slug']}: {c['from']} → {c['to']}")
         for u in res["unmatched"][:10]:
@@ -516,6 +535,8 @@ def build_parser() -> argparse.ArgumentParser:
     m.add_argument("source", nargs="?", default="-",
                    help="JSON file of messages, or - for stdin")
     m.add_argument("--no-status", action="store_true")
+    m.add_argument("--auto-intake", action="store_true",
+                   help="create job records for untracked application emails")
     commitflags(m)
     m = msub.add_parser("needs-reply")
     m.add_argument("--days", type=int, default=3)

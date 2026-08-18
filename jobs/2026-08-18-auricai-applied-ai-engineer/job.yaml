@@ -1,0 +1,28 @@
+company: Auricai
+role: Applied AI Engineer
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: interview
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-08-07T10:55:03Z'
+applied_at: '2026-08-07T10:55:03Z'
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-08-07T10:55:03Z'
+  kind: interview
+  detail: Auric AI | Applied AI Engineer | Feedback | Aditya Dasika — from shivang.tonde@auricai.in
+  source: gmail:19fdbdcd79984e91
+  ref: 19fdbdcd79984e91

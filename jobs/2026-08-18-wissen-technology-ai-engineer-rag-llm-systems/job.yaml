@@ -4,14 +4,14 @@ url: https://www.wissen.com/career/opportunities-wissen-technology
 source: backfill
 location: ''
 work_mode: ''
-status: queued
+status: applied
 priority: ''
 fit_score: 80
 keyword_coverage: null
 stretch: false
 posted_at: ''
 intake_at: '2026-06-03T00:00:00+00:00'
-applied_at: ''
+applied_at: '2026-05-09T17:45:18Z'
 closed_at: ''
 outcome: ''
 contacts: []
@@ -22,3 +22,9 @@ events:
   kind: intake
   detail: via backfill — https://www.wissen.com/career/opportunities-wissen-technology
   source: backfill
+- ts: '2026-05-09T17:45:18Z'
+  kind: applied
+  detail: Acknowledgment for your Application for the position -  AI solution Engineer — from
+    careers@wissen.com
+  source: gmail:19e0dd80928e12a5
+  ref: 19e0dd80928e12a5

@@ -203,9 +203,17 @@ def intake(root: Path, raw: str, *, source: str = "manual",
 
     slug = job_slug(company, role)
     d = jobs_dir(root) / slug
-    if d.exists():
+    # A directory with no job.yaml is a husk, not a real job -- git cannot
+    # delete empty directories, so an interrupted run leaves them behind and
+    # they must not push a genuine job onto a "-2" slug.
+    if d.exists() and not (d / "job.yaml").exists():
+        pass
+    elif d.exists():
         n = 2
-        while (jobs_dir(root) / f"{slug}-{n}").exists():
+        while True:
+            cand = jobs_dir(root) / f"{slug}-{n}"
+            if not cand.exists() or not (cand / "job.yaml").exists():
+                break
             n += 1
         slug = f"{slug}-{n}"
         d = jobs_dir(root) / slug

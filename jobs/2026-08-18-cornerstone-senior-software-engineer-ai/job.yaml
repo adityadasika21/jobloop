@@ -1,0 +1,29 @@
+company: Cornerstone
+role: Senior Software Engineer - AI
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: rejected
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-07-27T06:03:48Z'
+applied_at: '2026-07-27T06:03:48Z'
+closed_at: '2026-07-27T06:03:48Z'
+outcome: rejected
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-07-27T06:03:48Z'
+  kind: rejected
+  detail: Update on your application with Cornerstone - Senior Software Engineer - AI — from
+    careers@csod.com
+  source: gmail:19fa22dd97a9c742
+  ref: 19fa22dd97a9c742

@@ -1,0 +1,28 @@
+company: Accenture
+role: AI / ML Engineer
+url: ''
+source: email
+location: ''
+work_mode: ''
+status: rejected
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-08-06T16:06:14Z'
+applied_at: '2026-08-06T16:06:14Z'
+closed_at: '2026-08-06T16:06:14Z'
+outcome: rejected
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-18T04:34:59+00:00'
+  kind: intake
+  detail: via email
+  source: email
+- ts: '2026-08-06T16:06:14Z'
+  kind: rejected
+  detail: News on your Accenture Application — from accenture@myworkday.com
+  source: gmail:19fd7d3453d62769
+  ref: 19fd7d3453d62769

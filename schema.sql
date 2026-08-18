@@ -139,9 +139,21 @@ SELECT
     ROUND(j.keyword_coverage * 100) AS kw_pct,
     j.stretch,
     (SELECT COUNT(*) FROM interviews i WHERE i.job_slug = j.slug) AS rounds,
-    (SELECT MAX(ts) FROM events e WHERE e.job_slug = j.slug)      AS last_activity,
+    -- Last time the COMPANY did something, not the last time we touched the
+    -- record. Bookkeeping events (intake, tailored, screened) all carry
+    -- today's timestamp and would otherwise mask a job that has been silent
+    -- for three weeks -- which is exactly what this column exists to surface.
+    (SELECT MAX(ts) FROM events e
+      WHERE e.job_slug = j.slug
+        AND e.kind IN ('email','screen','interview','assessment','offer',
+                       'rejected','applied')) AS last_contact,
+    (SELECT MAX(ts) FROM events e WHERE e.job_slug = j.slug) AS last_activity,
     CAST(julianday('now') - julianday(COALESCE(
-        (SELECT MAX(ts) FROM events e WHERE e.job_slug = j.slug), j.intake_at
+        (SELECT MAX(ts) FROM events e
+          WHERE e.job_slug = j.slug
+            AND e.kind IN ('email','screen','interview','assessment','offer',
+                           'rejected','applied')),
+        j.applied_at, j.intake_at
     )) AS INTEGER) AS days_since_activity
 FROM jobs j
 WHERE j.status NOT IN ('rejected', 'withdrawn', 'closed')
