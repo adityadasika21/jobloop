@@ -26,10 +26,17 @@ CLASSIFIERS: list[tuple[str, str, re.Pattern]] = [
     ("offer", "offer", re.compile(
         r"(?i)\b(offer letter|pleased to offer|extend(?:ing)? an offer|"
         r"compensation package)\b")),
+    # "unfortunately"/"regret to inform" are the polite forms. Plenty of ATSes
+    # send the blunt one instead — Persistent's subject is literally
+    # "Application Rejected" over a body that only says "not the right fit",
+    # which fell through to a generic email event and left the job sitting in
+    # `applied`, counting as silent.
     ("rejected", "rejected", re.compile(
         r"(?i)\b(unfortunately|regret to inform|not (?:be )?moving forward|"
         r"decided (?:to (?:go|proceed)|not to)|will not be progressing|"
-        r"other candidates|position has been filled|no longer under consideration)\b")),
+        r"other candidates|position has been filled|no longer under consideration|"
+        r"application (?:was |has been )?rejected|not (?:the|a) right fit|"
+        r"not been (?:selected|shortlisted)|unable to (?:move|take) (?:you )?forward)\b")),
     ("interview", "interview", re.compile(
         r"(?i)\b(schedule (?:an? )?(?:interview|call|chat)|interview invit|"
         r"technical (?:round|interview)|onsite|panel|book a time|calendly|"
