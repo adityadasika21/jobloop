@@ -1,0 +1,162 @@
+name: build resumes
+
+# Why this exists: the scheduled Claude routine has judgment but no guaranteed
+# TeX toolchain, and Actions has a guaranteed toolchain but no judgment. So the
+# routine commits a tailored resume.tex and this workflow turns it into the PDF
+# and reports back to Discord. Keeps the two concerns from contaminating
+# each other.
+
+on:
+  push:
+    paths:
+      - "jobs/**/resume.tex"
+      - "profile/master-resume.tex"
+      - "templates/resume.cls"
+  workflow_dispatch:
+    inputs:
+      slug:
+        description: "Job slug to rebuild (blank = all)"
+        required: false
+
+permissions:
+  contents: write
+
+concurrency:
+  # Serialize: two runs pushing PDFs would race on the same branch.
+  group: build-resumes
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 2
+
+      - name: Install toolchain
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
+            poppler-utils python3-yaml python3-jinja2
+          # fontawesome5 + enumitem + titlesec live in latex-extra; fail loudly
+          # now rather than mid-build.
+          for pkg in geometry titlesec enumitem hyperref fontawesome5 fullpage; do
+            kpsewhich "$pkg.sty" >/dev/null || { echo "MISSING $pkg.sty"; exit 1; }
+          done
+
+      - name: Determine targets
+        id: targets
+        run: |
+          if [ -n "${{ inputs.slug }}" ]; then
+            echo "files=jobs/${{ inputs.slug }}/resume.tex" >> "$GITHUB_OUTPUT"
+          elif [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            echo "files=$(ls jobs/*/resume.tex profile/master-resume.tex 2>/dev/null | tr '\n' ' ')" >> "$GITHUB_OUTPUT"
+          else
+            changed=$(git diff --name-only HEAD^ HEAD -- '*resume.tex' | tr '\n' ' ')
+            # A change to the shared class invalidates every resume.
+            if git diff --name-only HEAD^ HEAD | grep -q 'templates/resume.cls'; then
+              changed=$(ls jobs/*/resume.tex profile/master-resume.tex 2>/dev/null | tr '\n' ' ')
+            fi
+            echo "files=$changed" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Compile
+        id: compile
+        run: |
+          set -o pipefail
+          built=""
+          failed=""
+          for tex in ${{ steps.targets.outputs.files }}; do
+            [ -f "$tex" ] || continue
+            dir=$(dirname "$tex")
+            cp templates/resume.cls "$dir/resume.cls"
+            echo "::group::$tex"
+            if (cd "$dir" && pdflatex -interaction=nonstopmode -halt-on-error "$(basename "$tex")" >/dev/null \
+                          && pdflatex -interaction=nonstopmode -halt-on-error "$(basename "$tex")" >/dev/null); then
+              built="$built $dir/$(basename "${tex%.tex}").pdf"
+              echo "ok"
+            else
+              failed="$failed $tex"
+              (cd "$dir" && tail -40 "$(basename "${tex%.tex}").log") || true
+            fi
+            echo "::endgroup::"
+          done
+          echo "built=$built" >> "$GITHUB_OUTPUT"
+          echo "failed=$failed" >> "$GITHUB_OUTPUT"
+          [ -z "$failed" ]
+
+      - name: ATS audit
+        id: ats
+        if: steps.compile.outputs.built != ''
+        run: |
+          # The gate that matters: a PDF a parser can't read is not a resume.
+          python3 - <<'PY' | tee ats-summary.txt
+          import sys, pathlib
+          sys.path.insert(0, ".")
+          from jt.ats import audit, render_audit
+          from jt.store import load_profile
+          root = pathlib.Path(".")
+          prof = load_profile(root)
+          fails = []
+          for pdf in "${{ steps.compile.outputs.built }}".split():
+              p = pathlib.Path(pdf)
+              if not p.exists():
+                  continue
+              d = p.parent
+              jd = (d / "jd.md").read_text() if (d / "jd.md").exists() else ""
+              rep = audit(p, prof, jd_text=jd)
+              (d / "ats-report.md").write_text(render_audit(rep))
+              status = "PASS" if rep["passes"] else "FAIL"
+              cov = rep.get("keywords", {}).get("coverage")
+              line = f"{status}  {pdf}"
+              if cov is not None:
+                  line += f"  (keyword coverage {cov*100:.0f}%)"
+              print(line)
+              if not rep["passes"]:
+                  fails.append(pdf)
+                  for f in rep["findings"]:
+                      if not f["pass"]:
+                          print(f"   - [{f['severity']}] {f['id']}: {f['detail']}")
+          pathlib.Path("ats-failed.txt").write_text("\n".join(fails))
+          PY
+
+      - name: Commit artifacts
+        if: steps.compile.outputs.built != ''
+        run: |
+          git config user.name  "jobloop-ci"
+          git config user.email "actions@github.com"
+          git add -f ${{ steps.compile.outputs.built }} jobs/*/ats-report.md 2>/dev/null || true
+          git rm --cached -q --ignore-unmatch '*.aux' '*.log' '*.out' || true
+          if git diff --cached --quiet; then
+            echo "no artifact changes"
+          else
+            git commit -m "ci: build resume PDFs [skip ci]"
+            git push
+          fi
+
+      - name: Report to Discord
+        if: always() && env.DISCORD_WEBHOOK != ''
+        env:
+          DISCORD_WEBHOOK: ${{ secrets.DISCORD_WEBHOOK }}
+        run: |
+          built="${{ steps.compile.outputs.built }}"
+          failed="${{ steps.compile.outputs.failed }}"
+          if [ -n "$failed" ]; then
+            summary="❌ LaTeX build failed for:$failed"
+          else
+            summary="✅ Built:$built"
+            [ -f ats-summary.txt ] && summary="$summary"$'\n'"$(cat ats-summary.txt)"
+          fi
+          # Attach the first PDF so the resume itself lands on the phone.
+          first=$(echo $built | awk '{print $1}')
+          if [ -n "$first" ] && [ -f "$first" ]; then
+            curl -sf -X POST "$DISCORD_WEBHOOK" \
+              -F "payload_json={\"content\": $(jq -Rs . <<< "$summary")}" \
+              -F "file1=@$first" >/dev/null
+          else
+            curl -sf -X POST "$DISCORD_WEBHOOK" \
+              -H "Content-Type: application/json" \
+              -d "$(jq -n --arg c "$summary" '{content: $c}')" >/dev/null
+          fi
