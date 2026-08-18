@@ -1,0 +1,178 @@
+name: discord commands
+
+# Receives slash commands from the Discord bot (Cloud Run) via
+# repository_dispatch. The bot answers Discord inside its 3-second budget and
+# fires an event here; this workflow does the real work and reports back
+# through the bot's /postmessage endpoint.
+#
+# SETUP
+#   secret DISCORD_POST_URL  → https://senddiscordbot-f6q5ge4umq-uc.a.run.app/postmessage
+#   secret ANTHROPIC_API_KEY → optional; without it a JD is captured but not tailored
+
+on:
+  repository_dispatch:
+    types: [jobloop-intake, jobloop-status, jobloop-advance]
+
+permissions:
+  contents: write
+
+concurrency:
+  # Serialize against the other writers — three workflows pushing to main
+  # would race. Do not cancel: a cancelled run can leave a job half-tailored.
+  group: jobloop-write
+  cancel-in-progress: false
+
+jobs:
+  handle:
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_POST_URL: ${{ secrets.DISCORD_POST_URL }}
+      DISCORD_CHANNEL_ID: ${{ github.event.client_payload.channel_id }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          # Pushing needs full history, and other writers may be ahead.
+          fetch-depth: 0
+
+      - name: Set up jt
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          uv venv && uv pip install -e .
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      - name: Configure git
+        run: |
+          git config user.name  "jobloop-bot"
+          git config user.email "actions@github.com"
+
+      - name: Check for API key
+        id: gate
+        env:
+          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+        run: |
+          # `secrets` is not usable in a step-level `if`, so surface it as an
+          # output here and gate on that.
+          if [ -n "$KEY" ]; then echo "ai=true" >> "$GITHUB_OUTPUT";
+          else echo "ai=false" >> "$GITHUB_OUTPUT"; fi
+
+      # ---------------------------------------------------------------- intake
+      - name: Capture the JD
+        if: github.event.action == 'jobloop-intake'
+        id: intake
+        env:
+          JD_TEXT: ${{ github.event.client_payload.text }}
+          JD_COMPANY: ${{ github.event.client_payload.company }}
+          JD_ROLE: ${{ github.event.client_payload.role }}
+        shell: bash
+        run: |
+          set -o pipefail
+          # Build the argument list as an array — a company like "The Standard
+          # India" word-splits into three arguments if interpolated unquoted.
+          args=(--source discord --no-push)
+          [ -n "$JD_COMPANY" ] && args+=(--company "$JD_COMPANY")
+          [ -n "$JD_ROLE" ]    && args+=(--role "$JD_ROLE")
+          # --no-push: this job pushes once at the end, after tailoring, so a
+          # failed tailor doesn't leave a half-written commit on main.
+          printf '%s' "$JD_TEXT" | jt intake "${args[@]}" | tee "$RUNNER_TEMP/intake.log"
+          slug=$(head -1 "$RUNNER_TEMP/intake.log" | awk '{print $2}')
+          echo "slug=$slug" >> "$GITHUB_OUTPUT"
+          # Only tailorable if the JD actually came through with real text.
+          if python3 scripts/tailorable.py 1 | grep -q "$slug"; then
+            echo "tailorable=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "tailorable=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Report capture
+        if: github.event.action == 'jobloop-intake'
+        run: |
+          {
+            cat "$RUNNER_TEMP/intake.log"
+            if [ "${{ steps.intake.outputs.tailorable }}" != "true" ]; then
+              echo ""
+              echo "No usable JD text — the link is probably behind a login."
+              echo "Paste the description text and I'll tailor against it."
+            fi
+          } | python3 scripts/discord_post.py --code
+
+      - name: Tailor
+        if: >-
+          github.event.action == 'jobloop-intake' &&
+          steps.intake.outputs.tailorable == 'true' &&
+          steps.gate.outputs.ai == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read CLAUDE.md and follow it exactly, then tailor this one job:
+            ${{ steps.intake.outputs.slug }}
+
+              1. jt worksheet <slug>
+              2. Write jobs/<slug>/tailored.yaml from the worksheet.
+                 THE RULE: every bullet needs provenance into
+                 profile/master.yaml. Never state a number or name a
+                 technology the cited units don't support. Never upgrade
+                 scope, seniority, or ownership. Rephrase in the JD's exact
+                 vocabulary where the claim stays true — literal keyword
+                 matching is what the ATS scores. Requirements with no
+                 matching evidence stay gaps; they go in the report, never
+                 into a bullet.
+              3. jt verify <slug>   — must pass. If it flags something that is
+                 genuinely true, fix profile/master.yaml; never loosen it.
+              4. jt build <slug> --no-pdf   — build.yml compiles the PDF
+              5. jt screen <slug>
+
+            Do not commit or push; the workflow handles that.
+
+      - name: Report screening
+        if: github.event.action == 'jobloop-intake' && steps.intake.outputs.tailorable == 'true'
+        run: |
+          report="jobs/${{ steps.intake.outputs.slug }}/screen-report.md"
+          if [ -f "$report" ]; then
+            head -40 "$report" | python3 scripts/discord_post.py
+          else
+            echo "Captured, but tailoring did not run (no ANTHROPIC_API_KEY?)." \
+              | python3 scripts/discord_post.py
+          fi
+
+      # ---------------------------------------------------------------- status
+      - name: Pipeline status
+        if: github.event.action == 'jobloop-status'
+        env:
+          SLUG: ${{ github.event.client_payload.slug }}
+        run: |
+          if [ -n "$SLUG" ]; then
+            jt show "$SLUG" | python3 scripts/discord_post.py --code
+          else
+            jt status | python3 scripts/discord_post.py --code
+          fi
+
+      # --------------------------------------------------------------- advance
+      - name: Advance a job
+        if: github.event.action == 'jobloop-advance'
+        env:
+          SLUG: ${{ github.event.client_payload.slug }}
+          NEW_STATUS: ${{ github.event.client_payload.status }}
+        run: |
+          jt advance "$SLUG" "$NEW_STATUS" --no-push 2>&1 \
+            | python3 scripts/discord_post.py --code
+
+      # ----------------------------------------------------------------- push
+      - name: Commit and push
+        if: always()
+        run: |
+          git add -A
+          if git diff --cached --quiet; then
+            echo "nothing to commit"
+            exit 0
+          fi
+          git commit -m "discord: ${{ github.event.action }}"
+          # Another writer may have landed while we worked.
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            echo "push race, retrying ($i)"
+            sleep 5
+          done
+          echo "could not push after 3 attempts" >&2
+          exit 1
