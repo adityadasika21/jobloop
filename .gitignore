@@ -26,3 +26,6 @@ profile/pending-evidence.yaml
 
 # /j writes its Discord reply here; the workflow posts and removes it
 .jobloop-reply.md
+
+# Lock shared by run-routine.sh and drain-inbox.sh
+.jobloop.lock

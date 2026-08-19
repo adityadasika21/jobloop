@@ -38,6 +38,23 @@ so the real PDF and ATS audit happen; the cloud path couldn't do that.
 `scripts/run-routine.sh` + `scripts/routine-prompt.md` are the routine.
 `systemctl --user list-timers jobloop.timer` shows when it next fires.
 
+**There is no `ANTHROPIC_API_KEY` in GitHub Actions and there is not going to
+be one.** Actions does the deterministic half of a Discord command — intake,
+scaffolds, LaTeX, verification — and drops anything needing judgment in
+`inbox/`. The routine drains it, answers in the channel, and `jt inbox done`s
+it. Never add a `claude-code-action` step to a workflow in this repo; it would
+be dead code that silently does nothing.
+
+```
+Discord ──▶ Actions ──▶ inbox/ ──▶ routine (this machine) ──▶ Discord
+            no judgment            all judgment
+```
+
+`scripts/drain-inbox.sh` is the fast path: same section-1 work, run often,
+exits before starting Claude when the inbox is empty. Both runners take
+`.jobloop.lock`, because two `claude -p` runs in one repo race on the working
+tree and on the push.
+
 ## State model
 
 `jobs/<slug>/*.yaml`, `learning/ledger.yaml`, and `profile/master.yaml` are the

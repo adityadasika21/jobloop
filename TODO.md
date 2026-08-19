@@ -33,9 +33,16 @@ What remains needs Aditya, or needs a deploy.
       registered: `DISCORD_TOKEN=... node discord/registerCommands.js` in the
       discordBot repo, then redeploy the Cloud Run function so the new files
       in `discord/commands/` ship.
-- [ ] `jobloop` repo secret `ANTHROPIC_API_KEY` is what lets `/msg` write the
-      pitch and `/ctx` write the evidence unit; without it both capture the
-      input and report that they did nothing with it.
+- [x] ~~`ANTHROPIC_API_KEY`~~ — not happening, by design. Judgment runs on the
+      workstation against the Claude Code subscription. Actions now queues to
+      `inbox/` and the routine drains it; `claude-code-action` is gone from
+      `discord.yml` and a test keeps it gone.
+- [ ] `.github/workflows/tailor.yml` is now dead for the same reason — it
+      gates on `ANTHROPIC_API_KEY` and no-ops every 3 hours. Say the word and
+      I will delete it; the routine already covers what it was for.
+- [ ] `jobloop-inbox.timer` is written (`scripts/drain-inbox.sh`) but NOT
+      installed. Without it `/j` waits for the hourly run at :53 rather than
+      answering in a few minutes.
 - [ ] `DISCORD_WEBHOOK` is what attaches the built PDF to the Discord reply —
       the bot's `/postmessage` route only forwards text, so without the
       webhook `/cv` returns the screening report but not the resume itself.

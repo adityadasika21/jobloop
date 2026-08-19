@@ -7,8 +7,11 @@ name: discord commands
 #
 # SETUP
 #   secret DISCORD_POST_URL  → https://senddiscordbot-f6q5ge4umq-uc.a.run.app/postmessage
-#   secret ANTHROPIC_API_KEY → optional; without it a JD is captured but not
-#                              tailored, and /msg returns a scaffold to fill in
+#
+# There is deliberately NO ANTHROPIC_API_KEY here. Judgment runs on Aditya's
+# workstation against his Claude Code subscription, on a systemd timer — see
+# scripts/run-routine.sh. This workflow does the deterministic half of a
+# command and drops the rest in inbox/ for the routine to drain.
 
 on:
   repository_dispatch:
@@ -47,16 +50,6 @@ jobs:
         run: |
           git config user.name  "jobloop-bot"
           git config user.email "actions@github.com"
-
-      - name: Check for API key
-        id: gate
-        env:
-          KEY: ${{ secrets.ANTHROPIC_API_KEY }}
-        run: |
-          # `secrets` is not usable in a step-level `if`, so surface it as an
-          # output here and gate on that.
-          if [ -n "$KEY" ]; then echo "ai=true" >> "$GITHUB_OUTPUT";
-          else echo "ai=false" >> "$GITHUB_OUTPUT"; fi
 
       # ---------------------------------------------------------------- intake
       - name: Capture the JD
@@ -98,45 +91,15 @@ jobs:
             fi
           } | python3 scripts/discord_post.py --code
 
-      - name: Tailor
-        if: >-
-          github.event.action == 'jobloop-intake' &&
-          steps.intake.outputs.tailorable == 'true' &&
-          steps.gate.outputs.ai == 'true'
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read CLAUDE.md and follow it exactly, then tailor this one job:
-            ${{ steps.intake.outputs.slug }}
-
-              1. jt worksheet <slug>
-              2. Write jobs/<slug>/tailored.yaml from the worksheet.
-                 THE RULE: every bullet needs provenance into
-                 profile/master.yaml. Never state a number or name a
-                 technology the cited units don't support. Never upgrade
-                 scope, seniority, or ownership. Rephrase in the JD's exact
-                 vocabulary where the claim stays true — literal keyword
-                 matching is what the ATS scores. Requirements with no
-                 matching evidence stay gaps; they go in the report, never
-                 into a bullet.
-              3. jt verify <slug>   — must pass. If it flags something that is
-                 genuinely true, fix profile/master.yaml; never loosen it.
-              4. jt build <slug> --no-pdf   — build.yml compiles the PDF
-              5. jt screen <slug>
-
-            Do not commit or push; the workflow handles that.
-
-      - name: Report screening
+      - name: Say who tailors it
         if: github.event.action == 'jobloop-intake' && steps.intake.outputs.tailorable == 'true'
         run: |
-          report="jobs/${{ steps.intake.outputs.slug }}/screen-report.md"
-          if [ -f "$report" ]; then
-            head -40 "$report" | python3 scripts/discord_post.py
-          else
-            echo "Captured, but tailoring did not run (no ANTHROPIC_API_KEY?)." \
-              | python3 scripts/discord_post.py
-          fi
+          # Tailoring is judgment, so it happens on the workstation. The
+          # routine picks this up from `scripts/tailorable.py`, which lists
+          # exactly the jobs that have real JD text and no tailored.yaml yet —
+          # no queue entry needed, the repo state IS the queue.
+          echo "Captured. The routine tailors it on the workstation and posts the resume and screening report here." \
+            | python3 scripts/discord_post.py
 
       # ---------------------------------------------------------------- status
       - name: Pipeline status
@@ -161,10 +124,10 @@ jobs:
             | python3 scripts/discord_post.py --code
 
       # --------------------------------------------------------------- message
-      # /msg <job> <type> [name]. The scaffold is deterministic; only the one
-      # varying paragraph needs a model, and it is provenance-checked before
-      # anything is posted. Without ANTHROPIC_API_KEY the scaffold still lands
-      # in the repo and the reply says so, rather than silently doing nothing.
+      # /msg <job> <type> [name], and /ln_msg <jd> [name] [type].
+      # The scaffold is deterministic and happens here; the one varying
+      # paragraph is judgment, so it is queued for the routine, which writes
+      # it, runs `jt verify --message`, and posts it.
       - name: Scaffold the message
         if: github.event.action == 'jobloop-message'
         id: msg
@@ -197,56 +160,28 @@ jobs:
           echo "path=$path" >> "$GITHUB_OUTPUT"
           echo "slug=$(echo "$path" | cut -d/ -f2)" >> "$GITHUB_OUTPUT"
 
-      - name: Write the pitch
-        if: >-
-          github.event.action == 'jobloop-message' &&
-          steps.gate.outputs.ai == 'true'
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read CLAUDE.md, then write ONE paragraph.
-
-            Open ${{ steps.msg.outputs.path }}. It carries the message type,
-            the contact, and the best-matching evidence for this job, ranked.
-            Fill in `pitch` following its `_instructions` exactly, and list
-            every evidence id you used in `provenance`.
-
-            THE RULE: the pitch is a claim surface like any resume bullet. It
-            may not state a number or name a technology the cited evidence
-            units don't support, and it may not upgrade scope, seniority or
-            ownership. A message that oversells gets the call, and the call is
-            where the overselling is found out.
-
-            Change nothing else — the surrounding format is fixed and verbatim.
-            Then run:
-              jt verify ${{ steps.msg.outputs.slug }} --message ${{ github.event.client_payload.type }}
-            and fix the pitch until it passes. Do not commit or push.
-
-      - name: Post the message
+      - name: Queue the pitch for the routine
         if: github.event.action == 'jobloop-message'
         env:
           SLUG: ${{ steps.msg.outputs.slug }}
           MTYPE: ${{ github.event.client_payload.type }}
+          CHANNEL: ${{ github.event.client_payload.channel_id }}
         run: |
-          if jt message "$SLUG" --type "$MTYPE" > "$RUNNER_TEMP/out.md" 2>&1; then
-            python3 scripts/discord_post.py < "$RUNNER_TEMP/out.md"
-          else
-            {
-              cat "$RUNNER_TEMP/out.md"
-              echo ""
-              echo "The scaffold is committed; fill in the pitch and re-run."
-            } | python3 scripts/discord_post.py --code
-          fi
+          # The scaffold is deterministic and already written. Only the one
+          # varying paragraph needs judgment, and judgment lives on the
+          # workstation.
+          jt inbox add message --slug "$SLUG" --type "$MTYPE" --channel "$CHANNEL"
+          echo "Scaffolded a $MTYPE for $SLUG. The routine writes the pitch, checks every claim in it against your evidence, and posts it here." \
+            | python3 scripts/discord_post.py
 
       # --------------------------------------------------------------- context
-      # /ctx <text>. Writes straight into profile/master.yaml — Aditya's
-      # explicit call on 2026-08-19, with the risk on the table. What stands in
-      # for a confirmation gate is `jt evidence add`'s validation: a required
-      # probe phrased as a question, a real role id, a unique id, and a
-      # rollback if the splice produces anything the loader or verify_profile
-      # rejects. The unit records the words that produced it, so any claim can
-      # be traced back to what he actually said.
+      # /ctx <text>. Ends up written straight into profile/master.yaml —
+      # Aditya's explicit call on 2026-08-19, with the risk on the table. What
+      # stands in for a confirmation gate is `jt evidence add`'s validation: a
+      # required probe phrased as a question, a real role id, a unique id, and
+      # a rollback if the splice produces anything the loader or
+      # verify_profile rejects. The unit records the words that produced it,
+      # so any claim can be traced back to what he actually said.
       - name: Draft the evidence unit
         if: github.event.action == 'jobloop-context'
         id: ctx
@@ -258,46 +193,15 @@ jobs:
           printf '%s' "$CTX_TEXT" | jt evidence draft - \
             | tee "$RUNNER_TEMP/ctx.log"
 
-      - name: Write it
-        if: >-
-          github.event.action == 'jobloop-context' &&
-          steps.gate.outputs.ai == 'true'
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read CLAUDE.md, then turn one piece of raw context into evidence.
-
-            Open profile/pending-evidence.yaml. `raw` is what Aditya typed.
-            Fill in `units` following its `_instructions`, then run:
-              jt evidence add profile/pending-evidence.yaml --no-commit
-
-            THE RULE, and it matters more here than anywhere else in this
-            repo: master.yaml is the root of trust. Every resume bullet and
-            every message is generated from it and `jt verify` believes it
-            absolutely. Claim only what `raw` actually says. Do not round a
-            number up, do not promote "helped with" into "owned", and do not
-            add a technology because it would look good next to the others.
-
-            `probe` is not paperwork. It is the question an interviewer asks
-            if this lands him a screen. If he could not answer it from what
-            `raw` says, the claim is written too strongly — weaken the claim,
-            never soften the probe.
-
-            If `raw` is too vague to support any honest claim, add nothing and
-            say what you would need to know instead. That is a valid outcome.
-
-      - name: Report the unit
+      - name: Queue the unit for the routine
         if: github.event.action == 'jobloop-context'
+        env:
+          CTX_TEXT: ${{ github.event.client_payload.text }}
+          CHANNEL: ${{ github.event.client_payload.channel_id }}
         run: |
-          if [ "${{ steps.gate.outputs.ai }}" != "true" ]; then
-            {
-              echo "No ANTHROPIC_API_KEY — captured the text but wrote no unit."
-              cat "$RUNNER_TEMP/ctx.log"
-            } | python3 scripts/discord_post.py --code
-          else
-            python3 scripts/report_new_evidence.py | python3 scripts/discord_post.py --code
-          fi
+          printf '%s' "$CTX_TEXT" | jt inbox add context - --channel "$CHANNEL"
+          echo "Got it. The routine turns that into an evidence unit and posts back the claim it wrote plus the probe it commits you to answering." \
+            | python3 scripts/discord_post.py
 
       # ------------------------------------------------------------- freetext
       # /j <anything>. The other commands make you name a job and pick a status
@@ -310,77 +214,15 @@ jobs:
       # resolution is `jt find`, status ordering is `jt advance`, provenance is
       # `jt verify`. The model reads the sentence and picks the commands; the
       # commands still enforce every rule.
-      - name: Answer in free text
-        if: >-
-          github.event.action == 'jobloop-freetext' &&
-          steps.gate.outputs.ai == 'true'
-        uses: anthropics/claude-code-action@v1
-        with:
-          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
-          prompt: |
-            Read CLAUDE.md first. Aditya said this in Discord:
-
-            ---
-            ${{ github.event.client_payload.text }}
-            ---
-
-            Work out what he means and do it. He will not name a job by slug,
-            pick a status from a menu, or split one thought into three
-            commands — assume the sentence carries several things at once.
-
-            RESOLVING THE JOB: run `jt find "<his words>"`. It ranks every job
-            against the text. Take the top hit when it is clearly ahead; if two
-            are close, ask him which rather than guessing — writing an
-            interview onto the wrong company's timeline is worse than a
-            question.
-
-            WHAT HE IS PROBABLY DOING, and what to run:
-
-            * An interview happened ("round 1 done", "they asked me about X",
-              "went badly") → `jt debrief <slug>` for the template, fill it in,
-              pipe it back with `jt debrief <slug> --apply - --no-commit`.
-              Put what they actually asked in `questions_asked`. Only open a
-              weakness if he says something went badly, and put HIS words in
-              `quote` — never yours. "Answered fine" is not a weakness.
-              If the outcome is not yet known, `outcome` is "pending".
-            * A status moved ("applied", "they rejected me", "got an offer")
-              → `jt advance <slug> <status> --no-commit`.
-            * He built or shipped something ("I added X", "we shipped Y")
-              → `jt evidence draft` then `jt evidence add --no-commit`. This
-              writes to master.yaml, which every future resume is generated
-              from — claim only what he said, and `probe` is required.
-            * He wants a message ("write to the recruiter", "follow up on X")
-              → `jt message <slug> --type <type> --scaffold`, write the pitch,
-              `jt verify <slug> --message <type>`, then `jt message`.
-            * He pasted a job posting → `jt intake` (see the Tailor step's
-              rules; do not tailor here, just capture and say so).
-            * He asked a question ("what is silent", "where is Barclays")
-              → answer it from `jt status`, `jt show`, `jt sql`.
-
-            THE RULE, unchanged: never record a number, a technology, a quote
-            or an outcome he did not say. If the message is too vague to act
-            on, do nothing and ask him the one question that would unblock it.
-            Doing nothing and saying why is a good outcome; guessing is not.
-
-            Then write a SHORT reply to `.jobloop-reply.md` — a few lines,
-            plain text, no markdown headers. Say what you recorded and where,
-            and surface anything he should know (a weakness that just escalated,
-            a probe he now has to be able to answer). If you did nothing, say
-            what you need. Do not commit or push; the workflow handles that.
-
-      - name: Post the reply
+      - name: Queue it for the routine
         if: github.event.action == 'jobloop-freetext'
+        env:
+          TEXT: ${{ github.event.client_payload.text }}
+          CHANNEL: ${{ github.event.client_payload.channel_id }}
         run: |
-          if [ "${{ steps.gate.outputs.ai }}" != "true" ]; then
-            echo "No ANTHROPIC_API_KEY on this repo — /j needs it to read free text." \
-              | python3 scripts/discord_post.py
-          elif [ -s .jobloop-reply.md ]; then
-            python3 scripts/discord_post.py < .jobloop-reply.md
-          else
-            echo "I could not work out what to do with that. Try naming the company." \
-              | python3 scripts/discord_post.py
-          fi
-          rm -f .jobloop-reply.md
+          # Nothing here is deterministic — working out what he meant IS the
+          # work, so all of it goes to the routine.
+          printf '%s' "$TEXT" | jt inbox add freetext - --channel "$CHANNEL"
 
       # ----------------------------------------------------------------- push
       - name: Commit and push

@@ -115,6 +115,11 @@ From Discord: `/msg job:<fragment> type:<kind> name:<contact>`, or
 | `/jobstatus job:<frag> status:<s>` | move a job along |
 | `/ctx <text>` | add something you built to `profile/master.yaml` |
 
+Commands that need judgment do not do it in the cloud. Actions does the
+deterministic half and queues the rest in `inbox/`; the routine on the
+workstation drains it and answers in the channel. So a reply arrives in
+minutes, not instantly — and arrives at all without an API key anywhere.
+
 `/j` is the one to reach for. The rest make you name a job and pick a status
 from a menu, which is not how anyone types on a phone —
 "auric ai round 1 done, waiting for feedback, question was on RAG and entity

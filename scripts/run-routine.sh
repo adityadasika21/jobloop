@@ -20,6 +20,13 @@ export PATH="$HOME/.local/bin:$PATH"
 uv pip install -q -e . >/dev/null 2>&1
 
 LOG="$ROOT/.routine.log"
+
+# Shared with scripts/drain-inbox.sh. Two `claude -p` runs in this repo would
+# race on the working tree and on the push. The hourly run waits rather than
+# skipping: its work is not optional.
+exec 9>"$ROOT/.jobloop.lock"
+flock 9
+
 echo "=== $(date -Is) ===" >> "$LOG"
 
 # Tools are allowlisted rather than skipping permission checks outright: this

@@ -14,6 +14,7 @@ from pathlib import Path
 from . import ats as ats_mod
 from . import db as db_mod
 from . import evidence as evidence_mod
+from . import inbox as inbox_mod
 from . import intake as intake_mod
 from . import learn as learn_mod
 from . import mail as mail_mod
@@ -432,6 +433,36 @@ def cmd_referral(root: Path, a) -> int:
     return cmd_message(root, a)
 
 
+def cmd_inbox(root: Path, a) -> int:
+    if a.inbox_cmd == "add":
+        text = sys.stdin.read() if a.text == "-" else a.text
+        path = inbox_mod.add(root, a.kind, text=(text or "").strip(),
+                             slug=a.slug, type=a.type, name=a.name,
+                             channel_id=a.channel)
+        print(f"{_c('queued', OK)} {path.relative_to(root)}")
+        return 0
+
+    if a.inbox_cmd == "done":
+        print(f"{_c('done', OK)} {inbox_mod.done(root, a.id)}")
+        return 0
+
+    items = inbox_mod.pending(root)
+    if not items:
+        print("inbox empty")
+        return 0
+    if a.json:
+        print(json.dumps(items, indent=2, default=str))
+        return 0
+    for r in items:
+        head = " ".join(str(r.get("text", "")).split())[:100]
+        print(f"{r['id']}  {_c(r['kind'], WARN)}  {r.get('requested_at','')[:16]}")
+        if r.get("slug"):
+            print(f"{DIM}    job {r['slug']}  type {r.get('type','')}{OFF}")
+        if head:
+            print(f"    {head}")
+    return 0
+
+
 def cmd_find(root: Path, a) -> int:
     """Which job is this sentence about? Deterministic, so the free-text
     handler resolves jobs by ranking rather than by guessing."""
@@ -656,6 +687,21 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--name", default="", help="contact's first name")
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_referral)
+
+    s = sub.add_parser("inbox", help="requests waiting for the local routine")
+    isub = s.add_subparsers(dest="inbox_cmd", required=True)
+    m = isub.add_parser("add")
+    m.add_argument("kind", choices=sorted(inbox_mod.KINDS))
+    m.add_argument("text", nargs="?", default="")
+    m.add_argument("--slug", default="")
+    m.add_argument("--type", default="")
+    m.add_argument("--name", default="")
+    m.add_argument("--channel", default="")
+    m = isub.add_parser("list")
+    m.add_argument("--json", action="store_true")
+    m = isub.add_parser("done")
+    m.add_argument("id")
+    s.set_defaults(fn=cmd_inbox)
 
     s = sub.add_parser("find", help="which job does this text refer to?")
     s.add_argument("text")

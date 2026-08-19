@@ -583,3 +583,66 @@ def test_an_exact_slug_still_wins(jobsbox):
     from jt.store import resolve_slug
     slug = "2026-08-18-joveo-ai-llm-engineer"
     assert resolve_slug(jobsbox, slug) == slug
+
+
+# --------------------------------------------------------------------------- #
+# 9. The inbox is the handoff to the routine
+#
+# There is no ANTHROPIC_API_KEY in Actions and there is not going to be one:
+# judgment runs on the workstation, on a subscription, on a timer. So a
+# workflow's job is to do the deterministic half and leave the rest here.
+# --------------------------------------------------------------------------- #
+
+def test_a_request_survives_the_round_trip(tmp_path):
+    from jt.inbox import add, pending, done
+    add(tmp_path, "freetext", text="auric ai round 1 done", channel_id="123")
+    items = pending(tmp_path)
+    assert len(items) == 1
+    assert items[0]["kind"] == "freetext"
+    assert items[0]["channel_id"] == "123"
+    done(tmp_path, items[0]["id"])
+    assert pending(tmp_path) == []
+
+
+def test_two_requests_in_the_same_second_both_survive(tmp_path):
+    """Discord bursts. Losing the second message would be silent."""
+    from jt.inbox import add, pending
+    add(tmp_path, "freetext", text="first")
+    add(tmp_path, "freetext", text="second")
+    assert len({i["id"] for i in pending(tmp_path)}) == 2
+
+
+def test_unknown_kind_is_refused(tmp_path):
+    from jt.inbox import add
+    from jt.store import JobloopError
+    with pytest.raises(JobloopError, match="unknown inbox kind"):
+        add(tmp_path, "nonsense", text="x")
+
+
+def test_empty_inbox_is_empty(tmp_path):
+    from jt.inbox import pending
+    assert pending(tmp_path) == []
+
+
+def test_the_discord_workflow_does_no_thinking():
+    """Regression on a design error: these handlers were first written around
+    claude-code-action, which can never run — there is no API key and the
+    routine is what does judgment."""
+    wf = (ROOT / ".github" / "workflows" / "discord.yml").read_text()
+    assert "claude-code-action" not in wf
+    assert "secrets.ANTHROPIC_API_KEY" not in wf
+
+
+def test_the_routine_drains_the_inbox_before_anything_else():
+    prompt = (ROOT / "scripts" / "routine-prompt.md").read_text()
+    assert "## 1. Drain the inbox" in prompt
+    for kind in ("freetext", "context", "message"):
+        assert f"kind: {kind}" in prompt
+
+
+def test_both_runners_take_the_same_lock():
+    """Two `claude -p` runs in one repo race on the tree and on the push."""
+    for script in ("run-routine.sh", "drain-inbox.sh"):
+        body = (ROOT / "scripts" / script).read_text()
+        assert ".jobloop.lock" in body, script
+        assert "flock" in body, script
