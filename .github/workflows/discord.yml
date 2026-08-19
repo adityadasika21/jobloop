@@ -59,9 +59,25 @@ jobs:
           JD_TEXT: ${{ github.event.client_payload.text }}
           JD_COMPANY: ${{ github.event.client_payload.company }}
           JD_ROLE: ${{ github.event.client_payload.role }}
+          JD_FILE: ${{ github.event.client_payload.attachment_url }}
         shell: bash
         run: |
           set -o pipefail
+          # Every text input Discord offers has a cap — 6000 characters on a
+          # slash-command option, 4000 on a modal field — and job descriptions
+          # are routinely longer. An attachment has no such limit, and Discord
+          # turns any paste over 2000 characters into a message.txt by itself.
+          # Fetching happens here rather than in the bot, which has three
+          # seconds to answer Discord. The CDN link is signed and short-lived,
+          # which is fine: this runs seconds later.
+          if [ -n "$JD_FILE" ]; then
+            if curl -fsSL --max-time 30 "$JD_FILE" -o "$RUNNER_TEMP/jd.txt"; then
+              echo "fetched $(wc -c < "$RUNNER_TEMP/jd.txt") bytes from the attachment"
+              JD_TEXT="$(cat "$RUNNER_TEMP/jd.txt")"
+            else
+              echo "could not fetch the attachment; falling back to any text given" >&2
+            fi
+          fi
           # Build the argument list as an array — a company like "The Standard
           # India" word-splits into three arguments if interpolated unquoted.
           args=(--source discord --no-push)
