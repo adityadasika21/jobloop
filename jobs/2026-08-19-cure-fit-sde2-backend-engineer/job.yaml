@@ -4,10 +4,10 @@ url: ''
 source: discord
 location: ''
 work_mode: ''
-status: queued
+status: analyzed
 priority: ''
-fit_score: null
-keyword_coverage: null
+fit_score: 48
+keyword_coverage: 0.242
 stretch: false
 posted_at: ''
 intake_at: '2026-08-19T17:49:03+00:00'
@@ -21,4 +21,28 @@ events:
   kind: intake
   detail: via discord
   source: discord
+- ts: '2026-08-19T17:51:54+00:00'
+  kind: analyzed
+  detail: worksheet generated
+  source: jt
+- ts: '2026-08-19T17:53:30+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-19T17:53:33+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-19T17:54:19+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-19T17:54:20+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-19T17:54:24+00:00'
+  kind: screened
+  detail: fit 48
+  source: jt
 jd_fingerprint: f18b23f8c9f4d4a6

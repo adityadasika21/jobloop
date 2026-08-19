@@ -15,3 +15,20 @@ weaknesses:
     round: null
     quote: ''
     recovered: false
+- id: distributed-system-resiliency-retries-backoff-an
+  topic: 'Distributed-system resiliency: retries, backoff, and production failure modes'
+  category: technical
+  severity: medium
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-19T17:54:45+00:00'
+  last_seen: '2026-08-19T17:54:45+00:00'
+  notes: ''
+  evidence:
+  - ts: '2026-08-19T17:54:45+00:00'
+    kind: jd_gap
+    job_slug: 2026-08-19-cure-fit-sde2-backend-engineer
+    round: null
+    quote: Ability to reason about scalability, latency, retries, resiliency, and production
+      failure scenarios.
+    recovered: false
