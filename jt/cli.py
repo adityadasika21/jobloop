@@ -130,10 +130,31 @@ def cmd_build(root: Path, a) -> int:
         try:
             pdf = render_mod.build_pdf(tex_path)
             print(f"{_c('pdf', OK)} {pdf.relative_to(root)}")
+            _warn_if_long(pdf, root, slug)
         except JobloopError as exc:
             print(f"{_c('pdf skipped', WARN)} — {exc}")
     append_event(root, slug, "tailored", "resume rendered", "jt")
     return 0
+
+
+def _warn_if_long(pdf: Path, root: Path, slug: str) -> None:
+    """Say it out loud when the resume spills onto a second page.
+
+    The bullet-count proxy in `jt screen` said "fits one page" while the built
+    PDF was two, because a bullet's height depends on how long it is and on
+    the class's spacing — neither of which a count can see. Measure the artifact.
+    """
+    try:
+        pages = ats_mod.extract_text(pdf).count("\f") or 1
+    except Exception:
+        return
+    if pages <= 1:
+        return
+    print(f"{_c('!', WARN)} {pages} pages. One is the target at this level — "
+          f"cut the bullets this JD cares least about, or shorten the headline "
+          f"if it wraps. Do not fix this by tightening resume.cls: the spacing "
+          f"is Aditya's own and was reconciled against "
+          f"reference/resume-source.tex.")
 
 
 def cmd_ats(root: Path, a) -> int:

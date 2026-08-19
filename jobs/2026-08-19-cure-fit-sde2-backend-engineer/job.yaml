@@ -6,8 +6,8 @@ location: ''
 work_mode: ''
 status: analyzed
 priority: ''
-fit_score: 48
-keyword_coverage: 0.242
+fit_score: 46
+keyword_coverage: 0.212
 stretch: false
 posted_at: ''
 intake_at: '2026-08-19T17:49:03+00:00'
@@ -44,5 +44,21 @@ events:
 - ts: '2026-08-19T17:54:24+00:00'
   kind: screened
   detail: fit 48
+  source: jt
+- ts: '2026-08-19T18:15:13+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-19T18:17:11+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-19T18:17:12+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-19T18:17:22+00:00'
+  kind: screened
+  detail: fit 46
   source: jt
 jd_fingerprint: f18b23f8c9f4d4a6

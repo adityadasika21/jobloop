@@ -1,5 +1,5 @@
-fit_score: 48
-keyword_coverage: 0.242
+fit_score: 46
+keyword_coverage: 0.212
 summary:
   required_total: 23
   met: 12
@@ -266,6 +266,6 @@ scan_checks:
   pass: false
 - check: No required item is an unacknowledged gap
   pass: false
-- check: Fits one page (<= 14 experience bullets)
+- check: Fits one page (built PDF is 1)
   pass: true
-screened_at: '2026-08-19T17:54:24+00:00'
+screened_at: '2026-08-19T18:17:22+00:00'

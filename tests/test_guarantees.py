@@ -248,6 +248,8 @@ def test_pdf_carries_the_ats_unicode_map():
     "\\addtolength{\\textheight}{1.0in}",
     "leftmargin=0.15in",                            # his list indent
     "0.97\\textwidth",                              # his tabular width
+    "{#1 \\vspace{-2pt}}",                          # his bullet spacing
+    "\\end{itemize}\\vspace{-5pt}",                  # his list close
 ])
 def test_class_matches_the_authoritative_source(fragment):
     """reference/resume-source.tex is Aditya's own file. Where the
@@ -748,8 +750,15 @@ def test_the_work_gate_sees_a_job_that_arrived_by_git(tmp_path):
         shutil.copytree(ROOT / d, tmp_path / d,
                         ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
     shutil.copy(ROOT / "schema.sql", tmp_path / "schema.sql")
-    shutil.copytree(ROOT / "jobs" / "2026-08-19-cure-fit-sde2-backend-engineer",
-                    tmp_path / "jobs" / "2026-08-19-cure-fit-sde2-backend-engineer")
+    # Build the job here rather than copying a live one: the moment that job
+    # gets tailored it stops being tailorable and the test starts lying.
+    from jt.store import save_job
+    slug = "2026-01-01-testco-backend-engineer"
+    (tmp_path / "jobs" / slug).mkdir(parents=True)
+    (tmp_path / "jobs" / slug / "jd.md").write_text(
+        "# Backend Engineer — Testco\n\n" + ("Real job description text. " * 30))
+    save_job(tmp_path, slug, {"company": "Testco", "role": "Backend Engineer",
+                              "status": "queued", "events": []})
     # No jobs.db at all — exactly the state after a fresh git pull.
     assert not (tmp_path / "jobs.db").exists()
     out = subprocess.run([sys.executable, "-m", "jt.cli", "work"],
@@ -757,4 +766,24 @@ def test_the_work_gate_sees_a_job_that_arrived_by_git(tmp_path):
                          env={**os.environ, "JOBLOOP_ROOT": str(tmp_path),
                               "PYTHONPATH": str(ROOT)})
     assert out.returncode == 0, f"gate said idle: {out.stdout}{out.stderr}"
-    assert "cure-fit" in out.stdout
+    assert slug in out.stdout
+
+
+def test_the_class_does_not_override_list_spacing():
+    """The spacing bug: the class kept a \\setlist override and \\parskip 0pt
+    from the 11pt reconstruction while adopting his 10pt body and margins.
+    Bullets ended up with no gap at all and project headings ran into the line
+    above. Spacing is a system — half of one layout and half of another is a
+    third layout nobody designed."""
+    cls = (ROOT / "templates" / "resume.cls").read_text()
+    assert "\\setlist[itemize]" not in cls
+    assert "\\setlength{\\parskip}" not in cls
+    assert cls.count("\\vspace{-7pt}") >= 3, "subheading/project spacing is his"
+
+
+def test_the_master_resume_still_fits_one_page_after_a_class_change():
+    """Any spacing change has to be paid for in vertical room. Measure it."""
+    import subprocess as sp
+    out = sp.run(["pdfinfo", str(ROOT / "profile" / "master-resume.pdf")],
+                 capture_output=True, text=True).stdout
+    assert "Pages:           1" in out

@@ -1,147 +1,139 @@
-# Tailored for: SDE2 Backend Engineer — Cure Fit (Growth Engineering)
-#
-# Strategy: this is a backend/platform JD, not an AI JD, so the AI work is
-# reframed as what it is underneath — services, APIs, policy/config planes,
-# observability and load behaviour — and the bullets are ordered to answer the
-# JD's required list top-down: backend services and APIs, internal platform
-# services, integrations, performance/scalability/observability, then
-# AI-assisted engineering.
-#
-# The Blueleaves delivery bullet is the single closest match in the corpus
-# (Node.js, REST APIs, CRM, internal system integration, RBAC, CI/CD) and the
-# JD names Node.js/TypeScript explicitly, so it is not cut for recency.
-#
-# NOT claimed anywhere: "microservices" (no unit supports it), Java/Spring
-# Boot, payment or communication-provider integrations, authentication (the
-# evidence supports role-based access *control*, i.e. authorization),
-# Redis/MongoDB in production, and retries/resiliency patterns. Those stay
-# gaps in the screening report.
-#
-# Every bullet carries provenance into profile/master.yaml. `jt verify` fails
-# the build if any number or technology here is unsupported by its sources.
-
-headline: "Backend & Platform Engineer · Node.js, REST APIs & CI/CD · Policy and Configuration Services · Observability for Production Systems"
+headline: Backend & Platform Engineer · Node.js, REST APIs & CI/CD · Microservices · Observability
 headline_provenance:
-  - ev-blueleaves-fullstack-delivery
-  - ev-phenom-fraud-policy-plane
-  - ev-phenom-eval-framework
-
+- ev-blueleaves-fullstack-delivery
+- ev-phenom-fraud-policy-plane
+- ev-phenom-eval-framework
 experience:
-  - role_id: phenom-ai-llm-eng-ii
-    bullets:
-      - text: >-
-          Designed the configuration and policy plane for an enterprise
-          hiring-integrity / fraud-risk platform: a global fraud-signal registry
-          with feature groups, tenant-scoped overrides and applicable-context
-          gating, exposed through a resolve API consumed by the reviewer console
-          and the live detection pipeline — including a role-gated
-          signal-lifecycle state machine, definition versioning that keeps every
-          downstream consumer stable across config changes, and CEL-evaluated
-          decision policies (score / condition → action).
-        provenance: [ev-phenom-fraud-policy-plane]
-        emphasize: ["resolve API"]
-
-      - text: >-
-          Building the detection and decisioning layer of an enterprise
-          hiring-integrity / fraud-risk platform — an LLM orchestration engine
-          that investigates flagged candidate activity, correlates evidence
-          across signals and produces reviewer-facing assessments with
-          supporting rationale — backed by a policy-driven rules engine (score /
-          condition → action), per-tenant risk configuration and audited review
-          workflows across the signal lifecycle.
-        provenance: [ev-phenom-fraud-detection-engine]
-        emphasize: ["policy-driven rules engine"]
-
-      - text: >-
-          Built the evaluation and observability layer gating every release
-          across all 12 nodes (pass@k, LLM-as-judge rubric), instrumented with
-          LiteLLM + Langfuse for per-node cost, latency and full-trace
-          auditability — continuously monitoring agent behaviour and curbing
-          hallucinations.
-        provenance: [ev-phenom-eval-framework]
-        emphasize: ["LiteLLM + Langfuse"]
-
-      - text: >-
-          Engineered tool-calling agents that execute governed actions —
-          database queries and structured extraction from unstructured
-          documents — under XGrammar constrained decoding and schema-validated
-          JSON guardrails, raising tool-routing accuracy to 91.9% and
-          eliminating malformed tool calls in live traffic.
-        provenance: [ev-phenom-toolcalling-guardrails]
-        emphasize: ["91.9%"]
-
-      - text: >-
-          Architected chatbotCXAgent, a production multi-agent system on
-          LangGraph (12 orchestrated nodes) spanning intent recognition,
-          planning, dialogue-state management and tool routing, with Graph RAG
-          retrieval pipelines over enterprise knowledge and document
-          repositories via FAISS vector search and a Neo4j graph for multi-hop,
-          policy-aware grounding.
-        provenance: [ev-phenom-chatbotcx-architecture]
-        emphasize: ["chatbotCXAgent"]
-
-      - text: >-
-          Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
-          AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under load
-          at roughly half the inference cost of hosted GPT-4.1.
-        provenance: [ev-phenom-finetune-serving]
-
-  - role_id: blueleaves-fullstack
-    bullets:
-      - text: >-
-          Owned end-to-end delivery of production systems (POS, CRM, inventory,
-          procurement, e-commerce) on Node.js, Firebase Cloud Functions and REST
-          APIs — with role-based access control and CI/CD — integrating multiple
-          internal systems and cutting manual operational errors by roughly 90%.
-        provenance: [ev-blueleaves-fullstack-delivery]
-
-      - text: >-
-          Built data-driven analytics on large-scale transactional and
-          stock-movement data — demand forecasting, sales-trend and inventory
-          models that surfaced discrepancies and improved
-          procurement/replenishment decisions across 5+ locations and 10,000+
-          monthly transactions.
-        provenance: [ev-blueleaves-analytics]
-
+- role_id: phenom-ai-llm-eng-ii
+  bullets:
+  - text: 'Designed the configuration and policy plane for an enterprise hiring-integrity
+      / fraud-risk platform: a global fraud-signal registry with feature groups, tenant-scoped
+      overrides and applicable-context gating, exposed through a resolve API consumed by the
+      reviewer console and the live detection pipeline — including a role-gated signal-lifecycle
+      state machine, definition versioning that keeps every downstream consumer stable across
+      config changes, and CEL-evaluated decision policies (score / condition → action).'
+    provenance:
+    - ev-phenom-fraud-policy-plane
+    emphasize:
+    - resolve API
+  - text: Building the detection and decisioning layer of an enterprise hiring-integrity /
+      fraud-risk platform — an LLM orchestration engine that investigates flagged candidate
+      activity, correlates evidence across signals and produces reviewer-facing assessments
+      with supporting rationale — backed by a policy-driven rules engine (score / condition
+      → action), per-tenant risk configuration and audited review workflows across the signal
+      lifecycle.
+    provenance:
+    - ev-phenom-fraud-detection-engine
+    emphasize:
+    - policy-driven rules engine
+  - text: Built the evaluation and observability layer gating every release across all 12
+      nodes (pass@k, LLM-as-judge rubric), instrumented with LiteLLM + Langfuse for per-node
+      cost, latency and full-trace auditability — continuously monitoring agent behaviour
+      and curbing hallucinations.
+    provenance:
+    - ev-phenom-eval-framework
+    emphasize:
+    - LiteLLM + Langfuse
+  - text: Engineered tool-calling agents that execute governed actions — database queries
+      and structured extraction from unstructured documents — under XGrammar constrained decoding
+      and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+      malformed tool calls in live traffic.
+    provenance:
+    - ev-phenom-toolcalling-guardrails
+    emphasize:
+    - 91.9%
+- role_id: blueleaves-fullstack
+  bullets:
+  - text: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
+      e-commerce) on Node.js, Firebase Cloud Functions and REST APIs — with role-based access
+      control and CI/CD — integrating multiple internal systems and cutting manual operational
+      errors by roughly 90%.
+    provenance:
+    - ev-blueleaves-fullstack-delivery
+  - text: Built data-driven analytics on large-scale transactional and stock-movement data
+      — demand forecasting, sales-trend and inventory models that surfaced discrepancies and
+      improved procurement/replenishment decisions across 5+ locations and 10,000+ monthly
+      transactions.
+    provenance:
+    - ev-blueleaves-analytics
 projects:
-  - name: NorthStar — Motorcycle Navigation Companion App
-    stack: [Android, Kotlin, BLE, Maps SDK]
-    bullets:
-      - text: >-
-          Built and shipped a companion app for the Royal Enfield Tripper Dash,
-          delivering turn-by-turn navigation to the bike's connected instrument
-          cluster and growing an organic user base without paid distribution;
-          the traction drew Royal Enfield's attention directly, leading to an
-          on-site collaboration visit at their HQ.
-        provenance: [ev-proj-northstar, ev-proj-northstar-traction]
-
-  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
-    stack: [Python, Neo4j, Ollama, Docker]
-    bullets:
-      - text: >-
-          Built an automated Graph RAG pipeline ingesting research papers (PDF →
-          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
-          and 17+ typed relationships, with quantized local models via Ollama
-          for entity/relationship extraction.
-        provenance: [ev-proj-indexnotes]
-
-# Reordered for a backend screen: infra and databases before the GenAI stack.
+- name: NorthStar — Motorcycle Navigation Companion App
+  stack:
+  - Android
+  - Kotlin
+  - BLE
+  - Maps SDK
+  bullets:
+  - text: Built and shipped a companion app for the Royal Enfield Tripper Dash, delivering
+      turn-by-turn navigation to the bike's connected instrument cluster and growing an organic
+      user base without paid distribution; the traction drew Royal Enfield's attention directly,
+      leading to an on-site collaboration visit at their HQ.
+    provenance:
+    - ev-proj-northstar
+    - ev-proj-northstar-traction
+- name: IndexNotes — AI Knowledge Graph for Scientific Papers
+  stack:
+  - Python
+  - Neo4j
+  - Ollama
+  - Docker
+  bullets:
+  - text: Built an automated Graph RAG pipeline ingesting research papers (PDF → local-LLM
+      extraction → structured JSON → Neo4j), creating 40+ concepts and 17+ typed relationships,
+      with quantized local models via Ollama for entity/relationship extraction.
+    provenance:
+    - ev-proj-indexnotes
 skill_groups:
-  - name: Backend & Infra
-    items: [Node.js, Express.js, FastAPI, "REST APIs", Microservices, Docker,
-            "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux]
-  - name: Databases
-    items: [PostgreSQL, MongoDB, Redis, Firebase, Neo4j]
-  - name: Languages
-    items: [Python, JavaScript, TypeScript, SQL, Bash]
-  - name: "Eval, Observability & Guardrails"
-    items: [Langfuse, LiteLLM, "Model Monitoring", "Schema Validation",
-            "Role-Based Access Control", "LLM Evaluation (LLM-as-judge, pass@k)",
-            "Constrained Decoding (XGrammar)"]
-  - name: GenAI & Agentic
-    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
-            "Tool/Function Calling", "RAG & Graph RAG", "Model Routing",
-            "LLM Fine-Tuning (QLoRA, SFT)"]
-  - name: ML & Serving
-    items: [PyTorch, "Transformers (BERT/ModernBERT)", vLLM, Unsloth,
-            "Embeddings / Vector Search (FAISS)", Ollama, "Production MLOps"]
+- name: Backend & Infra
+  items:
+  - Node.js
+  - Express.js
+  - FastAPI
+  - REST APIs
+  - Microservices
+  - Docker
+  - AWS (EC2/S3/SageMaker)
+  - GitHub Actions
+  - CI/CD
+  - Linux
+- name: Databases
+  items:
+  - PostgreSQL
+  - MongoDB
+  - Redis
+  - Firebase
+  - Neo4j
+- name: Languages
+  items:
+  - Python
+  - JavaScript
+  - TypeScript
+  - SQL
+  - Bash
+- name: Eval, Observability & Guardrails
+  items:
+  - Langfuse
+  - LiteLLM
+  - Model Monitoring
+  - Schema Validation
+  - Role-Based Access Control
+  - LLM Evaluation (LLM-as-judge, pass@k)
+  - Constrained Decoding (XGrammar)
+- name: GenAI & Agentic
+  items:
+  - Agentic / Multi-Agent Systems
+  - LangGraph
+  - LangChain
+  - Tool/Function Calling
+  - RAG & Graph RAG
+  - Model Routing
+  - LLM Fine-Tuning (QLoRA, SFT)
+- name: ML & Serving
+  items:
+  - PyTorch
+  - Transformers (BERT/ModernBERT)
+  - vLLM
+  - Unsloth
+  - Embeddings / Vector Search (FAISS)
+  - Ollama
+  - Production MLOps

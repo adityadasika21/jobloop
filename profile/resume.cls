@@ -1,22 +1,23 @@
 % =============================================================================
 % resume.cls — self-contained one-page resume class for jobloop.
 %
-% Reconciled against reference/resume-source.tex — Aditya's own authoritative
-% source, supplied 2026-08-18. This class was reverse-engineered from a
-% compiled PDF before that file existed; where the two disagree, HIS WINS.
-% Point size, margins, list indents, tabular widths and section-heading weight
-% below are his values, not the reconstruction's.
+% This is Aditya's own source, reference/resume-source.tex, expressed as a
+% class. Its preamble is reproduced line for line: point size, margins, section
+% format, and — the part that was got wrong the first time — every piece of
+% vertical spacing.
 %
-% Deliberately depends ONLY on packages verified present on this machine:
-%   geometry, titlesec, enumitem, hyperref, tabularx, marvosym
-% fontawesome5 and ragged2e were required here and never used. fontawesome5
-% lives in texlive-fonts-extra, which CI does not install, so the preflight
-% check in build.yml failed on every push — meaning no PDF was ever built in
-% CI and none was ever posted to Discord. An unused dependency is not free.
-% moderncv and altacv are NOT installed and are not used.
+% The earlier version kept the reconstruction's own spacing machinery (a
+% \setlist override killing itemsep, \parskip 0pt, and negative \vspace values
+% tuned for 11pt) while adopting his 10pt body and margins. The result had no
+% gap between bullets and ran project headings into the line above. Spacing is
+% a system: half of one and half of another is not a compromise, it is a
+% third layout nobody designed.
+%
+% If you change a \vspace here, diff the rendered PDF against
+% reference/resume-source.tex before committing it.
 % =============================================================================
 \NeedsTeXFormat{LaTeX2e}
-\ProvidesClass{resume}[2026/08/18 jobloop resume class]
+\ProvidesClass{resume}[2026/08/19 jobloop resume class]
 
 \LoadClass[letterpaper,10pt]{article}
 
@@ -31,27 +32,13 @@
 \RequirePackage{fancyhdr}
 \RequirePackage[english]{babel}
 \RequirePackage{tabularx}
-\RequirePackage{multicol}
 
-% Ensure that generated pdf is machine readable / ATS parsable. This is the
-% single highest-value line in the class: it installs the glyph->unicode map
-% pdfLaTeX needs for text extraction to be reliable rather than lucky. His
-% source carries it; the reconstruction had lost it entirely.
-% Guarded because build_pdf() falls back to lualatex, which has no
-% \pdfgentounicode and needs no equivalent.
+% Ensure that generated pdf is machine readable / ATS parsable. Guarded
+% because build_pdf() falls back to lualatex, which has no \pdfgentounicode.
 \ifdefined\pdfgentounicode
   \input{glyphtounicode}
   \pdfgentounicode=1
 \fi
-
-\setlength{\multicolsep}{-3.0pt}
-\setlength{\columnsep}{-1pt}
-
-% Zero out list leading globally. LaTeX's default itemize spacing is tuned
-% for prose, and on a dense one-page resume it silently costs ~4 lines --
-% which is exactly what pushed Education onto page 2.
-\setlist[itemize]{topsep=2pt, partopsep=0pt, parsep=0pt, itemsep=1pt}
-\setlength{\parskip}{0pt}
 
 \pagestyle{fancy}
 \fancyhf{}
@@ -77,43 +64,53 @@
 }{}{0em}{}[\color{black}\titlerule \vspace{-5pt}]
 
 % ---- Building blocks ---------------------------------------------------------
-\newcommand{\resumeItem}[1]{%
-  \item\small{#1 \vspace{-3pt}}%
+\newcommand{\resumeItem}[1]{
+  \item\small{
+    {#1 \vspace{-2pt}}
+  }
 }
 
-\newcommand{\resumeSubheading}[4]{%
+\newcommand{\resumeSubheading}[4]{
   \vspace{-2pt}\item
     \begin{tabular*}{0.97\textwidth}[t]{l@{\extracolsep{\fill}}r}
-      \textbf{#1} & \textbf{\small #2} \\
+      \textbf{#1} & #2 \\
       \textit{\small#3} & \textit{\small #4} \\
-    \end{tabular*}\vspace{-5pt}%
+    \end{tabular*}\vspace{-7pt}
 }
 
-\newcommand{\resumeProjectHeading}[2]{%
-  \item
+\newcommand{\resumeSubSubheading}[2]{
+    \item
     \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
-      \small#1 & \textbf{\small #2}\\
-    \end{tabular*}\vspace{-5pt}%
+      \textit{\small#1} & \textit{\small #2} \\
+    \end{tabular*}\vspace{-7pt}
+}
+
+\newcommand{\resumeProjectHeading}[2]{
+    \item
+    \begin{tabular*}{0.97\textwidth}{l@{\extracolsep{\fill}}r}
+      \small#1 & #2 \\
+    \end{tabular*}\vspace{-7pt}
 }
 
 \newcommand{\resumeSubItem}[1]{\resumeItem{#1}\vspace{-4pt}}
 
-\renewcommand\labelitemi{$\vcenter{\hbox{\tiny$\bullet$}}$}
 \renewcommand\labelitemii{$\vcenter{\hbox{\tiny$\bullet$}}$}
 
 \newcommand{\resumeSubHeadingListStart}{\begin{itemize}[leftmargin=0.15in, label={}]}
 \newcommand{\resumeSubHeadingListEnd}{\end{itemize}}
 \newcommand{\resumeItemListStart}{\begin{itemize}}
-\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-2pt}}
+\newcommand{\resumeItemListEnd}{\end{itemize}\vspace{-5pt}}
 
 % ---- Header ------------------------------------------------------------------
 % #1 name  #2 headline  #3 contact line
+% Reproduces his \begin{center} block exactly, including that \small applies
+% to both the headline and the contact line below it.
 \newcommand{\resumeHeader}[3]{%
   \begin{center}
-    {\Huge \scshape #1} \\ \vspace{3pt}
-    \small #2 \\ \vspace{2pt}
-    \footnotesize #3
-  \end{center}\vspace{-6pt}%
+    \textbf{\Huge \scshape #1} \\ \vspace{2pt}
+    \small #2 \\ \vspace{3pt}
+    #3
+  \end{center}%
 }
 
 \endinput

@@ -1,6 +1,6 @@
 # Screening report — SDE2 Backend Engineer @ Cure Fit
 
-**Fit score: 48/100**  ·  keyword coverage 24%  ·  gate: FAIL
+**Fit score: 46/100**  ·  keyword coverage 21%  ·  gate: FAIL
 
 Required items — met 12 · partial 9 · gap 2 (of 23); 0 nice-to-have.
 
@@ -13,7 +13,7 @@ Experience asked: 2y · actual: 4.3y → within range
 - [x] Every bullet carries a metric or a concrete system
 - [ ] Keyword coverage of stated requirements >= 60%
 - [ ] No required item is an unacknowledged gap
-- [x] Fits one page (<= 14 experience bullets)
+- [x] Fits one page (built PDF is 1)
 
 ## Requirement matrix
 

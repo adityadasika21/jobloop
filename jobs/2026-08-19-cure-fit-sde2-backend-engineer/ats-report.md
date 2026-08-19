@@ -1,12 +1,12 @@
 # ATS parse audit
 
-**FAIL** — 0 critical, 1 high · 4678 chars extracted
+**FAIL** — 0 critical, 1 high · 4092 chars extracted
 
-Keyword coverage **on extracted text**: 26% exact · 33% allowing word-form variants
+Keyword coverage **on extracted text**: 24% exact · 31% allowing word-form variants
 
 | | Check | Result |
 |---|---|---|
-| ✅ | `text-extractable` | 4678 chars recovered by the text extractor |
+| ✅ | `text-extractable` | 4092 chars recovered by the text extractor |
 | ✅ | `name` | name found in extracted text |
 | ✅ | `email` | email found |
 | ✅ | `phone` | phone digits recovered |
@@ -17,11 +17,12 @@ Keyword coverage **on extracted text**: 26% exact · 33% allowing word-form vari
 | ✅ | `section-education` | 'education' section recognised as 'education' |
 | ✅ | `section-skills` | 'skills' section recognised as 'technical skills' |
 | ✅ | `date-ranges` | 3 parseable date range(s) for 2 role(s) (+education) |
-| ✅ | `reading-order` | 43/46 long lines agree between reading-order and layout extraction |
+| ✅ | `reading-order` | 38/41 long lines agree between reading-order and layout extraction |
 | ✅ | `glyphs` | no undecodable glyphs |
 | ✅ | `no-template-leakage` | no template artifacts |
 | ✅ | `ligatures` | 0 possible ligature splits |
-| ❌ | `ats-keyword-coverage` _(HIGH)_ | 27% of JD requirement terms present in the EXTRACTED text |
+| ✅ | `content-fidelity` | 100.0% of intended terms survived extraction |
+| ❌ | `ats-keyword-coverage` _(HIGH)_ | 23% of JD requirement terms present in the EXTRACTED text |
 | ✅ | `no-overlap` | no overlapping text |
 | ✅ | `page-count` | 1 page(s) |
 
@@ -33,7 +34,7 @@ Keyword coverage **on extracted text**: 26% exact · 33% allowing word-form vari
 
 The concept is on the resume under a different inflection. Literal ATS matching misses these, so adopt the JD's exact wording where the claim stays true.
 
-`engineers`, `error`, `features`, `lead`, `platforms`, `risks`, `support`, `tools`
+`engineers`, `error`, `features`, `lead`, `pipelines`, `platforms`, `risks`, `support`, `system`, `tools`
 
 ## JD terms genuinely absent
 

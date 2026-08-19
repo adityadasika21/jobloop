@@ -193,6 +193,22 @@ def years_required(jd_text: str) -> int | None:
     return max(nums) if nums else None
 
 
+def _one_page_check(root: Path, slug: str, tailored: dict) -> dict:
+    pdf = root / "jobs" / slug / "resume.pdf"
+    if pdf.exists():
+        try:
+            from .ats import extract_text
+            pages = extract_text(pdf).count("\f") or 1
+            return {"check": f"Fits one page (built PDF is {pages})",
+                    "pass": pages <= 1}
+        except Exception:
+            pass
+    n = sum(len(r.get("bullets", []) or [])
+            for r in tailored.get("experience", []) or [])
+    return {"check": f"Fits one page (no PDF yet; {n} experience bullets)",
+            "pass": n <= 14}
+
+
 def screen(root: Path, slug: str) -> dict:
     """Score the tailored resume against the JD. Returns the report dict."""
     prof = load_profile(root)
@@ -259,9 +275,11 @@ def screen(root: Path, slug: str) -> dict:
          "pass": coverage >= 0.60},
         {"check": "No required item is an unacknowledged gap",
          "pass": gap == 0},
-        {"check": "Fits one page (<= 14 experience bullets)",
-         "pass": sum(len(r.get("bullets", []) or [])
-                     for r in tailored.get("experience", []) or []) <= 14},
+        # Measure the artifact, not a proxy for it. Counting bullets said
+        # "fits one page" while the built PDF was two: a bullet's height
+        # depends on its length and on the class's spacing, and a count can
+        # see neither. Falls back to the count only when no PDF exists yet.
+        _one_page_check(root, slug, tailored),
     ]
 
     # Fit: coverage is what a screen actually measures; the matrix is what a
