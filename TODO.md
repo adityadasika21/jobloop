@@ -5,13 +5,18 @@ What remains needs Aditya, or needs a deploy.
 
 ## 1. Waiting on Aditya
 
-- [ ] **Backbase** (interviewed 4 Aug) and **Auric AI** (10 Aug) have no
-      recorded outcome. Highest-value items in the pipeline. Say how they went
-      and `jt debrief <slug> --apply -` records them; weaknesses open and
-      drills generate from what actually went wrong.
-      A follow-up for Backbase is already drafted, verified and waiting at
-      `jobs/2026-08-18-backbase-ai-engineer/messages/follow-up.md` — read it
-      before it goes anywhere.
+- [x] ~~**Backbase**~~ — rejected. Recorded 2026-08-19. The drafted follow-up
+      was deleted rather than sent, and the one durable signal from the round
+      (they pressed on guardrails, high bar on AI) is open as a self-reported
+      weakness with a drill:
+      `learning/drills/production-llm-guardrails-end-to-end.md`.
+- [ ] **Auric AI** (interviewed 10 Aug) still has no recorded outcome. Say how
+      it went and `jt debrief 2026-08-18-auricai-applied-ai-engineer --apply -`
+      records it.
+- [ ] **Debrief on the day.** Two rounds have now lost their detail before
+      anyone wrote them down, and Backbase's is unrecoverable — no questions,
+      no quotes, just an impression. The ledger escalates on repeats and can
+      only do that if the first occurrence is specific.
 - [ ] Three of his own TODOs are still in `reference/resume-source.tex`:
       the exact LinkedIn URL, confirming the NorthStar stack, and a real
       user/download count for NorthStar if one exists. The first two are

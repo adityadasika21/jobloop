@@ -1,0 +1,27 @@
+round: 1
+stage: technical
+format: video call
+held_at: '2026-08-04'
+interviewer: ''
+duration_min: 60
+questions_asked: []
+went_well: []
+went_badly:
+- Recall is already gone two weeks on. The only thing that survived is that Backbase held
+  a high bar on AI work and pressed on guardrails.
+outcome: rejected
+self_rating: null
+notes: 'Outcome reported by Aditya on 2026-08-19; no rejection email is in the timeline, so
+  this is his account rather than a tracked message. Questions and quotes are deliberately
+  empty: he does not remember the specifics, and inventing them would be exactly the fabrication
+  this system exists to prevent. The one durable signal — that they wanted guardrails ''and
+  many things'' — is recorded separately as a self-reported weakness rather than attributed
+  to an interviewer who may never have said it.
+
+
+  Process note: this is the second interview to lose its detail before it was debriefed. The
+  loop''s value depends on the debrief happening within a day, while the interviewer''s words
+  are still recoverable.'
+weaknesses: []
+recovered: []
+recorded_at: '2026-08-19T03:57:32+00:00'

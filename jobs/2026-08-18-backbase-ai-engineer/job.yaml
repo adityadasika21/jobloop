@@ -4,7 +4,7 @@ url: ''
 source: email
 location: ''
 work_mode: ''
-status: interview
+status: rejected
 priority: ''
 fit_score: null
 keyword_coverage: null
@@ -12,8 +12,8 @@ stretch: false
 posted_at: ''
 intake_at: '2026-08-01T10:59:00Z'
 applied_at: '2026-08-01T10:59:00Z'
-closed_at: ''
-outcome: ''
+closed_at: '2026-08-19T03:57:32+00:00'
+outcome: rejected
 contacts: []
 notes: ''
 events:
@@ -59,3 +59,7 @@ events:
   kind: message
   detail: follow-up generated
   source: jt
+- ts: '2026-08-19T03:57:32+00:00'
+  kind: interview
+  detail: round 1 — technical → rejected
+  source: debrief

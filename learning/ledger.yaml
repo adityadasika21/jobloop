@@ -1,4 +1,17 @@
-# Weakness ledger — opened by interview debriefs and screening gaps,
-# closed only by evidence of recovery in a later real interview.
-# Managed by `jt learn` and `jt debrief`; safe to read, avoid hand-editing.
-weaknesses: []
+weaknesses:
+- id: production-llm-guardrails-end-to-end
+  topic: Production LLM guardrails end to end
+  category: technical
+  severity: medium
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-19T03:57:38+00:00'
+  last_seen: '2026-08-19T03:57:38+00:00'
+  notes: ''
+  evidence:
+  - ts: '2026-08-19T03:57:38+00:00'
+    kind: self_report
+    job_slug: 2026-08-18-backbase-ai-engineer
+    round: null
+    quote: ''
+    recovered: false
