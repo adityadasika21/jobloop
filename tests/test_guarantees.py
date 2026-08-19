@@ -6,6 +6,7 @@ every resume it produces becomes a liability rather than an asset.
 """
 from __future__ import annotations
 
+import os
 import subprocess
 from pathlib import Path
 
@@ -710,3 +711,50 @@ def test_the_same_posting_twice_is_one_job(tmp_path):
     second, notes = intake(tmp_path, REAL_JD + "   \n", source="discord")
     assert second == first, "the same JD created a second job"
     assert any("already tracked" in n for n in notes)
+
+
+def test_a_label_value_stops_at_the_name():
+    """A slash-command option is ONE line, so `(.+)$` on a label captured the
+    whole job description as the company: "Cure Fit. jd: About the Role: The
+    Growth Engineering team is responsible for d" became the job's identity."""
+    from jt.intake import guess_fields
+    g = guess_fields("company: Cure Fit. jd: About the Role: The Growth "
+                     "Engineering team drives acquisition. We are looking for "
+                     "an SDE2 Backend Engineer who has built systems.", "")
+    assert g["company"] == "Cure Fit"
+    assert g["role"] == "SDE2 Backend Engineer"
+
+
+def test_a_dotted_company_name_survives():
+    """Cure.fit, Node.js — a period only ends the value when a space follows."""
+    from jt.intake import guess_fields
+    assert guess_fields("company: Cure.fit jd: hiring an SDE2 Backend Engineer "
+                        "who ships.", "")["company"] == "Cure.fit"
+
+
+def test_labels_are_found_mid_line():
+    """Everything arrives on one line, so "company: X | role: Y" is normal."""
+    from jt.intake import guess_fields
+    g = guess_fields("company: Wissen Technology | role: AI Engineer", "")
+    assert g["company"] == "Wissen Technology"
+    assert g["role"] == "AI Engineer"
+
+
+def test_the_work_gate_sees_a_job_that_arrived_by_git(tmp_path):
+    """jobs.db is derived and gitignored. Without a reindex the gate reported
+    "idle" forever and every /jd was captured and never tailored."""
+    import shutil, subprocess, sys
+    for d in ("profile", "scripts", "jt"):
+        shutil.copytree(ROOT / d, tmp_path / d,
+                        ignore=shutil.ignore_patterns("__pycache__", "*.pyc"))
+    shutil.copy(ROOT / "schema.sql", tmp_path / "schema.sql")
+    shutil.copytree(ROOT / "jobs" / "2026-08-19-cure-fit-sde2-backend-engineer",
+                    tmp_path / "jobs" / "2026-08-19-cure-fit-sde2-backend-engineer")
+    # No jobs.db at all — exactly the state after a fresh git pull.
+    assert not (tmp_path / "jobs.db").exists()
+    out = subprocess.run([sys.executable, "-m", "jt.cli", "work"],
+                         cwd=tmp_path, capture_output=True, text=True,
+                         env={**os.environ, "JOBLOOP_ROOT": str(tmp_path),
+                              "PYTHONPATH": str(ROOT)})
+    assert out.returncode == 0, f"gate said idle: {out.stdout}{out.stderr}"
+    assert "cure-fit" in out.stdout

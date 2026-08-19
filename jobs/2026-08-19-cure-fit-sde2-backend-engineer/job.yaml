@@ -1,0 +1,24 @@
+company: Cure Fit
+role: SDE2 Backend Engineer
+url: ''
+source: discord
+location: ''
+work_mode: ''
+status: queued
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-08-19T17:49:03+00:00'
+applied_at: ''
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-08-19T17:49:03+00:00'
+  kind: intake
+  detail: via discord
+  source: discord
+jd_fingerprint: f18b23f8c9f4d4a6
