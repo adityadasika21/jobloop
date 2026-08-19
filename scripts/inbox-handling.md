@@ -38,6 +38,10 @@ What he is probably doing, and what to run:
   with HIS words in `quote`, never yours. "Answered fine" is not a weakness.
   Outcome is `pending` until he says otherwise. If he did not say when it was
   held, leave `held_at` empty rather than guessing a date.
+- **He is naming a company for a captured JD** ("<slug> is at cult.fit", "the
+  unknown one is X") → set `company` in `jobs/<slug>/job.yaml`, rename nothing
+  (the slug is an id, not a label), and say it is set. Plenty of JDs never
+  name the employer, so this is a normal follow-up rather than an error.
 - **A status moved** ("applied", "they rejected me", "got an offer") →
   `jt advance <slug> <status>`.
 - **He built or shipped something** → treat it as `kind: context` below.

@@ -89,6 +89,14 @@ jobs:
               echo "No usable JD text — the link is probably behind a login."
               echo "Paste the description text and I'll tailor against it."
             fi
+            # Plenty of JDs never name the employer — "our products", "our
+            # centers". No regex can recover what is not written down, so ask
+            # rather than leaving an unknown-company stub in the pipeline.
+            if grep -q "could not determine company" "$RUNNER_TEMP/intake.log"; then
+              echo ""
+              echo "That description never names the company. Tell me with:"
+              echo "  /j ${{ steps.intake.outputs.slug }} is at <company>"
+            fi
           } | python3 scripts/discord_post.py --code
 
       - name: Say who tailors it
@@ -230,10 +238,19 @@ jobs:
         run: |
           git add -A
           if git diff --cached --quiet; then
-            echo "nothing to commit"
+            echo "nothing new to stage"
+          else
+            git commit -m "discord: ${{ github.event.action }}"
+          fi
+          # `jt` auto-commits, so "nothing to stage" does NOT mean "nothing to
+          # push". This exited 0 here and threw the commit away with the
+          # runner: two JDs were captured, committed, reported in Discord, and
+          # silently lost. Decide on what is ahead of origin, not on the index.
+          if [ -z "$(git log --oneline origin/main..HEAD)" ]; then
+            echo "nothing to push"
             exit 0
           fi
-          git commit -m "discord: ${{ github.event.action }}"
+          echo "pushing: $(git log --oneline origin/main..HEAD | wc -l) commit(s)"
           # Another writer may have landed while we worked.
           for i in 1 2 3; do
             git pull --rebase --autostash origin main && git push && exit 0

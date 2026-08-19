@@ -667,3 +667,46 @@ def test_gmail_is_not_a_heartbeat():
     prompt = (ROOT / "scripts" / "routine-prompt.md").read_text()
     assert "ONLY on request" in prompt
     assert "kind: mail" in (ROOT / "scripts" / "inbox-handling.md").read_text()
+
+
+# --------------------------------------------------------------------------- #
+# 10. Intake: a JD that never names the employer
+# --------------------------------------------------------------------------- #
+
+REAL_JD = (
+    "About the Role:\n\nThe Growth Engineering team is responsible for driving "
+    "customer acquisition and conversion across the entire user journey. We build "
+    "and optimize experiences that help prospective customers discover our "
+    "products, book trials, and become paying members. We're looking for an SDE2 "
+    "Backend Engineer who has built and shipped scalable backend systems.\n"
+)
+
+
+def test_a_role_stated_only_in_prose_is_still_found():
+    """This JD never puts the title on its own line — it says it once, in the
+    sentence describing who they want. That produced `unknown-role`."""
+    from jt.intake import guess_fields
+    assert guess_fields(REAL_JD, "")["role"] == "SDE2 Backend Engineer"
+
+
+def test_a_company_that_is_not_written_down_is_not_invented():
+    """"our products", "our centers" — no regex can recover this, and guessing
+    it would put a fabricated employer on a tracked application."""
+    from jt.intake import guess_fields
+    assert guess_fields(REAL_JD, "")["company"] == ""
+
+
+def test_the_same_posting_twice_is_one_job(tmp_path):
+    """Regression: two /jd submissions 7 seconds apart both created
+    `unknown-company-unknown-role`. find_duplicate matches on company and
+    role, and both were blank, so it could not see the collision."""
+    import shutil
+    from jt.intake import intake
+    (tmp_path / "profile").mkdir()
+    shutil.copy(ROOT / "profile" / "master.yaml", tmp_path / "profile" / "master.yaml")
+    (tmp_path / "jobs").mkdir()
+
+    first, _ = intake(tmp_path, REAL_JD, source="discord")
+    second, notes = intake(tmp_path, REAL_JD + "   \n", source="discord")
+    assert second == first, "the same JD created a second job"
+    assert any("already tracked" in n for n in notes)

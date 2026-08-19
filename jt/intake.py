@@ -121,6 +121,19 @@ def guess_fields(text: str, url: str) -> dict:
         if m:
             out["company"] = m.group(1).replace("-", " ").title()
 
+    # "We're looking for an SDE2 Backend Engineer who ..." — a JD that never
+    # puts the title on its own line still states it once, in prose, in the
+    # sentence that describes who they want. Bounded to a short span so it
+    # captures the title and not the rest of the paragraph.
+    if not out["role"]:
+        m = re.search(
+            r"(?i)\b(?:we(?:'re| are)\s+)?(?:looking|searching|hiring)\s+"
+            r"(?:for\s+)?(?:an?\s+)?([A-Z][\w/+.\-]*(?:[ ][\w/+.\-]+){0,5}?)"
+            r"\s+(?:who|that|to\s+join|with\s+)",
+            text or "")
+        if m and any(h in m.group(1).lower() for h in ROLE_HINTS):
+            out["role"] = m.group(1).strip(" .,;:-")
+
     # First heading-ish line that looks like a title.
     if not out["role"]:
         for line in (text or "").splitlines()[:40]:
@@ -156,6 +169,29 @@ def find_duplicate(root: Path, company: str, role: str, url: str) -> str | None:
                 and slugify(job.get("role", "")) == r:
             return slug
     return None
+
+
+def jd_fingerprint(body: str) -> str:
+    """A stable id for a job description's text.
+
+    Company and role can both be unextractable — plenty of JDs never name the
+    employer — and `find_duplicate` matches on those, so it cannot see that
+    the same posting has been submitted twice. The text can. Whitespace and
+    case are normalised because a repost is rarely byte-identical.
+    """
+    import hashlib
+    import re as _re
+    norm = _re.sub(r"[^a-z0-9]+", " ", (body or "").lower()).strip()
+    return hashlib.sha256(norm.encode()).hexdigest()[:16] if norm else ""
+
+
+def find_by_fingerprint(root: Path, fp: str) -> str:
+    if not fp:
+        return ""
+    for slug in all_jobs(root):
+        if load_job(root, slug).get("jd_fingerprint") == fp:
+            return slug
+    return ""
 
 
 def intake(root: Path, raw: str, *, source: str = "manual",
@@ -196,8 +232,9 @@ def intake(root: Path, raw: str, *, source: str = "manual",
         role = "unknown-role"
         notes.append("could not determine role — set it in job.yaml")
 
+    fp = jd_fingerprint(body)
     if not allow_dupe:
-        dupe = find_duplicate(root, company, role, url)
+        dupe = find_by_fingerprint(root, fp) or find_duplicate(root, company, role, url)
         if dupe:
             return dupe, [f"already tracked as {dupe} (use --allow-dupe to force)"]
 
@@ -222,6 +259,7 @@ def intake(root: Path, raw: str, *, source: str = "manual",
         company, role, url=url, source=source, priority=priority,
         location=guessed["location"], work_mode=guessed["work_mode"],
     )
+    rec["jd_fingerprint"] = fp
     (d / "interviews").mkdir(parents=True, exist_ok=True)
     write_text(d / "jd.md", f"# {role} — {company}\n\n"
                             f"{'Source: ' + url if url else ''}\n\n{body}\n")
