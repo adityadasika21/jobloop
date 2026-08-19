@@ -40,9 +40,10 @@ jobs:
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
             poppler-utils python3-yaml python3-jinja2
-          # fontawesome5 + enumitem + titlesec live in latex-extra; fail loudly
-          # now rather than mid-build.
-          for pkg in geometry titlesec enumitem hyperref fontawesome5 fullpage; do
+          # enumitem + titlesec live in latex-extra; fail loudly now rather than
+          # mid-build. Keep this list in step with resume.cls's RequirePackage
+          # lines — a package the class wants and CI lacks fails every push.
+          for pkg in geometry titlesec enumitem hyperref fullpage; do
             kpsewhich "$pkg.sty" >/dev/null || { echo "MISSING $pkg.sty"; exit 1; }
           done
 

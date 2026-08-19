@@ -8,7 +8,11 @@
 % below are his values, not the reconstruction's.
 %
 % Deliberately depends ONLY on packages verified present on this machine:
-%   geometry, titlesec, enumitem, hyperref, fontawesome5, tabularx, marvosym
+%   geometry, titlesec, enumitem, hyperref, tabularx, marvosym
+% fontawesome5 and ragged2e were required here and never used. fontawesome5
+% lives in texlive-fonts-extra, which CI does not install, so the preflight
+% check in build.yml failed on every push — meaning no PDF was ever built in
+% CI and none was ever posted to Discord. An unused dependency is not free.
 % moderncv and altacv are NOT installed and are not used.
 % =============================================================================
 \NeedsTeXFormat{LaTeX2e}
@@ -27,9 +31,7 @@
 \RequirePackage{fancyhdr}
 \RequirePackage[english]{babel}
 \RequirePackage{tabularx}
-\RequirePackage{fontawesome5}
 \RequirePackage{multicol}
-\RequirePackage{ragged2e}
 
 % Ensure that generated pdf is machine readable / ATS parsable. This is the
 % single highest-value line in the class: it installs the glyph->unicode map
