@@ -26,3 +26,13 @@ events:
   detail: Thank you for applying to Emergent Labs — from no-reply@us.greenhouse-mail.io
   source: gmail:19fdb8c3fb7e5635
   ref: 19fdb8c3fb7e5635
+- ts: '2026-08-17T09:36:07Z'
+  kind: email
+  detail: Action Required – Forward Deployed Engineer (Night shift) | Emergent — from disha@emergent.sh
+  source: gmail:1a00f13905b683b2
+  ref: 1a00f13905b683b2
+- ts: '2026-08-17T09:54:57Z'
+  kind: email
+  detail: 'Thanks for filling out this form: FDE @Emergent — from forms-receipts-noreply@google.com'
+  source: gmail:1a00f254c1367934
+  ref: 1a00f254c1367934
