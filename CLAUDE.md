@@ -141,6 +141,33 @@ plain, because bolding every number bolds nothing. Deriving emphasis from
 A term is only honoured where it appears verbatim in the bullet, and `jt
 verify` rejects a term the cited evidence doesn't contain. Bold is a claim.
 
+## Adding evidence (`/ctx`, `jt evidence`)
+
+```bash
+jt evidence draft "what he built, in his words"   # scaffold
+#   → Claude writes the unit(s)
+jt evidence add profile/pending-evidence.yaml
+```
+
+This is the most dangerous write in the system: every bullet and every message
+is generated from `master.yaml`, and `jt verify` believes it absolutely. There
+is **no human confirmation gate** — his explicit call, 2026-08-19. What stands
+in for one:
+
+- `probe` is required and must be a question. If he could not answer it from
+  what he actually said, the claim is too strong — weaken the claim, never
+  soften the probe.
+- `source_note` + `added_at` record the words that produced the unit, so any
+  claim can be traced back.
+- `on_master: false` by default: available to tailoring at once, but his
+  one-page master resume does not change until someone says so.
+- The splice is textual, and rolls back if the result fails to load or fails
+  `verify_profile`. Never round-trip `master.yaml` through the YAML dumper —
+  it would strip every comment in it, including the rules at the top.
+
+If the context is too vague to support an honest claim, **add nothing** and
+say what you would need to know. That is a valid outcome, not a failure.
+
 ## Editing `profile/master.yaml`
 
 Add an evidence unit when Aditya has genuinely done something new. Keep units

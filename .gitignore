@@ -20,3 +20,6 @@ __pycache__/
 
 # Local routine log (scripts/run-routine.sh)
 .routine.log
+
+# transient scaffold for `jt evidence add`
+profile/pending-evidence.yaml

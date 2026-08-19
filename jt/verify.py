@@ -26,7 +26,10 @@ from .store import (
 # Numbers we don't police: bare years, and small ints that are usually prose
 # ("3 services"), which would otherwise produce constant false positives.
 _YEAR_RE = re.compile(r"^(19|20)\d{2}$")
-NUM_RE = re.compile(r"\d[\d,]*\.?\d*\s*(?:%|x|k|m|b|rps|qps|ms|s|gb|tb)?", re.I)
+# Longest suffix first: with `m` ahead of `ms`, "400ms" tokenised as "400m"
+# and the unit was silently dropped. Both sides of every comparison used
+# the same helper so nothing was wrong, only unreadable.
+NUM_RE = re.compile(r"\d[\d,]*\.?\d*\s*(?:%|rps|qps|ms|gb|tb|x|k|m|b|s)?", re.I)
 
 # Technology-ish tokens worth policing in bullet prose. A tailored bullet must
 # not name a tool the cited evidence never mentions.

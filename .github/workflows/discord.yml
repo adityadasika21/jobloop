@@ -12,7 +12,8 @@ name: discord commands
 
 on:
   repository_dispatch:
-    types: [jobloop-intake, jobloop-status, jobloop-advance, jobloop-message]
+    types: [jobloop-intake, jobloop-status, jobloop-advance, jobloop-message,
+            jobloop-context]
 
 permissions:
   contents: write
@@ -171,10 +172,25 @@ jobs:
           SLUG: ${{ github.event.client_payload.slug }}
           MTYPE: ${{ github.event.client_payload.type }}
           NAME: ${{ github.event.client_payload.name }}
+          JD_TEXT: ${{ github.event.client_payload.text }}
         shell: bash
         run: |
           set -o pipefail
-          jt message "$SLUG" --type "$MTYPE" --name "$NAME" --scaffold \
+          slug="$SLUG"
+          # /ln_msg hands over a JD rather than a slug. Intake first — it is
+          # idempotent (find_duplicate returns the existing job), so posting
+          # the same JD to /cv and then to /ln_msg tracks one job, not two.
+          if [ -z "$slug" ] && [ -n "$JD_TEXT" ]; then
+            printf '%s' "$JD_TEXT" | jt intake --source discord --no-push \
+              | tee "$RUNNER_TEMP/intake.log"
+            slug=$(head -1 "$RUNNER_TEMP/intake.log" | awk '{print $2}')
+          fi
+          if [ -z "$slug" ]; then
+            echo "no job and no JD text — nothing to write about" \
+              | python3 scripts/discord_post.py
+            exit 1
+          fi
+          jt message "$slug" --type "$MTYPE" --name "$NAME" --scaffold \
             | tee "$RUNNER_TEMP/msg.log"
           # "scaffold jobs/<slug>/messages/<type>.yaml" -> both fields.
           path=$(head -1 "$RUNNER_TEMP/msg.log" | awk '{print $2}')
@@ -221,6 +237,66 @@ jobs:
               echo ""
               echo "The scaffold is committed; fill in the pitch and re-run."
             } | python3 scripts/discord_post.py --code
+          fi
+
+      # --------------------------------------------------------------- context
+      # /ctx <text>. Writes straight into profile/master.yaml — Aditya's
+      # explicit call on 2026-08-19, with the risk on the table. What stands in
+      # for a confirmation gate is `jt evidence add`'s validation: a required
+      # probe phrased as a question, a real role id, a unique id, and a
+      # rollback if the splice produces anything the loader or verify_profile
+      # rejects. The unit records the words that produced it, so any claim can
+      # be traced back to what he actually said.
+      - name: Draft the evidence unit
+        if: github.event.action == 'jobloop-context'
+        id: ctx
+        env:
+          CTX_TEXT: ${{ github.event.client_payload.text }}
+        shell: bash
+        run: |
+          set -o pipefail
+          printf '%s' "$CTX_TEXT" | jt evidence draft - \
+            | tee "$RUNNER_TEMP/ctx.log"
+
+      - name: Write it
+        if: >-
+          github.event.action == 'jobloop-context' &&
+          steps.gate.outputs.ai == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read CLAUDE.md, then turn one piece of raw context into evidence.
+
+            Open profile/pending-evidence.yaml. `raw` is what Aditya typed.
+            Fill in `units` following its `_instructions`, then run:
+              jt evidence add profile/pending-evidence.yaml --no-commit
+
+            THE RULE, and it matters more here than anywhere else in this
+            repo: master.yaml is the root of trust. Every resume bullet and
+            every message is generated from it and `jt verify` believes it
+            absolutely. Claim only what `raw` actually says. Do not round a
+            number up, do not promote "helped with" into "owned", and do not
+            add a technology because it would look good next to the others.
+
+            `probe` is not paperwork. It is the question an interviewer asks
+            if this lands him a screen. If he could not answer it from what
+            `raw` says, the claim is written too strongly — weaken the claim,
+            never soften the probe.
+
+            If `raw` is too vague to support any honest claim, add nothing and
+            say what you would need to know instead. That is a valid outcome.
+
+      - name: Report the unit
+        if: github.event.action == 'jobloop-context'
+        run: |
+          if [ "${{ steps.gate.outputs.ai }}" != "true" ]; then
+            {
+              echo "No ANTHROPIC_API_KEY — captured the text but wrote no unit."
+              cat "$RUNNER_TEMP/ctx.log"
+            } | python3 scripts/discord_post.py --code
+          else
+            python3 scripts/report_new_evidence.py | python3 scripts/discord_post.py --code
           fi
 
       # ----------------------------------------------------------------- push

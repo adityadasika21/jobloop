@@ -98,9 +98,26 @@ jt verify <slug> --message follow-up && jt message <slug> --type follow-up
 | `thank-you` | within a day of an interview round |
 | `outreach` | cold, to the person who would manage the role |
 
-From Discord: `/msg job:<fragment> type:<kind> name:<contact>`.
+From Discord: `/msg job:<fragment> type:<kind> name:<contact>`, or
+`/ln_msg <jd>` to go straight from a posting to the message.
 
 `jt referral <slug>` still works and is the same code path.
+
+## From Discord
+
+| command | what it does |
+|---|---|
+| `/cv <jd>` | paste a JD → tailored CV + screening report (`/jd` is the same) |
+| `/ln_msg <jd>` | paste a JD → the LinkedIn message to send about it |
+| `/msg job:<frag> type:<kind>` | a message for a job already tracked |
+| `/jobs [job]` | the pipeline, or one job in detail |
+| `/jobstatus job:<frag> status:<s>` | move a job along |
+| `/ctx <text>` | add something you built to `profile/master.yaml` |
+
+`/ctx` is the one that compounds. Nothing reaches a CV that is not an evidence
+unit, so context you never add is work the pipeline cannot use. It replies
+with the claim it wrote and the `probe` — the question that claim now commits
+you to answering in a room.
 
 ## Email
 

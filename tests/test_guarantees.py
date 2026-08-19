@@ -15,6 +15,8 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 from jt.ats import find_collisions  # noqa: E402
+from jt.evidence import (  # noqa: E402
+    add as evidence_add, validate as evidence_validate, warnings as evidence_warnings)
 from jt.message import TYPES, resolve_type  # noqa: E402
 from jt.model import stem, tokenize  # noqa: E402
 from jt.render import emphasis_terms, tex_escape_emph  # noqa: E402
@@ -406,3 +408,98 @@ def test_referral_template_is_verbatim():
     assert ("Would you be open to referring me or pointing me to the right "
             "person on the team? Happy to share my resume.") in tpl
     assert tpl.rstrip().endswith("Thanks!\nAditya")
+
+
+# --------------------------------------------------------------------------- #
+# 7. Adding evidence cannot corrupt the root of trust
+# --------------------------------------------------------------------------- #
+
+@pytest.fixture
+def sandbox(tmp_path):
+    """A throwaway repo whose master.yaml is the real one."""
+    import shutil
+    (tmp_path / "profile").mkdir()
+    shutil.copy(ROOT / "profile" / "master.yaml", tmp_path / "profile" / "master.yaml")
+    return tmp_path
+
+
+GOOD = {
+    "id": "ev-test-rate-limiter",
+    "role": "phenom-ai-llm-eng-ii",
+    "claim": "Built a rate limiter for the agent gateway, cutting p99 latency "
+             "from 3s to 400ms under burst load.",
+    "skills": ["rate-limiting", "latency-optimization"],
+    "metrics": {"p99_before": "3s", "p99_after": "400ms"},
+    "keywords": ["rate limiting", "latency", "throughput"],
+    "strength": "strong",
+    "probe": "What algorithm, and what was saturating at 3s?",
+}
+
+
+def test_evidence_add_preserves_every_comment(sandbox):
+    before = (sandbox / "profile" / "master.yaml").read_text()
+    assert evidence_add(sandbox, [dict(GOOD)]) == ["ev-test-rate-limiter"]
+    after = (sandbox / "profile" / "master.yaml").read_text()
+    # A YAML round-trip would strip these, taking the rules with them.
+    for comment in ("# RULE: Nothing may appear on a generated resume",
+                    "# KNOWN GAPS", "# emphasize  —"):
+        assert comment in after, f"lost {comment!r}"
+    assert len(after) > len(before)
+
+
+def test_added_evidence_is_tailorable_but_not_on_the_master_resume(sandbox):
+    from jt.store import load_profile
+    evidence_add(sandbox, [dict(GOOD)])
+    unit = {u["id"]: u for u in load_profile(sandbox)["evidence"]}["ev-test-rate-limiter"]
+    assert unit["on_master"] is False
+    assert unit["added_at"]
+
+
+def test_evidence_records_where_the_claim_came_from(sandbox):
+    from jt.store import load_profile
+    evidence_add(sandbox, [dict(GOOD)], source_note="built a rate limiter, 3s -> 400ms")
+    unit = {u["id"]: u for u in load_profile(sandbox)["evidence"]}["ev-test-rate-limiter"]
+    assert "rate limiter" in unit["source_note"]
+
+
+def test_evidence_without_a_probe_is_rejected(prof):
+    bad = dict(GOOD, probe="")
+    assert any("probe" in p for p in evidence_validate(prof, bad))
+
+
+def test_probe_must_be_a_question(prof):
+    bad = dict(GOOD, probe="Ask about the algorithm.")
+    assert any("question" in p for p in evidence_validate(prof, bad))
+
+
+def test_number_not_in_metrics_warns_but_does_not_block(prof):
+    """A number the metrics map doesn't hold should be flagged — but not
+    rejected. A check that refuses a true claim teaches people to edit
+    master.yaml by hand instead, which is strictly worse."""
+    loose = dict(GOOD, claim=GOOD["claim"] + " Sustained 12k requests per minute.")
+    assert evidence_validate(prof, loose) == []
+    assert any("12k" in w for w in evidence_warnings(loose))
+
+
+def test_a_name_with_digits_in_it_is_not_a_metric(prof):
+    """p99, GPT-4.1, g5.xlarge. Flagging these would make the warning noise,
+    and a warning that is always wrong is a warning nobody reads."""
+    assert not any("metrics" in w for w in evidence_warnings(dict(GOOD)))
+
+
+def test_duplicate_id_is_rejected(prof):
+    bad = dict(GOOD, id="ev-phenom-eval-framework")
+    assert any("already exists" in p for p in evidence_validate(prof, bad))
+
+
+def test_unknown_role_is_rejected(prof):
+    bad = dict(GOOD, role="ev-nope")
+    assert any("not a role" in p for p in evidence_validate(prof, bad))
+
+
+def test_a_rejected_unit_leaves_master_yaml_untouched(sandbox):
+    from jt.store import JobloopError
+    before = (sandbox / "profile" / "master.yaml").read_text()
+    with pytest.raises(JobloopError):
+        evidence_add(sandbox, [dict(GOOD, probe="")])
+    assert (sandbox / "profile" / "master.yaml").read_text() == before

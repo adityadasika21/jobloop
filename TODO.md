@@ -25,12 +25,17 @@ What remains needs Aditya, or needs a deploy.
 
 ## 2. Needs a deploy, not a decision
 
-- [ ] `/msg` is written and the Actions handler for it is live, but Discord
-      does not know the command exists until it is registered:
-      `DISCORD_TOKEN=... node discord/registerCommands.js` in the discordBot
-      repo, then redeploy the Cloud Run function so `commands/msg.js` ships.
+- [ ] `/msg`, `/cv`, `/ln_msg` and `/ctx` are written and their Actions
+      handlers are live, but Discord does not know they exist until they are
+      registered: `DISCORD_TOKEN=... node discord/registerCommands.js` in the
+      discordBot repo, then redeploy the Cloud Run function so the new files
+      in `discord/commands/` ship.
 - [ ] `jobloop` repo secret `ANTHROPIC_API_KEY` is what lets `/msg` write the
-      pitch rather than returning a scaffold to fill in by hand.
+      pitch and `/ctx` write the evidence unit; without it both capture the
+      input and report that they did nothing with it.
+- [ ] `DISCORD_WEBHOOK` is what attaches the built PDF to the Discord reply —
+      the bot's `/postmessage` route only forwards text, so without the
+      webhook `/cv` returns the screening report but not the resume itself.
 
 ## 3. Small and deliberate
 

@@ -344,6 +344,12 @@ evidence:
     strength: supporting
     probe: "What does a multi-hop query actually look like here?"
 
+  # <<< jt evidence add
+  # New units are spliced in immediately above this marker. It exists so
+  # master.yaml can be appended to without a YAML round-trip, which would
+  # strip every comment in this file — including the rules at the top that
+  # tell the next writer what an evidence unit is allowed to be.
+
 # -----------------------------------------------------------------------------
 # SKILLS — the master inventory, grouped as on the current resume.
 # `jt tailor` reorders groups and prunes within them to match the JD.

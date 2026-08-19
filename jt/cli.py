@@ -13,6 +13,7 @@ from pathlib import Path
 
 from . import ats as ats_mod
 from . import db as db_mod
+from . import evidence as evidence_mod
 from . import intake as intake_mod
 from . import learn as learn_mod
 from . import mail as mail_mod
@@ -431,6 +432,36 @@ def cmd_referral(root: Path, a) -> int:
     return cmd_message(root, a)
 
 
+def cmd_evidence(root: Path, a) -> int:
+    if a.evidence_cmd == "draft":
+        text = sys.stdin.read() if a.text in ("-", "") else a.text
+        if not text.strip():
+            raise JobloopError("nothing to draft from — pass text or pipe it in")
+        path = evidence_mod.draft(root, text.strip())
+        print(f"{_c('draft', OK)} {path.relative_to(root)}")
+        print("Claude: write the unit(s), then "
+              f"`jt evidence add {path.relative_to(root)}`")
+        return 0
+
+    units, raw = evidence_mod.load_draft(root, a.source)
+    ids = evidence_mod.add(root, units, source_note=raw)
+    prof = load_profile(root)
+    by_id = {u["id"]: u for u in prof["evidence"]}
+    for uid in ids:
+        u = by_id[uid]
+        print(f"{_c('added', OK)} {uid}  {DIM}[{u.get('strength')}]{OFF}")
+        print(f"  {' '.join(str(u['claim']).split())}")
+        print(f"  {_c('PROBE', WARN)} {' '.join(str(u.get('probe','')).split())}")
+        for w in evidence_mod.warnings(u):
+            print(f"  {_c('!', WARN)} {w}")
+    print(f"\n{DIM}Available to tailoring immediately. `on_master: false`, so "
+          f"the master resume is unchanged until you say otherwise.{OFF}")
+    if not a.no_commit:
+        msg = f"evidence: {', '.join(ids)}"
+        print(f"  {DIM}{commit_push(root, msg, push=not a.no_push)}{OFF}")
+    return 0
+
+
 def cmd_advance(root: Path, a) -> int:
     slug = resolve_slug(root, a.slug)
     job = load_job(root, slug)
@@ -610,6 +641,16 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--name", default="", help="contact's first name")
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_referral)
+
+    s = sub.add_parser("evidence", help="add a true thing to the master profile")
+    esub = s.add_subparsers(dest="evidence_cmd", required=True)
+    m = esub.add_parser("draft", help="scaffold a unit from raw text")
+    m.add_argument("text", nargs="?", default="-")
+    m = esub.add_parser("add", help="validate and splice a drafted unit in")
+    m.add_argument("source", nargs="?", default="-",
+                   help="draft YAML file, or - for profile/pending-evidence.yaml")
+    commitflags(m)
+    s.set_defaults(fn=cmd_evidence)
 
     s = sub.add_parser("advance", help="move a job's status")
     s.add_argument("slug")
