@@ -23,3 +23,6 @@ __pycache__/
 
 # transient scaffold for `jt evidence add`
 profile/pending-evidence.yaml
+
+# /j writes its Discord reply here; the workflow posts and removes it
+.jobloop-reply.md

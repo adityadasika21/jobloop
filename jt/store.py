@@ -60,26 +60,124 @@ def job_dir(root: Path, slug: str) -> Path:
     return d
 
 
-def resolve_slug(root: Path, needle: str) -> str:
-    """Accept a full slug, a directory name, or an unambiguous substring.
+# Words that carry no identity. "ai" and "engineer" are in half these slugs,
+# so matching on them makes everything ambiguous with everything.
+_SLUG_STOPWORDS = frozenset("""
+a an the and or of for at in on to with is was were be been being
+i we my our you your it its this that these those there here
+job jobs role roles position status update round done finished complete
+completed waiting feedback interview interviewed call screen screening
+question questions asked answered answer fine good bad well overall
+""".split())
 
-    Typing the full 2026-08-18-company-role slug on a phone is miserable, so
-    `jt tailor joveo` works when it matches exactly one job.
+
+def _slug_tokens(s: str) -> list[str]:
+    import re
+    return [t for t in re.split(r"[^a-z0-9]+", str(s).lower()) if t]
+
+
+def _needle_tokens(needle: str) -> list[str]:
+    """Tokens worth matching on, plus adjacent pairs glued together.
+
+    The glue matters: "auric ai" has to reach the slug `...-auricai-...`, and
+    a person typing a company name does not know whether it was slugified as
+    one word or two.
+    """
+    toks = [t for t in _slug_tokens(needle) if t not in _SLUG_STOPWORDS]
+    joined = [a + b for a, b in zip(toks, toks[1:])]
+    return toks + joined
+
+
+def _token_match(needle_tok: str, job_toks: set[str]) -> bool:
+    if needle_tok in job_toks:
+        return True
+    # Prefix either way, so "auric" reaches "auricai" and vice versa. Length 4
+    # floor keeps "ml"/"nlp" from matching half the corpus.
+    if len(needle_tok) >= 4:
+        return any(t.startswith(needle_tok) or needle_tok.startswith(t)
+                   for t in job_toks if len(t) >= 4)
+    return False
+
+
+def rank_jobs(root: Path, needle: str) -> list[tuple[str, float]]:
+    """Every job scored against free text, best first.
+
+    Rare words identify a job; common ones do not. So each matched token is
+    weighted by how few jobs contain it — which is why a sentence naming
+    "auricai" once outranks one saying "ai engineer" three times.
+    """
+    import math
+
+    slugs = all_jobs(root)
+    if not slugs:
+        return []
+    corpus: dict[str, set[str]] = {}
+    for slug in slugs:
+        job = load_job(root, slug)
+        corpus[slug] = set(_slug_tokens(slug)) \
+            | set(_slug_tokens(job.get("company", ""))) \
+            | set(_slug_tokens(job.get("role", "")))
+
+    n = len(slugs)
+    df: dict[str, int] = {}
+    for toks in corpus.values():
+        for t in toks:
+            df[t] = df.get(t, 0) + 1
+
+    scored = []
+    for slug, toks in corpus.items():
+        score = 0.0
+        for nt in set(_needle_tokens(needle)):
+            if not _token_match(nt, toks):
+                continue
+            # A token in one job out of 24 is worth far more than one in 12.
+            hits = min((df[t] for t in toks
+                        if t == nt or (len(nt) >= 4 and len(t) >= 4
+                                       and (t.startswith(nt) or nt.startswith(t)))),
+                       default=n)
+            score += math.log(1 + n / max(1, hits)) * (1.5 if len(nt) > 5 else 1.0)
+        if score:
+            scored.append((slug, round(score, 3)))
+    scored.sort(key=lambda x: (-x[1], x[0]))
+    return scored
+
+
+def resolve_slug(root: Path, needle: str) -> str:
+    """Accept a full slug, a substring, or a sentence that mentions the job.
+
+    Typing the full 2026-08-18-company-role slug on a phone is miserable, and
+    people do not type identifiers at all — they type "auric ai round 1 done,
+    waiting for feedback". Both have to land on the same job.
     """
     jd = jobs_dir(root)
     if not jd.exists():
         raise JobloopError("no jobs yet")
     slugs = sorted(p.name for p in jd.iterdir() if p.is_dir())
+    needle = (needle or "").strip()
+    if not needle:
+        raise JobloopError("no job given")
     if needle in slugs:
         return needle
+
     matches = [s for s in slugs if needle.lower() in s.lower()]
     if len(matches) == 1:
         return matches[0]
-    if not matches:
+    if len(matches) > 1:
+        raise JobloopError(
+            f"{needle!r} is ambiguous, matches:\n  " + "\n  ".join(matches))
+
+    ranked = rank_jobs(root, needle)
+    if not ranked:
         raise JobloopError(f"no job matching {needle!r}")
+    best, best_score = ranked[0]
+    runner_up = ranked[1][1] if len(ranked) > 1 else 0.0
+    # Decisive means clearly ahead, not merely first. Guessing between two
+    # jobs at the same company writes an interview onto the wrong timeline.
+    if best_score >= runner_up * 1.4 or runner_up == 0.0:
+        return best
+    tied = [f"{s} ({sc})" for s, sc in ranked[:4]]
     raise JobloopError(
-        f"{needle!r} is ambiguous, matches:\n  " + "\n  ".join(matches)
-    )
+        f"{needle!r} is ambiguous, closest matches:\n  " + "\n  ".join(tied))
 
 
 def all_jobs(root: Path) -> list[str]:

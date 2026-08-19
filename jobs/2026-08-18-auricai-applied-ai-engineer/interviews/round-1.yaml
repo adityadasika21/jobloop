@@ -1,0 +1,24 @@
+round: 1
+stage: technical
+format: ''
+held_at: ''
+interviewer: ''
+duration_min: null
+questions_asked:
+- RAG
+- Entity resolution
+- Grouping entities
+went_well:
+- Answered fine overall
+went_badly: []
+outcome: pending
+self_rating: null
+notes: 'Reported by Aditya in Discord on 2026-08-19: round 1 done, waiting for feedback. He
+  did not state the date the round was held, so held_at is left empty rather than guessed
+  — the tracked Auric AI thread (shivang.tonde@auricai.in, subject ''Feedback'') is dated
+  2026-08-07. No weakness opened: he said he answered fine overall, and ''fine'' is not a
+  weakness. Entity resolution and entity grouping are worth noting as recurring interview
+  ground rather than as a failure.'
+weaknesses: []
+recovered: []
+recorded_at: '2026-08-19T06:45:18+00:00'

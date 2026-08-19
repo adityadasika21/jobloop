@@ -503,3 +503,83 @@ def test_a_rejected_unit_leaves_master_yaml_untouched(sandbox):
     with pytest.raises(JobloopError):
         evidence_add(sandbox, [dict(GOOD, probe="")])
     assert (sandbox / "profile" / "master.yaml").read_text() == before
+
+
+# --------------------------------------------------------------------------- #
+# 8. Free text has to reach the right job
+#
+# The failure this pins: a whole sentence went into /jobstatus's `job` field
+# and came back "no job matching 'auric ai round 1 done. Waiting for
+# feedback...'". Two bugs in one — the matcher only did substring containment,
+# so it could not read a sentence, and it could not even match "auric ai"
+# against the slug `auricai` because of the space.
+# --------------------------------------------------------------------------- #
+
+@pytest.fixture
+def jobsbox(tmp_path):
+    from jt.store import save_job
+    (tmp_path / "profile").mkdir()
+    (ROOT / "profile" / "master.yaml").read_bytes()  # sanity: repo intact
+    import shutil
+    shutil.copy(ROOT / "profile" / "master.yaml", tmp_path / "profile" / "master.yaml")
+    for slug, company, role in [
+        ("2026-08-18-auricai-applied-ai-engineer", "Auricai", "Applied AI Engineer"),
+        ("2026-08-18-joveo-ai-llm-engineer", "Joveo AI", "LLM Engineer"),
+        ("2026-08-18-eightfold-ai-ml-engineer-nlp-ai", "Eightfold AI", "ML Engineer – NLP/AI"),
+        ("2026-08-18-eightfold-senior-engineer-fullstack", "Eightfold", "Senior Engineer- Fullstack"),
+        ("2026-08-18-wissen-technology-ai-engineer-rag-llm-systems",
+         "Wissen Technology", "AI Engineer – RAG & LLM Systems"),
+    ]:
+        (tmp_path / "jobs" / slug).mkdir(parents=True)
+        save_job(tmp_path, slug, {"company": company, "role": role,
+                                  "status": "applied", "events": []})
+    return tmp_path
+
+
+def test_a_sentence_resolves_to_the_job_it_names(jobsbox):
+    """The exact string that failed in Discord."""
+    from jt.store import resolve_slug
+    said = ("auric ai round 1 done. Waiting for feedback. Question was on RAG "
+            "and entity resolution and grouping entities. Answered fine overall")
+    assert resolve_slug(jobsbox, said) == "2026-08-18-auricai-applied-ai-engineer"
+
+
+def test_a_company_typed_with_a_space_resolves(jobsbox):
+    """`auric ai` must reach the slug `auricai`. Nobody knows how a name was
+    slugified, and they should not have to."""
+    from jt.store import resolve_slug
+    assert resolve_slug(jobsbox, "auric ai") == "2026-08-18-auricai-applied-ai-engineer"
+
+
+def test_rag_in_the_sentence_does_not_beat_the_company_name(jobsbox):
+    """"RAG" appears in the Wissen role title. A word that identifies one job
+    must outweigh a word that merely appears in one."""
+    from jt.store import rank_jobs
+    ranked = rank_jobs(jobsbox, "auric ai round 1, they asked about RAG")
+    assert ranked[0][0] == "2026-08-18-auricai-applied-ai-engineer"
+    assert ranked[0][1] > ranked[1][1] * 1.4
+
+
+def test_two_jobs_at_one_company_still_refuse_to_guess(jobsbox):
+    """Guessing here writes an interview onto the wrong timeline."""
+    from jt.store import JobloopError, resolve_slug
+    with pytest.raises(JobloopError, match="ambiguous"):
+        resolve_slug(jobsbox, "eightfold")
+
+
+def test_words_every_job_shares_identify_nothing(jobsbox):
+    from jt.store import JobloopError, resolve_slug
+    with pytest.raises(JobloopError):
+        resolve_slug(jobsbox, "the ai engineer role")
+
+
+def test_unrelated_text_resolves_to_nothing(jobsbox):
+    from jt.store import JobloopError, resolve_slug
+    with pytest.raises(JobloopError, match="no job matching"):
+        resolve_slug(jobsbox, "what is the weather tomorrow")
+
+
+def test_an_exact_slug_still_wins(jobsbox):
+    from jt.store import resolve_slug
+    slug = "2026-08-18-joveo-ai-llm-engineer"
+    assert resolve_slug(jobsbox, slug) == slug

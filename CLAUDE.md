@@ -76,6 +76,22 @@ Look for non-obvious matches before declaring a gap. The hiring-integrity
 platform is HR-tech domain experience; the local-LLM project is on-device
 inference experience. `jt worksheet` surfaces role domains for this reason.
 
+## Resolving a job from what someone said
+
+`resolve_slug` takes a full slug, a substring, or a whole sentence. Rare words
+identify a job and common ones do not, so it scores tokens by how few jobs
+contain them — "auricai" outweighs "ai engineer", which is in half the corpus.
+Adjacent tokens are also glued ("auric ai" → `auricai`), because nobody knows
+how a company name was slugified.
+
+```bash
+jt find "auric ai round 1 done, they asked about RAG"   # ranked candidates
+```
+
+It refuses rather than guesses when two jobs are close — two roles at one
+company is the case that matters, and putting an interview on the wrong
+timeline corrupts both.
+
 ## Interview debriefs
 
 ```bash

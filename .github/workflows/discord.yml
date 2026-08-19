@@ -13,7 +13,7 @@ name: discord commands
 on:
   repository_dispatch:
     types: [jobloop-intake, jobloop-status, jobloop-advance, jobloop-message,
-            jobloop-context]
+            jobloop-context, jobloop-freetext]
 
 permissions:
   contents: write
@@ -298,6 +298,89 @@ jobs:
           else
             python3 scripts/report_new_evidence.py | python3 scripts/discord_post.py --code
           fi
+
+      # ------------------------------------------------------------- freetext
+      # /j <anything>. The other commands make you name a job and pick a status
+      # from a menu; nobody types like that on a phone. This one takes the
+      # sentence as it was actually said — "auric ai round 1 done, waiting for
+      # feedback, question was on RAG and entity resolution" — and works out
+      # which job, what happened, and which jt commands say so.
+      #
+      # Note what it does NOT do: decide anything jt already decides. Job
+      # resolution is `jt find`, status ordering is `jt advance`, provenance is
+      # `jt verify`. The model reads the sentence and picks the commands; the
+      # commands still enforce every rule.
+      - name: Answer in free text
+        if: >-
+          github.event.action == 'jobloop-freetext' &&
+          steps.gate.outputs.ai == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read CLAUDE.md first. Aditya said this in Discord:
+
+            ---
+            ${{ github.event.client_payload.text }}
+            ---
+
+            Work out what he means and do it. He will not name a job by slug,
+            pick a status from a menu, or split one thought into three
+            commands — assume the sentence carries several things at once.
+
+            RESOLVING THE JOB: run `jt find "<his words>"`. It ranks every job
+            against the text. Take the top hit when it is clearly ahead; if two
+            are close, ask him which rather than guessing — writing an
+            interview onto the wrong company's timeline is worse than a
+            question.
+
+            WHAT HE IS PROBABLY DOING, and what to run:
+
+            * An interview happened ("round 1 done", "they asked me about X",
+              "went badly") → `jt debrief <slug>` for the template, fill it in,
+              pipe it back with `jt debrief <slug> --apply - --no-commit`.
+              Put what they actually asked in `questions_asked`. Only open a
+              weakness if he says something went badly, and put HIS words in
+              `quote` — never yours. "Answered fine" is not a weakness.
+              If the outcome is not yet known, `outcome` is "pending".
+            * A status moved ("applied", "they rejected me", "got an offer")
+              → `jt advance <slug> <status> --no-commit`.
+            * He built or shipped something ("I added X", "we shipped Y")
+              → `jt evidence draft` then `jt evidence add --no-commit`. This
+              writes to master.yaml, which every future resume is generated
+              from — claim only what he said, and `probe` is required.
+            * He wants a message ("write to the recruiter", "follow up on X")
+              → `jt message <slug> --type <type> --scaffold`, write the pitch,
+              `jt verify <slug> --message <type>`, then `jt message`.
+            * He pasted a job posting → `jt intake` (see the Tailor step's
+              rules; do not tailor here, just capture and say so).
+            * He asked a question ("what is silent", "where is Barclays")
+              → answer it from `jt status`, `jt show`, `jt sql`.
+
+            THE RULE, unchanged: never record a number, a technology, a quote
+            or an outcome he did not say. If the message is too vague to act
+            on, do nothing and ask him the one question that would unblock it.
+            Doing nothing and saying why is a good outcome; guessing is not.
+
+            Then write a SHORT reply to `.jobloop-reply.md` — a few lines,
+            plain text, no markdown headers. Say what you recorded and where,
+            and surface anything he should know (a weakness that just escalated,
+            a probe he now has to be able to answer). If you did nothing, say
+            what you need. Do not commit or push; the workflow handles that.
+
+      - name: Post the reply
+        if: github.event.action == 'jobloop-freetext'
+        run: |
+          if [ "${{ steps.gate.outputs.ai }}" != "true" ]; then
+            echo "No ANTHROPIC_API_KEY on this repo — /j needs it to read free text." \
+              | python3 scripts/discord_post.py
+          elif [ -s .jobloop-reply.md ]; then
+            python3 scripts/discord_post.py < .jobloop-reply.md
+          else
+            echo "I could not work out what to do with that. Try naming the company." \
+              | python3 scripts/discord_post.py
+          fi
+          rm -f .jobloop-reply.md
 
       # ----------------------------------------------------------------- push
       - name: Commit and push

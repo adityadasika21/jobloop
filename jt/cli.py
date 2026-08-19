@@ -24,8 +24,8 @@ from . import verify as verify_mod
 from .model import STATUS_ORDER, status_rank, utcnow
 from .store import (
     JobloopError, all_jobs, append_event, commit_push, job_dir, load_job,
-    load_profile, repo_root, resolve_slug, save_job, read_yaml, write_text,
-    write_yaml,
+    load_profile, rank_jobs, repo_root, resolve_slug, save_job, read_yaml,
+    write_text, write_yaml,
 )
 
 # Colour only when a human is watching. _c() already checked isatty, but
@@ -432,6 +432,21 @@ def cmd_referral(root: Path, a) -> int:
     return cmd_message(root, a)
 
 
+def cmd_find(root: Path, a) -> int:
+    """Which job is this sentence about? Deterministic, so the free-text
+    handler resolves jobs by ranking rather than by guessing."""
+    ranked = rank_jobs(root, a.text)
+    if not ranked:
+        print("no job matches that")
+        return 1
+    for slug, score in ranked[:a.top]:
+        job = load_job(root, slug)
+        print(f"{score:>7.2f}  {slug}")
+        print(f"{DIM}         {job.get('company')} — {job.get('role')}  "
+              f"[{job.get('status')}]{OFF}")
+    return 0
+
+
 def cmd_evidence(root: Path, a) -> int:
     if a.evidence_cmd == "draft":
         text = sys.stdin.read() if a.text in ("-", "") else a.text
@@ -641,6 +656,11 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--name", default="", help="contact's first name")
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_referral)
+
+    s = sub.add_parser("find", help="which job does this text refer to?")
+    s.add_argument("text")
+    s.add_argument("--top", type=int, default=5)
+    s.set_defaults(fn=cmd_find)
 
     s = sub.add_parser("evidence", help="add a true thing to the master profile")
     esub = s.add_subparsers(dest="evidence_cmd", required=True)

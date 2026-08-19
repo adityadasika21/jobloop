@@ -107,12 +107,18 @@ From Discord: `/msg job:<fragment> type:<kind> name:<contact>`, or
 
 | command | what it does |
 |---|---|
+| `/j <anything>` | **say it in your own words** — it works out which job and what happened |
 | `/cv <jd>` | paste a JD → tailored CV + screening report (`/jd` is the same) |
 | `/ln_msg <jd>` | paste a JD → the LinkedIn message to send about it |
 | `/msg job:<frag> type:<kind>` | a message for a job already tracked |
 | `/jobs [job]` | the pipeline, or one job in detail |
 | `/jobstatus job:<frag> status:<s>` | move a job along |
 | `/ctx <text>` | add something you built to `profile/master.yaml` |
+
+`/j` is the one to reach for. The rest make you name a job and pick a status
+from a menu, which is not how anyone types on a phone —
+"auric ai round 1 done, waiting for feedback, question was on RAG and entity
+resolution" is one message, and it lands as a debrief on the right job.
 
 `/ctx` is the one that compounds. Nothing reaches a CV that is not an evidence
 unit, so context you never add is work the pipeline cannot use. It replies

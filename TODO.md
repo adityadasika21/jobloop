@@ -10,9 +10,12 @@ What remains needs Aditya, or needs a deploy.
       (they pressed on guardrails, high bar on AI) is open as a self-reported
       weakness with a drill:
       `learning/drills/production-llm-guardrails-end-to-end.md`.
-- [ ] **Auric AI** (interviewed 10 Aug) still has no recorded outcome. Say how
-      it went and `jt debrief 2026-08-18-auricai-applied-ai-engineer --apply -`
-      records it.
+- [x] ~~**Auric AI**~~ — round 1 recorded 2026-08-19 from what he said in
+      Discord: done, waiting for feedback, questions on RAG, entity resolution
+      and grouping entities, answered fine overall. `outcome: pending`. No
+      weakness opened — "fine" is not a weakness. Tell me when feedback lands.
+- [ ] The date of that round is unknown; he didn't say and I didn't guess. The
+      tracked Auric AI thread is dated 7 Aug if that is the one.
 - [ ] **Debrief on the day.** Two rounds have now lost their detail before
       anyone wrote them down, and Backbase's is unrecoverable — no questions,
       no quotes, just an impression. The ledger escalates on repeats and can
