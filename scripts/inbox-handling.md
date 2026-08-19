@@ -77,3 +77,20 @@ Then `.venv/bin/jt verify <slug> --message <type>` — it must pass — and
 A message that oversells is worse than no message: it gets the call, and the
 call is where the overselling is discovered.
 
+
+### kind: mail — from `/j check my mail`
+
+Read-only. **Never send, reply, label, trash, or mark spam.**
+
+Search the companies in `.venv/bin/jt status` that still have a live process —
+not all of them, and not the whole inbox — plus a 3-day sweep for
+application / interview / rejection mail. Build a JSON array of
+`{thread_id, from, subject, date, snippet}` and pipe it to:
+
+    .venv/bin/jt mail ingest - --auto-intake
+
+Then `.venv/bin/jt mail needs-reply`, and report what moved. If nothing moved,
+say so in one line — that is the common case and it should read as cheap.
+
+This used to run every hour whether or not anything had happened. It is a
+request now because it was the reason an idle repo cost anything at all.

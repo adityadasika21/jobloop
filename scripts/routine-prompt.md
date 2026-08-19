@@ -32,17 +32,14 @@ not invent work. Otherwise, for each slug:
      has pdflatex, so build the real PDF and audit it.
   5. `.venv/bin/jt screen <slug>`
 
-## 3. Gmail
+## 3. Gmail — ONLY on request
 
-Read-only. Never send, reply, label, trash, or mark spam.
+Do **not** sweep Gmail because a run happened. A run happens because Aditya
+asked for something, and a mail sync he did not ask for is a bill he did not
+agree to.
 
-Search for the companies in `.venv/bin/jt status`, plus a 3-day sweep for
-application / interview / rejection mail. Build a JSON array of
-{thread_id, from, subject, date, snippet} and pipe it to:
-
-  `.venv/bin/jt mail ingest - --auto-intake`
-
-Then `.venv/bin/jt mail needs-reply`.
+Sync only when a `kind: mail` request is in the inbox; `scripts/inbox-handling.md`
+says how. Otherwise skip this section entirely.
 
 ## 4. Report
 

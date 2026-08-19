@@ -651,9 +651,19 @@ def test_inbox_detail_is_not_read_on_an_idle_run():
     assert "inbox-handling.md" in prompt
 
 
-def test_both_runners_take_the_same_lock():
-    """Two `claude -p` runs in one repo race on the tree and on the push."""
-    for script in ("run-routine.sh", "drain-inbox.sh"):
-        body = (ROOT / "scripts" / script).read_text()
-        assert ".jobloop.lock" in body, script
-        assert "flock" in body, script
+def test_the_worker_is_locked_and_gated():
+    """The gate is the expensive question answered cheaply: an idle repo must
+    not start a model. Both timers call this one script, so the check lives
+    here or nowhere."""
+    body = (ROOT / "scripts" / "run-routine.sh").read_text()
+    assert ".jobloop.lock" in body and "flock" in body
+    gate = body.index("jt work")
+    assert gate < body.index("claude -p"), "Claude starts before the gate"
+
+
+def test_gmail_is_not_a_heartbeat():
+    """Sweeping Gmail on a schedule was the only reason a quiet repo ever
+    woke up. It is a request now."""
+    prompt = (ROOT / "scripts" / "routine-prompt.md").read_text()
+    assert "ONLY on request" in prompt
+    assert "kind: mail" in (ROOT / "scripts" / "inbox-handling.md").read_text()

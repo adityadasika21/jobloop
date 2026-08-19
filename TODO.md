@@ -43,20 +43,21 @@ What remains needs Aditya, or needs a deploy.
       idle tick is a `git pull` and an exit; Claude only starts when something
       is actually queued.
 
-## 2b. Token burn — the hourly routine, not the JDs
+## 2b. Token burn — closed 2026-08-19
 
-- [ ] **The hourly routine starts a full Claude session every hour whether or
-      not anything happened.** The last several runs did the same thing:
-      tailorable → nothing, then a Gmail sweep across all 19 tracked
-      companies, then a summary. `created 0 · events +0` three runs running.
-      The Gmail sweep is the recurring cost, not the tailoring.
-      Options, in rough order of saving: drop to every 3-4 hours; sweep only
-      companies with a live process instead of all 19; or gate the run so
-      Claude only starts when there is tailorable work, a queued request, or
-      it is the Nth hour for a mail check. Say which and I will do it.
-- [ ] `DISCORD_WEBHOOK` is what attaches the built PDF to the Discord reply —
-      the bot's `/postmessage` route only forwards text, so without the
-      webhook `/cv` returns the screening report but not the resume itself.
+- [x] ~~An idle repo cost ~20M cache-read tokens a day~~ — the routine started
+      Claude every hour whether or not anything had happened, and 68% of a run
+      was 26 turns each re-reading the same 21.7k preamble. Both timers now
+      call one gated worker: `jt work` answers "is there anything to do"
+      deterministically and for free, and Claude does not start unless the
+      answer is yes. Work means a queued Discord request or an untailored JD.
+      **An idle day now costs nothing.**
+- [x] ~~Gmail swept 19 companies hourly~~ — it is a `kind: mail` request now
+      (`/j check my mail`). It was the only reason a quiet repo ever woke up.
+- [ ] **Consequence, and it is real:** nothing watches your inbox any more. A
+      rejection or an interview invite will not appear in `jt status` until
+      you ask for a sync. If that bites, the fix is one queued `mail` request
+      a day — ~1/24th of what it used to cost — say the word.
 
 ## 3. Small and deliberate
 

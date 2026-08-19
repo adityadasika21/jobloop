@@ -433,6 +433,35 @@ def cmd_referral(root: Path, a) -> int:
     return cmd_message(root, a)
 
 
+def cmd_work(root: Path, a) -> int:
+    """Is there anything to do? Exit 1 when idle.
+
+    The gate the timers ask before starting Claude. It is deliberately
+    deterministic and lives in `jt` rather than in the shell, because "does
+    this repo need a model right now" is the single most expensive question in
+    the system and it should be answerable for free.
+    """
+    import subprocess
+
+    items = inbox_mod.pending(root)
+    tailorable = subprocess.run(
+        [sys.executable, "scripts/tailorable.py", "3"],
+        cwd=root, capture_output=True, text=True,
+    ).stdout.split()
+
+    for r in items:
+        head = " ".join(str(r.get("text", "")).split())[:70]
+        print(f"{_c('request', WARN)} {r['id']}  {r['kind']}  {head}")
+    for slug in tailorable:
+        print(f"{_c('untailored', WARN)} {slug}")
+
+    if not items and not tailorable:
+        if not a.quiet:
+            print("idle")
+        return 1
+    return 0
+
+
 def cmd_inbox(root: Path, a) -> int:
     if a.inbox_cmd == "add":
         text = sys.stdin.read() if a.text == "-" else a.text
@@ -687,6 +716,10 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--name", default="", help="contact's first name")
     s.add_argument("--force", action="store_true")
     s.set_defaults(fn=cmd_referral)
+
+    s = sub.add_parser("work", help="anything to do? exit 1 when idle")
+    s.add_argument("-q", "--quiet", action="store_true")
+    s.set_defaults(fn=cmd_work)
 
     s = sub.add_parser("inbox", help="requests waiting for the local routine")
     isub = s.add_subparsers(dest="inbox_cmd", required=True)

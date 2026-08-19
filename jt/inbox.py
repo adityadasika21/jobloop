@@ -29,6 +29,7 @@ KINDS = {
     "freetext": "raw text from /j — work out what he means and do it",
     "context":  "raw text from /ctx — turn it into an evidence unit",
     "message":  "a scaffolded message whose pitch still has to be written",
+    "mail":     "sync Gmail into the job timelines, on request",
 }
 
 
