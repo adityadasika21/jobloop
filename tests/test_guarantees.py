@@ -636,8 +636,19 @@ def test_the_discord_workflow_does_no_thinking():
 def test_the_routine_drains_the_inbox_before_anything_else():
     prompt = (ROOT / "scripts" / "routine-prompt.md").read_text()
     assert "## 1. Drain the inbox" in prompt
+    assert prompt.index("## 1. Drain the inbox") < prompt.index("## 2. Tailor")
+
+
+def test_inbox_detail_is_not_read_on_an_idle_run():
+    """The hourly routine reads routine-prompt.md every run and most runs have
+    an empty inbox. Paying for 70 lines about requests that are not there is a
+    cost with no upside, so the detail lives in a file read on demand."""
+    prompt = (ROOT / "scripts" / "routine-prompt.md").read_text()
+    detail = (ROOT / "scripts" / "inbox-handling.md").read_text()
     for kind in ("freetext", "context", "message"):
-        assert f"kind: {kind}" in prompt
+        assert f"kind: {kind}" in detail
+        assert f"kind: {kind}" not in prompt
+    assert "inbox-handling.md" in prompt
 
 
 def test_both_runners_take_the_same_lock():

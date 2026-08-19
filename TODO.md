@@ -37,12 +37,23 @@ What remains needs Aditya, or needs a deploy.
       workstation against the Claude Code subscription. Actions now queues to
       `inbox/` and the routine drains it; `claude-code-action` is gone from
       `discord.yml` and a test keeps it gone.
-- [ ] `.github/workflows/tailor.yml` is now dead for the same reason — it
-      gates on `ANTHROPIC_API_KEY` and no-ops every 3 hours. Say the word and
-      I will delete it; the routine already covers what it was for.
-- [ ] `jobloop-inbox.timer` is written (`scripts/drain-inbox.sh`) but NOT
-      installed. Without it `/j` waits for the hourly run at :53 rather than
-      answering in a few minutes.
+- [x] ~~`tailor.yml`~~ — deleted 2026-08-19. It gated on a key that will never
+      exist; the routine's section 2 does the same work with pdflatex present.
+- [x] ~~`jobloop-inbox.timer`~~ — installed 2026-08-19, every 3 minutes. An
+      idle tick is a `git pull` and an exit; Claude only starts when something
+      is actually queued.
+
+## 2b. Token burn — the hourly routine, not the JDs
+
+- [ ] **The hourly routine starts a full Claude session every hour whether or
+      not anything happened.** The last several runs did the same thing:
+      tailorable → nothing, then a Gmail sweep across all 19 tracked
+      companies, then a summary. `created 0 · events +0` three runs running.
+      The Gmail sweep is the recurring cost, not the tailoring.
+      Options, in rough order of saving: drop to every 3-4 hours; sweep only
+      companies with a live process instead of all 19; or gate the run so
+      Claude only starts when there is tailorable work, a queued request, or
+      it is the Nth hour for a mail check. Say which and I will do it.
 - [ ] `DISCORD_WEBHOOK` is what attaches the built PDF to the Discord reply —
       the bot's `/postmessage` route only forwards text, so without the
       webhook `/cv` returns the screening report but not the resume itself.
