@@ -134,7 +134,17 @@ jobs:
             echo "no artifact changes"
           else
             git commit -m "ci: build resume PDFs [skip ci]"
-            git push
+            # Three writers push to main — this workflow, discord.yml, and the
+            # worker on the workstation — so a bare push loses whenever one of
+            # them lands mid-build. That is not an edge case: a build takes
+            # five minutes, most of it installing TeX.
+            for i in 1 2 3; do
+              git pull --rebase --autostash origin main && git push && exit 0
+              echo "push race, retrying ($i)"
+              sleep 5
+            done
+            echo "could not push after 3 attempts" >&2
+            exit 1
           fi
 
       - name: Report to Discord
