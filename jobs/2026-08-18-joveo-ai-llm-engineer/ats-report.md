@@ -1,12 +1,12 @@
 # ATS parse audit
 
-**PASS** — 0 critical, 0 high · 4291 chars extracted
+**PASS** — 0 critical, 0 high · 4294 chars extracted
 
 Keyword coverage **on extracted text**: 70% exact · 76% allowing word-form variants
 
 | | Check | Result |
 |---|---|---|
-| ✅ | `text-extractable` | 4291 chars recovered by the text extractor |
+| ✅ | `text-extractable` | 4294 chars recovered by the text extractor |
 | ✅ | `name` | name found in extracted text |
 | ✅ | `email` | email found |
 | ✅ | `phone` | phone digits recovered |
