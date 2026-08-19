@@ -47,3 +47,15 @@ events:
   detail: GDPR Notification from Backbase — from no-reply@backbase.com
   source: gmail:19fa84899a9cf365
   ref: 19fa84899a9cf365
+- ts: '2026-08-19T03:47:21+00:00'
+  kind: message
+  detail: follow-up generated
+  source: jt
+- ts: '2026-08-19T03:47:45+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-19T03:47:45+00:00'
+  kind: message
+  detail: follow-up generated
+  source: jt

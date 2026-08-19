@@ -7,11 +7,12 @@ name: discord commands
 #
 # SETUP
 #   secret DISCORD_POST_URL  → https://senddiscordbot-f6q5ge4umq-uc.a.run.app/postmessage
-#   secret ANTHROPIC_API_KEY → optional; without it a JD is captured but not tailored
+#   secret ANTHROPIC_API_KEY → optional; without it a JD is captured but not
+#                              tailored, and /msg returns a scaffold to fill in
 
 on:
   repository_dispatch:
-    types: [jobloop-intake, jobloop-status, jobloop-advance]
+    types: [jobloop-intake, jobloop-status, jobloop-advance, jobloop-message]
 
 permissions:
   contents: write
@@ -157,6 +158,70 @@ jobs:
         run: |
           jt advance "$SLUG" "$NEW_STATUS" --no-push 2>&1 \
             | python3 scripts/discord_post.py --code
+
+      # --------------------------------------------------------------- message
+      # /msg <job> <type> [name]. The scaffold is deterministic; only the one
+      # varying paragraph needs a model, and it is provenance-checked before
+      # anything is posted. Without ANTHROPIC_API_KEY the scaffold still lands
+      # in the repo and the reply says so, rather than silently doing nothing.
+      - name: Scaffold the message
+        if: github.event.action == 'jobloop-message'
+        id: msg
+        env:
+          SLUG: ${{ github.event.client_payload.slug }}
+          MTYPE: ${{ github.event.client_payload.type }}
+          NAME: ${{ github.event.client_payload.name }}
+        shell: bash
+        run: |
+          set -o pipefail
+          jt message "$SLUG" --type "$MTYPE" --name "$NAME" --scaffold \
+            | tee "$RUNNER_TEMP/msg.log"
+          # "scaffold jobs/<slug>/messages/<type>.yaml" -> both fields.
+          path=$(head -1 "$RUNNER_TEMP/msg.log" | awk '{print $2}')
+          echo "path=$path" >> "$GITHUB_OUTPUT"
+          echo "slug=$(echo "$path" | cut -d/ -f2)" >> "$GITHUB_OUTPUT"
+
+      - name: Write the pitch
+        if: >-
+          github.event.action == 'jobloop-message' &&
+          steps.gate.outputs.ai == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          anthropic_api_key: ${{ secrets.ANTHROPIC_API_KEY }}
+          prompt: |
+            Read CLAUDE.md, then write ONE paragraph.
+
+            Open ${{ steps.msg.outputs.path }}. It carries the message type,
+            the contact, and the best-matching evidence for this job, ranked.
+            Fill in `pitch` following its `_instructions` exactly, and list
+            every evidence id you used in `provenance`.
+
+            THE RULE: the pitch is a claim surface like any resume bullet. It
+            may not state a number or name a technology the cited evidence
+            units don't support, and it may not upgrade scope, seniority or
+            ownership. A message that oversells gets the call, and the call is
+            where the overselling is found out.
+
+            Change nothing else — the surrounding format is fixed and verbatim.
+            Then run:
+              jt verify ${{ steps.msg.outputs.slug }} --message ${{ github.event.client_payload.type }}
+            and fix the pitch until it passes. Do not commit or push.
+
+      - name: Post the message
+        if: github.event.action == 'jobloop-message'
+        env:
+          SLUG: ${{ steps.msg.outputs.slug }}
+          MTYPE: ${{ github.event.client_payload.type }}
+        run: |
+          if jt message "$SLUG" --type "$MTYPE" > "$RUNNER_TEMP/out.md" 2>&1; then
+            python3 scripts/discord_post.py < "$RUNNER_TEMP/out.md"
+          else
+            {
+              cat "$RUNNER_TEMP/out.md"
+              echo ""
+              echo "The scaffold is committed; fill in the pitch and re-run."
+            } | python3 scripts/discord_post.py --code
+          fi
 
       # ----------------------------------------------------------------- push
       - name: Commit and push

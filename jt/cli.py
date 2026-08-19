@@ -16,6 +16,7 @@ from . import db as db_mod
 from . import intake as intake_mod
 from . import learn as learn_mod
 from . import mail as mail_mod
+from . import message as message_mod
 from . import render as render_mod
 from . import screen as screen_mod
 from . import verify as verify_mod
@@ -79,9 +80,20 @@ def cmd_worksheet(root: Path, a) -> int:
 
 def cmd_verify(root: Path, a) -> int:
     slug = resolve_slug(root, a.slug)
-    problems = verify_mod.verify_job(root, slug)
-    if a.referral:
-        problems += verify_mod.verify_referral(root, slug)
+    wanted = [t for t in (["referral"] if a.referral else []) + \
+              ([a.message] if a.message else [])]
+    try:
+        problems = verify_mod.verify_job(root, slug)
+    except JobloopError:
+        # A job recovered from an application email has no tailored.yaml and
+        # never will — but its outreach still has to survive the provenance
+        # rule, and that is exactly when a follow-up gets written.
+        if not wanted:
+            raise
+        print(f"{DIM}no tailored.yaml — checking the message only{OFF}")
+        problems = verify_mod.verify_profile(load_profile(root))
+    for mtype in wanted:
+        problems += verify_mod.verify_message(root, slug, mtype)
     if problems:
         print(_c(f"FAIL — {len(problems)} provenance violation(s)", BAD))
         for p in problems:
@@ -379,47 +391,44 @@ def cmd_learn(root: Path, a) -> int:
     return 1
 
 
-def cmd_referral(root: Path, a) -> int:
-    slug = resolve_slug(root, a.slug)
-    d = job_dir(root, slug)
-    path = d / "referral.yaml"
-    if a.scaffold or not path.exists():
-        job = load_job(root, slug)
-        prof = load_profile(root)
-        jd = (d / "jd.md").read_text("utf-8") if (d / "jd.md").exists() else ""
-        ranked = screen_mod.rank_evidence(prof, jd)[:6]
-        write_yaml(path, {
-            "_instructions": (
-                "Fill `pitch` with 2-4 sentences of real background mapping to "
-                "this JD — specific projects, numbers, technologies drawn from "
-                "the evidence below. List every evidence id you used in "
-                "`provenance`. Do NOT change the surrounding message format. "
-                f"Then: jt verify {slug} --referral && jt referral {slug}"),
-            "contact_name": a.name or "",
-            "company": job.get("company", ""),
-            "role": job.get("role", ""),
-            "pitch": "",
-            "provenance": [],
-            "_candidate_evidence": [
-                {"id": u["id"], "claim": " ".join(str(u["claim"]).split()),
-                 "metrics": u.get("metrics") or {}, "jd_overlap": hits[:10]}
-                for u, _s, hits in ranked],
-        })
-        print(f"{_c('scaffold', OK)} {path.relative_to(root)}")
-        print(f"Claude: write the pitch, then `jt referral {slug}`")
+def cmd_message(root: Path, a) -> int:
+    if getattr(a, "list_types", False):
+        print(f"{BOLD}message types{OFF}")
+        for name, spec in message_mod.TYPES.items():
+            print(f"  {name:<16} {spec['summary']}")
+            print(f"{DIM}  {'':<16} to {spec['audience']}{OFF}")
         return 0
 
-    msg = render_mod.render_referral(root, slug)
-    problems = verify_mod.verify_referral(root, slug)
+    slug = resolve_slug(root, a.slug)
+    mtype = message_mod.resolve_type(a.type)
+    data_path, out_path = message_mod.paths(root, slug, mtype)
+
+    if a.scaffold or not data_path.exists():
+        path = message_mod.scaffold(root, slug, mtype, name=a.name)
+        print(f"{_c('scaffold', OK)} {path.relative_to(root)}")
+        print(f"Claude: write the pitch, then "
+              f"`jt message {slug} --type {mtype}`")
+        return 0
+
+    msg = message_mod.render(root, slug, mtype)
+    problems = verify_mod.verify_message(root, slug, mtype)
     if problems and not a.force:
         print(_c("FAIL — pitch is not fully supported by your evidence", BAD))
         for p in problems:
             print(f"  {_c('x', BAD)} {p}")
         return 1
-    write_text(d / "referral.md", msg)
+    out_path.parent.mkdir(parents=True, exist_ok=True)
+    write_text(out_path, msg)
     print(msg)
-    append_event(root, slug, "referral", "message generated", "jt")
+    append_event(root, slug, "message", f"{mtype} generated", "jt")
     return 0
+
+
+def cmd_referral(root: Path, a) -> int:
+    """Kept because it is in muscle memory and in CLAUDE.md; `jt message
+    --type referral` is the same code path."""
+    a.type, a.list_types = "referral", False
+    return cmd_message(root, a)
 
 
 def cmd_advance(root: Path, a) -> int:
@@ -502,7 +511,10 @@ def build_parser() -> argparse.ArgumentParser:
 
     s = sub.add_parser("verify", help="enforce provenance on tailored.yaml")
     s.add_argument("slug")
-    s.add_argument("--referral", action="store_true")
+    s.add_argument("--referral", action="store_true",
+                   help="also check the referral pitch (= --message referral)")
+    s.add_argument("--message", default="",
+                   help="also check an outbound message's pitch, by type")
     s.set_defaults(fn=cmd_verify)
 
     s = sub.add_parser("build", help="render resume.tex (+pdf)")
@@ -581,7 +593,18 @@ def build_parser() -> argparse.ArgumentParser:
     m.add_argument("wid")
     s.set_defaults(fn=cmd_learn)
 
-    s = sub.add_parser("referral", help="LinkedIn referral ask (fixed format)")
+    s = sub.add_parser("message", help="draft an outbound message (fixed format)")
+    s.add_argument("slug", nargs="?", default="")
+    s.add_argument("--type", default=message_mod.DEFAULT_TYPE,
+                   help=f"one of: {', '.join(message_mod.TYPES)}")
+    s.add_argument("--scaffold", action="store_true")
+    s.add_argument("--name", default="", help="contact's first name")
+    s.add_argument("--force", action="store_true")
+    s.add_argument("--types", dest="list_types", action="store_true",
+                   help="list the message types and who each is for")
+    s.set_defaults(fn=cmd_message)
+
+    s = sub.add_parser("referral", help="LinkedIn referral ask (= message --type referral)")
     s.add_argument("slug")
     s.add_argument("--scaffold", action="store_true")
     s.add_argument("--name", default="", help="contact's first name")

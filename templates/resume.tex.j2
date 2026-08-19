@@ -11,7 +11,7 @@
   {\VAR{identity.name}}
   {\VAR{identity.headline}}
   {\href{mailto:\VAR{identity.email}}{\underline{\VAR{identity.email}}} $|$
-   \VAR{identity.phone} $|$
+   \href{tel:\VAR{identity.phone_tel}}{\underline{\VAR{identity.phone}}} $|$
    \href{\VAR{identity.links.portfolio}}{\underline{\VAR{display.portfolio}}} $|$
    \href{\VAR{identity.links.github}}{\underline{\VAR{display.github}}} $|$
    \href{\VAR{identity.links.linkedin}}{\underline{\VAR{display.linkedin}}}}
@@ -49,7 +49,7 @@
 
 %----------- TECHNICAL SKILLS -----------
 \section{Technical Skills}
- \begin{itemize}[leftmargin=0.0in, label={}]
+ \begin{itemize}[leftmargin=0.15in, label={}]
     \small{\item{
 \BLOCK{for group in skill_groups}
      \textbf{\VAR{group.name}}: \VAR{group.items_line}\BLOCK{if not loop.last} \\\BLOCK{endif}

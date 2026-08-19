@@ -8,6 +8,7 @@ is constrained mechanically rather than by asking a model nicely:
   2. every number in a bullet appears in the cited units
   3. every skill/technology token in a bullet is present in the cited units
   4. skills listed in the skills section exist in the master inventory
+  5. every emphasised (bolded) term is supported by the cited units too
 
 Rule 2 is the one that catches real drift: inflated metrics are the most
 common and most damaging fabrication, and they are trivially checkable.
@@ -196,6 +197,16 @@ def verify_bullets(bullets: list[dict], evidence: dict[str, dict],
                 f"{prov} does not support"
             )
 
+        # (5) emphasis. Bold is a claim about what matters, so it is held to
+        # the same bar: a model may not bold a term the evidence never says.
+        flat = " ".join(hay.split()).lower()
+        for term in b.get("emphasize", []) or []:
+            if str(term).strip().lower() not in flat:
+                problems.append(
+                    f"{where}: emphasises {term!r}, which the cited evidence "
+                    f"{prov} does not contain — bold is a claim too"
+                )
+
         # (4) declared skills
         for s in b.get("skills", []) or []:
             if norm_skill(s) not in allowed_skills:
@@ -203,6 +214,29 @@ def verify_bullets(bullets: list[dict], evidence: dict[str, dict],
                     f"{where}: declares skill {s!r} absent from cited evidence {prov}"
                 )
 
+    return problems
+
+
+def verify_profile(prof: dict) -> list[str]:
+    """Check master.yaml itself, not a job.
+
+    An `emphasize` term that appears nowhere in its own unit can never legally
+    bold anything — it is a typo that would fail silently, forever, by simply
+    never matching. Cheap to catch here.
+    """
+    problems: list[str] = []
+    for u in prof.get("evidence", []) or []:
+        parts = [str(u.get("claim", "")), str(u.get("name", ""))]
+        parts += [str(v) for v in (u.get("metrics") or {}).values()]
+        parts += [str(k) for k in (u.get("keywords") or [])]
+        parts += [str(k) for k in (u.get("stack") or [])]
+        flat = " ".join(" ".join(parts).split()).lower()
+        for term in u.get("emphasize", []) or []:
+            if str(term).strip().lower() not in flat:
+                problems.append(
+                    f"profile[{u['id']}]: emphasize {term!r} appears nowhere in "
+                    f"the unit — it can never match a bullet"
+                )
     return problems
 
 
@@ -219,7 +253,7 @@ def verify_job(root: Path, slug: str) -> list[str]:
             f"have Claude fill it in"
         )
     tailored = read_yaml(tpath)
-    problems: list[str] = []
+    problems: list[str] = verify_profile(prof)
 
     for role in tailored.get("experience", []) or []:
         rid = role.get("role_id", "?")
@@ -264,15 +298,27 @@ def verify_job(root: Path, slug: str) -> list[str]:
     return problems
 
 
-def verify_referral(root: Path, slug: str) -> list[str]:
-    """The referral pitch is a claim surface too — hold it to the same bar."""
+def verify_message(root: Path, slug: str, mtype: str = "referral") -> list[str]:
+    """An outbound message's pitch is a claim surface too — same bar.
+
+    A resume that oversells gets caught by an interviewer. A message that
+    oversells gets the interview, which is strictly worse.
+    """
+    from .message import paths, resolve_type
+    mtype = resolve_type(mtype)
     prof = load_profile(root)
     evidence = evidence_index(prof)
-    rpath = job_dir(root, slug) / "referral.yaml"
+    rpath, _ = paths(root, slug, mtype)
     if not rpath.exists():
-        raise JobloopError(f"{slug} has no referral.yaml — run `jt referral {slug}`")
+        raise JobloopError(
+            f"{slug} has no {rpath.name} — run "
+            f"`jt message {slug} --type {mtype} --scaffold`")
     data = read_yaml(rpath)
     return verify_bullets(
         [{"text": data.get("pitch", ""), "provenance": data.get("provenance") or []}],
-        evidence, label="referral pitch", vocab=profile_vocab(prof),
+        evidence, label=f"{mtype} pitch", vocab=profile_vocab(prof),
     )
+
+
+def verify_referral(root: Path, slug: str) -> list[str]:
+    return verify_message(root, slug, "referral")

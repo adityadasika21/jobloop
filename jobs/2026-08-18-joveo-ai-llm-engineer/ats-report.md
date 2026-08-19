@@ -1,18 +1,18 @@
 # ATS parse audit
 
-**PASS** — 0 critical, 0 high · 4342 chars extracted
+**PASS** — 0 critical, 0 high · 4291 chars extracted
 
 Keyword coverage **on extracted text**: 70% exact · 76% allowing word-form variants
 
 | | Check | Result |
 |---|---|---|
-| ✅ | `text-extractable` | 4342 chars recovered by the text extractor |
+| ✅ | `text-extractable` | 4291 chars recovered by the text extractor |
 | ✅ | `name` | name found in extracted text |
 | ✅ | `email` | email found |
 | ✅ | `phone` | phone digits recovered |
-| ✅ | `link-portfolio` | portfolio URL present as text (projectindex.online) |
-| ✅ | `link-github` | github URL present as text (github.com/adityadasika21) |
-| ✅ | `link-linkedin` | linkedin URL present as text (linkedin.com/in/adityadasika21) |
+| ✅ | `link-portfolio` | portfolio present as anchor text ('portfolio') — the URL projectindex.online is NOT recoverable by a text extractor |
+| ✅ | `link-github` | github present as anchor text ('github') — the URL github.com/adityadasika21 is NOT recoverable by a text extractor |
+| ✅ | `link-linkedin` | linkedin present as anchor text ('linkedin') — the URL linkedin.com/in/adityadasika21 is NOT recoverable by a text extractor |
 | ✅ | `section-experience` | 'experience' section recognised as 'experience' |
 | ✅ | `section-education` | 'education' section recognised as 'education' |
 | ✅ | `section-skills` | 'skills' section recognised as 'technical skills' |

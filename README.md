@@ -76,13 +76,31 @@ jt learn list
 Weaknesses escalate on repeat. Closing one **requires** recorded recovery in a
 later real interview — reading about a topic isn't resolution.
 
-Referral asks use one fixed format; only the pitch paragraph varies, and it's
-held to the same provenance bar as the resume:
+## Messages
+
+Five kinds of outbound message, one mechanism. The format of each is fixed and
+reproduced verbatim; exactly one paragraph varies, and it is held to the same
+provenance bar as the resume — a message that oversells gets the call, and the
+call is where the overselling is found out.
 
 ```bash
-jt referral <slug> --scaffold --name "Priya"
-jt verify <slug> --referral && jt referral <slug>
+jt message --types                                     # who each one is for
+jt message <slug> --type follow-up --scaffold --name "Neha"
+#   → Claude writes the pitch
+jt verify <slug> --message follow-up && jt message <slug> --type follow-up
 ```
+
+| type | for |
+|---|---|
+| `referral` | asking someone inside the company for a referral |
+| `recruiter-reply` | answering a recruiter who reached out first |
+| `follow-up` | an application that has gone quiet |
+| `thank-you` | within a day of an interview round |
+| `outreach` | cold, to the person who would manage the role |
+
+From Discord: `/msg job:<fragment> type:<kind> name:<contact>`.
+
+`jt referral <slug>` still works and is the same code path.
 
 ## Email
 

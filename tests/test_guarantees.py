@@ -15,10 +15,12 @@ import yaml
 ROOT = Path(__file__).resolve().parents[1]
 
 from jt.ats import find_collisions  # noqa: E402
+from jt.message import TYPES, resolve_type  # noqa: E402
 from jt.model import stem, tokenize  # noqa: E402
+from jt.render import emphasis_terms, tex_escape_emph  # noqa: E402
 from jt.screen import extract_requirements, match_requirement  # noqa: E402
 from jt.store import evidence_index, load_profile  # noqa: E402
-from jt.verify import profile_vocab, verify_bullets  # noqa: E402
+from jt.verify import profile_vocab, verify_bullets, verify_profile  # noqa: E402
 
 
 @pytest.fixture(scope="module")
@@ -204,14 +206,104 @@ def test_no_template_leakage_in_pdf():
         assert bad not in text
 
 
-def test_contact_urls_survive_text_extraction(prof):
-    """Anchor text of 'GitHub' loses the URL entirely to an ATS parser."""
+def test_contact_links_render_in_the_chosen_style(prof):
+    """Every link must reach the page in the form the profile asked for.
+
+    Aditya chose anchor text on 2026-08-19, knowing the cost: a parser gets
+    the word "GitHub" and the address is gone. That is a decision, not a bug,
+    so the test pins the CHOICE rather than one of the two options — flip
+    `identity.link_style` to `bare` and this still passes, on the URLs.
+    """
+    ident = prof["identity"]
     text = subprocess.run(
         ["pdftotext", str(ROOT / "profile" / "master-resume.pdf"), "-"],
-        capture_output=True, text=True).stdout.lower().replace(" ", "")
-    for url in prof["identity"]["links"].values():
-        bare = url.replace("https://", "").replace("www.", "").rstrip("/").lower()
-        assert bare in text, f"{bare} not recoverable from the PDF"
+        capture_output=True, text=True).stdout.lower()
+    squashed = text.replace(" ", "")
+    anchor = str(ident.get("link_style", "bare")).lower() == "anchor"
+    for key, url in ident["links"].items():
+        if anchor:
+            label = str((ident.get("link_labels") or {}).get(key, key)).lower()
+            assert label in text, f"{key}: anchor {label!r} missing from the PDF"
+        else:
+            bare = url.replace("https://", "").replace("www.", "").rstrip("/").lower()
+            assert bare in squashed, f"{bare} not recoverable from the PDF"
+
+
+def test_pdf_carries_the_ats_unicode_map():
+    r"""`\input{glyphtounicode}` + `\pdfgentounicode=1` is what makes pdfLaTeX
+    output reliably text-extractable. It was missing from the reconstructed
+    class entirely — extraction happened to work, which is not the same as
+    working. Highest-value single line in the class."""
+    cls = (ROOT / "templates" / "resume.cls").read_text()
+    assert "\\input{glyphtounicode}" in cls
+    assert "\\pdfgentounicode=1" in cls
+
+
+@pytest.mark.parametrize("fragment", [
+    "\\LoadClass[letterpaper,10pt]{article}",       # his 10pt, not 11pt
+    "\\addtolength{\\textwidth}{1in}",                # his margins
+    "\\addtolength{\\textheight}{1.0in}",
+    "leftmargin=0.15in",                            # his list indent
+    "0.97\\textwidth",                              # his tabular width
+])
+def test_class_matches_the_authoritative_source(fragment):
+    """reference/resume-source.tex is Aditya's own file. Where the
+    reverse-engineered class disagreed with it, his won — and it stays won."""
+    src = (ROOT / "reference" / "resume-source.tex").read_text()
+    cls = (ROOT / "templates" / "resume.cls").read_text()
+    assert fragment in cls
+    assert fragment.replace("\\LoadClass[", "\\documentclass[") in src or fragment in src
+
+
+# --------------------------------------------------------------------------- #
+# 3b. Emphasis is a claim
+# --------------------------------------------------------------------------- #
+
+def test_emphasis_is_provenance_bound(ev, vocab):
+    """Bold says 'this is the part that matters'. A model may no more invent
+    it than invent the claim itself."""
+    problems = verify_bullets([{
+        "text": "Engineered tool-calling agents under XGrammar constrained decoding.",
+        "provenance": ["ev-phenom-toolcalling-guardrails"],
+        "emphasize": ["Kubernetes"],
+    }], ev, vocab=vocab)
+    assert any("Kubernetes" in p for p in problems)
+
+
+def test_supported_emphasis_passes(ev, vocab):
+    assert verify_bullets([{
+        "text": "Engineered tool-calling agents under XGrammar constrained decoding.",
+        "provenance": ["ev-phenom-toolcalling-guardrails"],
+        "emphasize": ["XGrammar"],
+    }], ev, vocab=vocab) == []
+
+
+def test_profile_emphasis_terms_can_actually_match(prof):
+    """An `emphasize` entry that appears nowhere in its own unit would fail
+    silently forever, by simply never matching."""
+    assert verify_profile(prof) == []
+
+
+def test_emphasis_bolds_whole_tokens_only():
+    out = tex_escape_emph("RAG and Graph RAG retrieval", ["Graph RAG"])
+    assert out == "RAG and \\textbf{Graph RAG} retrieval"
+
+
+def test_longest_emphasis_term_wins():
+    """'RAG' must not eat the front of 'Graph RAG'."""
+    terms = emphasis_terms([{"emphasize": ["RAG", "Graph RAG"]}])
+    assert terms[0] == "Graph RAG"
+    assert tex_escape_emph("Graph RAG retrieval", terms) == \
+        "\\textbf{Graph RAG} retrieval"
+
+
+def test_master_resume_bolds_the_load_bearing_terms():
+    """His hand-written page bolds the system, the framework and the one
+    number worth arguing about; the generated one read flat beside it."""
+    tex = (ROOT / "profile" / "master-resume.tex").read_text()
+    for term in ("chatbotCXAgent", "LangGraph", "Graph RAG", "QLoRA", "vLLM",
+                 "ModernBERT", "LLM orchestration engine"):
+        assert "\\textbf{" + term + "}" in tex, f"{term} is not emphasised"
 
 
 # --------------------------------------------------------------------------- #
@@ -236,6 +328,76 @@ def test_jd_filler_is_not_scored_as_a_keyword():
 # --------------------------------------------------------------------------- #
 # 5. Referral format is fixed
 # --------------------------------------------------------------------------- #
+
+def test_every_message_type_has_a_template():
+    for name, spec in TYPES.items():
+        assert (ROOT / "templates" / spec["template"]).exists(), name
+
+
+@pytest.mark.parametrize("mtype", sorted(TYPES))
+def test_message_formats_are_fixed(mtype):
+    """One paragraph varies. Everything around it is Aditya's wording and is
+    reproduced verbatim — including the sign-off, which is how he signs."""
+    tpl = (ROOT / "templates" / TYPES[mtype]["template"]).read_text()
+    assert "{{ pitch }}" in tpl, f"{mtype}: nothing varies"
+    assert tpl.rstrip().endswith("Thanks!\nAditya"), f"{mtype}: wrong sign-off"
+
+
+def test_message_type_prefixes_resolve():
+    """Discord sends whatever the user picked; `follow` must reach follow-up."""
+    assert resolve_type("follow") == "follow-up"
+    assert resolve_type("") == "referral"
+
+
+def test_a_follow_up_never_counts_the_days():
+    """The one thing that turns a follow-up into a complaint."""
+    tpl = (ROOT / "templates" / "messages" / "follow-up.md.j2").read_text()
+    body = tpl.split("#}", 1)[1]
+    for phrase in ("weeks ago", "haven't heard", "have not heard",
+                   "still waiting", "any update yet"):
+        assert phrase not in body.lower()
+
+
+# --------------------------------------------------------------------------- #
+# 6. Mail sync cannot duplicate a job
+# --------------------------------------------------------------------------- #
+
+def test_a_known_thread_cannot_create_a_second_job(tmp_path):
+    """Regression: dedup covered repeat EVENTS but not repeat job CREATION.
+
+    A later message on an already-filed thread guessed the role slightly
+    differently, so match_job scored it below threshold and auto-intake made a
+    second Barclays stub. The thread id alone must be enough to prevent that.
+    """
+    import shutil
+
+    from jt.mail import ingest
+    from jt.store import save_job
+
+    shutil.copytree(ROOT / "profile", tmp_path / "profile")
+    slug = "2026-08-18-barclays-senior-engineer-ai-platform"
+    (tmp_path / "jobs" / slug).mkdir(parents=True)
+    save_job(tmp_path, slug, {
+        "company": "Barclays", "role": "Senior Engineer, AI Platform",
+        "status": "applied", "source": "email",
+        "events": [{"ts": "2026-08-10T00:00:00Z", "kind": "applied",
+                    "detail": "application received", "source": "gmail:abc123",
+                    "ref": "abc123"}],
+    })
+
+    # Same thread, a role string that will not match the tracked one.
+    res = ingest(tmp_path, [{
+        "thread_id": "abc123",
+        "from": "no-reply@barclays.com",
+        "subject": "Your application for the Vice President position",
+        "body": "Thank you for applying to Barclays. Your application for the "
+                "Vice President position is in review.",
+        "date": "2026-08-14T00:00:00Z",
+    }], auto_intake=True)
+
+    assert res["created"] == [], "a filed thread created a second job"
+    assert res["matched"] == 1
+
 
 def test_referral_template_is_verbatim():
     """Aditya specified this wording exactly; only the pitch may vary."""

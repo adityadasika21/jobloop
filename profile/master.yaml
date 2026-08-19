@@ -8,7 +8,8 @@
 # rephrases these units in the JD's vocabulary — it never invents.
 #
 # Reconstructed 2026-08-18 from ~/Downloads/Aditya_Resume.pdf (1 page, letter,
-# Jake-Ryan-style LaTeX). Verified against pdftotext -layout output.
+# Jake-Ryan-style LaTeX). Reconciled 2026-08-19 against Aditya's authoritative
+# source, reference/resume-source.tex — where the two disagreed, his won.
 # =============================================================================
 
 identity:
@@ -20,6 +21,14 @@ identity:
     portfolio: https://projectindex.online
     github: https://github.com/adityadasika21
     linkedin: https://www.linkedin.com/in/adityadasika21
+  # anchor | bare. Anchor reads better to a human; a bare URL is the only form
+  # that survives PDF text extraction. Aditya chose anchor on 2026-08-19 with
+  # that tradeoff on the table. `jt ats` reports which form it recovered.
+  link_style: anchor
+  link_labels:
+    portfolio: Portfolio
+    github: GitHub
+    linkedin: LinkedIn
   location: Hyderabad, Telangana, India
   # Used by `jt screen` to flag seniority mismatches honestly rather than hide them.
   experience_start: 2022-05
@@ -63,6 +72,11 @@ education:
 # strength   — core | strong | supporting. Drives selection under space pressure.
 # probe      — what an interviewer will ask if this bullet earns a screen pass.
 #              If you can't answer the probe, the bullet is too aggressive.
+# emphasize  — the load-bearing terms this unit may render in bold. Aditya's own
+#              resume bolds the system name, the framework, and the one number
+#              worth arguing about; bolding every number bolds nothing. A term
+#              is only honoured where it appears verbatim in the bullet, and
+#              `jt verify` rejects any term the cited evidence doesn't support.
 # -----------------------------------------------------------------------------
 
 evidence:
@@ -87,6 +101,7 @@ evidence:
     strength: core
     probe: "Why 12 nodes? How does dialogue state survive a tool failure mid-turn?
             Why a graph alongside vectors instead of vectors alone?"
+    emphasize: [chatbotCXAgent, LangGraph, Graph RAG]
 
   - id: ev-phenom-toolcalling-guardrails
     role: phenom-ai-llm-eng-ii
@@ -106,6 +121,44 @@ evidence:
     strength: core
     probe: "How did you measure routing accuracy? What was the baseline?
             Why XGrammar over plain JSON mode or retry-on-parse-failure?"
+    emphasize: ["XGrammar constrained decoding", XGrammar, 91.9%]
+
+  # Rewritten 2026-08-19 from Aditya's current source. The earlier version of
+  # this unit was reconstructed from the older PDF and described the *config
+  # and policy plane* — registry, feature groups, resolve API. His current
+  # bullet leads with the detection and decisioning layer: an LLM orchestration
+  # engine that investigates and produces reviewer-facing assessments. That is
+  # a materially stronger and much more agentic claim, and it is the one a
+  # screen should see. The config-plane work is still true, so it survives
+  # below as its own unit rather than being deleted — master.yaml is the
+  # evidence store, not the resume, and a tailored bullet may cite either.
+  - id: ev-phenom-fraud-detection-engine
+    role: phenom-ai-llm-eng-ii
+    claim: >-
+      Building the detection and decisioning layer of an enterprise
+      hiring-integrity / fraud-risk platform — an LLM orchestration engine that
+      investigates flagged candidate activity, correlates evidence across
+      signals, and produces reviewer-facing assessments with supporting
+      rationale — backed by a policy-driven rules engine (score / condition →
+      action), per-tenant risk configuration, and audited review workflows
+      across the signal lifecycle.
+    skills: [llm-orchestration, agent-orchestration, multi-agent-systems,
+             evidence-correlation, decision-support, explainability,
+             fraud-detection, risk-scoring, anomaly-investigation, policy-engine,
+             rules-engine, multi-tenancy, audit-logging, system-design]
+    metrics: {}
+    keywords: [agentic ai, llm orchestration, llm agents, investigation,
+               decision engine, rules engine, policy engine, risk scoring,
+               fraud detection, trust and safety, anomaly detection,
+               human-in-the-loop, reviewer workflow, explainable ai, rationale,
+               multi-tenant, audit trail, enterprise saas, hr tech, platform engineering]
+    strength: core
+    emphasize: ["hiring-integrity / fraud-risk platform", "LLM orchestration engine",
+                "policy-driven rules engine"]
+    probe: "What does the orchestration actually decide — does the LLM score, or
+            does it assemble evidence for a rules engine that scores? How do you
+            keep a reviewer-facing rationale faithful to the signals it cites?
+            What is the false-positive cost of accusing a real candidate?"
 
   - id: ev-phenom-fraud-policy-plane
     role: phenom-ai-llm-eng-ii
@@ -124,7 +177,12 @@ evidence:
     keywords: [platform engineering, policy engine, rules engine, multi-tenant,
                configuration management, api design, trust and safety, fraud detection,
                risk platform, backward compatibility, access control, enterprise saas]
-    strength: core
+    strength: strong
+    # Not on the master resume: his current page carries one fraud bullet, the
+    # detection engine above. This unit stays available to tailoring — a
+    # platform/backend JD should be able to lead with it.
+    on_master: false
+    emphasize: ["hiring-integrity / fraud-risk platform", "resolve API"]
     probe: "How do versioned definitions avoid breaking live consumers?
             Why CEL over a DSL you own? How are tenant overrides resolved and cached?"
 
@@ -146,6 +204,7 @@ evidence:
     strength: core
     probe: "What does your judge rubric look like and how did you validate the judge
             itself? What happens on a release that regresses one node out of twelve?"
+    emphasize: ["LLM evaluation framework", "LiteLLM + Langfuse"]
 
   - id: ev-phenom-finetune-serving
     role: phenom-ai-llm-eng-ii
@@ -165,7 +224,13 @@ evidence:
     strength: core
     probe: "What batch size and context length at 10.98 RPS? What was the 1.4% failure
             mode? How did you construct the QLoRA training set?"
+    emphasize: [QLoRA, vLLM]
 
+  # Aditya's source folds this into the QLoRA bullet ("; separately fine-tuned a
+  # multi-task ModernBERT..."). Kept split here because tailoring wants the
+  # granularity — a PyTorch/NLU role should be able to lead with it. To rejoin
+  # under space pressure, write ONE bullet citing both unit ids; provenance is a
+  # list and `jt verify` checks the merged text against the union.
   - id: ev-phenom-modernbert-nlu
     role: phenom-ai-llm-eng-ii
     claim: >-
@@ -181,6 +246,7 @@ evidence:
     strength: strong
     probe: "Why multi-task over two separate heads? Where did the 10 points come from —
             data, architecture, or labels?"
+    emphasize: [ModernBERT]
 
   # ---- Blueleaves Farms : full stack ---------------------------------------
   - id: ev-blueleaves-analytics

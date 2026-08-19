@@ -2,7 +2,9 @@ _instructions: 'Write tailored.yaml from this worksheet. RULES: (1) every bullet
   [evidence-id]`; (2) never state a number that is not in the cited unit''s claim/metrics;
   (3) never name a technology the cited units don''t mention; (4) rephrase in the JD''s vocabulary
   but do not upgrade scope, seniority, or ownership; (5) unmatched requirements stay gaps
-  — report them, don''t invent. Run `jt verify 2026-08-18-joveo-ai-llm-engineer` until clean.'
+  — report them, don''t invent; (6) `emphasize:` on a bullet bolds load-bearing terms, but
+  only terms the cited units contain — default to the unit''s own list. Run `jt verify 2026-08-18-joveo-ai-llm-engineer`
+  until clean.'
 job:
   company: Joveo AI
   role: LLM Engineer
@@ -36,6 +38,7 @@ requirements:
   caveat: null
   matched_terms:
   - faiss
+  - pipelines
   - rag
   - search
   - vector
@@ -58,7 +61,9 @@ requirements:
   evidence: ev-phenom-eval-framework
   caveat: null
   matched_terms:
+  - eval
   - evaluation
+  - harnesses
   - llm
   - llm-as-judge
   - monitoring
@@ -84,6 +89,7 @@ requirements:
   evidence: ev-phenom-finetune-serving
   caveat: null
   matched_terms:
+  - deploying
   - hosted
   - models
   - serving
@@ -108,6 +114,7 @@ requirements:
   - fine-tuning
   - lora
   - models
+  - open-source
   - qlora
   known_gap: null
   gap_note: null
@@ -118,16 +125,18 @@ requirements:
   caveat: null
   matched_terms:
   - graph
-  - knowledge
   - neo4j
   known_gap: null
   gap_note: null
   kind: nice_to_have
 - requirement: Experience in HR tech or recruitment domain
-  status: gap
-  evidence: null
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
   caveat: null
-  matched_terms: []
+  matched_terms:
+  - hr
+  - recruitment
+  - tech
   known_gap: null
   gap_note: null
   kind: nice_to_have
@@ -140,11 +149,12 @@ requirements:
   gap_note: Docker in production; orchestration was not owned.
   kind: nice_to_have
 - requirement: Design and ship multi-agent workflows and tool-calling systems
-  status: partial
+  status: met
   evidence: ev-phenom-chatbotcx-architecture
   caveat: null
   matched_terms:
   - multi-agent
+  - workflows
   known_gap: null
   gap_note: null
   kind: responsibility
@@ -154,8 +164,8 @@ requirements:
   caveat: null
   matched_terms:
   - evaluation
+  - gate
   - model
-  - quality
   known_gap: null
   gap_note: null
   kind: responsibility
@@ -168,6 +178,7 @@ requirements:
   - inference
   - latency
   - serving
+  - stack
   known_gap: null
   gap_note: null
   kind: responsibility
@@ -193,7 +204,7 @@ known_gaps:
     6+ yrs so the application is a deliberate stretch.
 evidence_ranked:
 - id: ev-phenom-finetune-serving
-  score: 2.374
+  score: 3.266
   strength: core
   role: phenom-ai-llm-eng-ii
   claim: Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS g5.xlarge
@@ -219,23 +230,26 @@ evidence_ranked:
   - load-testing
   - cost-optimization
   - throughput-optimization
+  emphasize:
+  - QLoRA
+  - vLLM
   jd_overlap:
   - aws
   - cost
+  - deploying
   - fine-tuning
   - hosted
+  - hr
   - inference
   - latency
+  - learning
   - llm
   - lora
-  - model
-  - models
-  - qlora
-  - serving
+  - machine
   probe: What batch size and context length at 10.98 RPS? What was the 1.4% failure mode?
     How did you construct the QLoRA training set?
 - id: ev-phenom-chatbotcx-architecture
-  score: 2.212
+  score: 2.65
   strength: core
   role: phenom-ai-llm-eng-ii
   claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
@@ -258,23 +272,27 @@ evidence_ranked:
   - neo4j
   - vector-search
   - production-systems
+  emphasize:
+  - chatbotCXAgent
+  - LangGraph
+  - Graph RAG
   jd_overlap:
   - agentic
   - ai
   - faiss
   - graph
-  - knowledge
+  - hr
   - langgraph
   - llm
   - machine
   - multi-agent
   - neo4j
+  - pipelines
   - production
-  - rag
   probe: Why 12 nodes? How does dialogue state survive a tool failure mid-turn? Why a graph
     alongside vectors instead of vectors alone?
 - id: ev-phenom-eval-framework
-  score: 1.789
+  score: 2.65
   strength: core
   role: phenom-ai-llm-eng-ii
   claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
@@ -296,22 +314,26 @@ evidence_ranked:
   - regression-testing
   - hallucination-mitigation
   - ci-gating
+  emphasize:
+  - LLM evaluation framework
+  - LiteLLM + Langfuse
   jd_overlap:
   - ai
   - cost
+  - eval
   - evaluation
+  - gate
+  - harnesses
+  - hr
   - latency
+  - learning
   - llm
   - llm-as-judge
-  - model
-  - monitoring
-  - observability
-  - quality
-  - tracing
+  - machine
   probe: What does your judge rubric look like and how did you validate the judge itself?
     What happens on a release that regresses one node out of twelve?
 - id: ev-proj-indexnotes
-  score: 1.474
+  score: 1.508
   strength: strong
   role: project
   claim: Built an automated Graph RAG pipeline ingesting research papers (PDF → local-LLM
@@ -333,21 +355,22 @@ evidence_ranked:
   - python
   - docker
   - etl
+  emphasize: []
   jd_overlap:
   - ai
   - docker
   - graph
-  - knowledge
   - llm
   - models
   - neo4j
+  - pipeline
   - python
   - rag
   - structured
   probe: How do you keep a local quantized model's extractions consistent enough to build
     a graph on?
 - id: ev-phenom-toolcalling-guardrails
-  score: 0.839
+  score: 1.241
   strength: core
   role: phenom-ai-llm-eng-ii
   claim: Engineered tool-calling agents that execute governed actions — database queries and
@@ -368,46 +391,66 @@ evidence_ranked:
   - structured-extraction
   - sql
   - agent-reliability
+  emphasize:
+  - XGrammar constrained decoding
+  - XGrammar
+  - 91.9%
   jd_overlap:
   - calling
   - function
+  - hr
   - output
+  - recruitment
   - structured
+  - tech
   - tool-calling
   probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
     JSON mode or retry-on-parse-failure?
-- id: ev-blueleaves-fullstack-delivery
-  score: 0.613
-  strength: supporting
-  role: blueleaves-fullstack
-  claim: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
-    e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs — with role-based access
-    control and CI/CD — integrating multiple internal systems and cutting manual operational
-    errors by roughly 90%.
-  metrics:
-    manual_error_reduction: ~90%
+- id: ev-phenom-fraud-detection-engine
+  score: 1.187
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Building the detection and decisioning layer of an enterprise hiring-integrity /
+    fraud-risk platform — an LLM orchestration engine that investigates flagged candidate
+    activity, correlates evidence across signals, and produces reviewer-facing assessments
+    with supporting rationale — backed by a policy-driven rules engine (score / condition
+    → action), per-tenant risk configuration, and audited review workflows across the signal
+    lifecycle.
+  metrics: {}
   allowed_skills:
-  - nodejs
-  - firebase
-  - cloud-functions
-  - rest-api
-  - rbac
-  - ci-cd
-  - system-integration
-  - full-stack
-  - serverless
-  - product-ownership
-  - e-commerce
-  - crm
+  - llm-orchestration
+  - agent-orchestration
+  - multi-agent-systems
+  - evidence-correlation
+  - decision-support
+  - explainability
+  - fraud-detection
+  - risk-scoring
+  - anomaly-investigation
+  - policy-engine
+  - rules-engine
+  - multi-tenancy
+  - audit-logging
+  - system-design
+  emphasize:
+  - hiring-integrity / fraud-risk platform
+  - LLM orchestration engine
+  - policy-driven rules engine
   jd_overlap:
-  - apis
-  - cloud
-  - production
-  - stack
-  - systems
-  probe: What did 'owned end-to-end' include — did you handle on-call and incidents?
+  - agentic
+  - ai
+  - engineering
+  - hr
+  - llm
+  - platform
+  - recruitment
+  - tech
+  - workflows
+  probe: What does the orchestration actually decide — does the LLM score, or does it assemble
+    evidence for a rules engine that scores? How do you keep a reviewer-facing rationale faithful
+    to the signals it cites? What is the false-positive cost of accusing a real candidate?
 - id: ev-phenom-modernbert-nlu
-  score: 0.577
+  score: 1.014
   strength: strong
   role: phenom-ai-llm-eng-ii
   claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
@@ -426,33 +469,20 @@ evidence_ranked:
   - nlu
   - fine-tuning
   - model-training
+  emphasize:
+  - ModernBERT
   jd_overlap:
   - fine-tuning
+  - hr
   - model
   - models
+  - recruitment
+  - tech
   probe: Why multi-task over two separate heads? Where did the 10 points come from — data,
     architecture, or labels?
-- id: ev-proj-indexnotes-schema
-  score: 0.57
-  strength: supporting
-  role: project
-  claim: Designed a Neo4j schema enabling multi-hop graph traversal and cross-document retrieval
-    across scientific domains.
-  metrics: {}
-  allowed_skills:
-  - neo4j
-  - graph-schema-design
-  - cypher
-  - multi-hop-retrieval
-  - data-modeling
-  jd_overlap:
-  - design
-  - graph
-  - neo4j
-  probe: What does a multi-hop query actually look like here?
 - id: ev-phenom-fraud-policy-plane
-  score: 0.542
-  strength: core
+  score: 0.793
+  strength: strong
   role: phenom-ai-llm-eng-ii
   claim: 'Designed the configuration and policy plane for an enterprise hiring-integrity /
     fraud-risk platform: a global fraud-signal registry with feature groups, tenant-scoped
@@ -474,15 +504,70 @@ evidence_ranked:
   - fraud-detection
   - risk-scoring
   - backend-architecture
+  emphasize:
+  - hiring-integrity / fraud-risk platform
+  - resolve API
   jd_overlap:
-  - design
   - engineering
+  - hr
   - machine
+  - pipeline
   - platform
+  - recruitment
+  - tech
   probe: How do versioned definitions avoid breaking live consumers? Why CEL over a DSL you
     own? How are tenant overrides resolved and cached?
+- id: ev-blueleaves-fullstack-delivery
+  score: 0.595
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
+    e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs — with role-based access
+    control and CI/CD — integrating multiple internal systems and cutting manual operational
+    errors by roughly 90%.
+  metrics:
+    manual_error_reduction: ~90%
+  allowed_skills:
+  - nodejs
+  - firebase
+  - cloud-functions
+  - rest-api
+  - rbac
+  - ci-cd
+  - system-integration
+  - full-stack
+  - serverless
+  - product-ownership
+  - e-commerce
+  - crm
+  emphasize: []
+  jd_overlap:
+  - apis
+  - cloud
+  - production
+  - stack
+  - systems
+  probe: What did 'owned end-to-end' include — did you handle on-call and incidents?
+- id: ev-proj-indexnotes-schema
+  score: 0.39
+  strength: supporting
+  role: project
+  claim: Designed a Neo4j schema enabling multi-hop graph traversal and cross-document retrieval
+    across scientific domains.
+  metrics: {}
+  allowed_skills:
+  - neo4j
+  - graph-schema-design
+  - cypher
+  - multi-hop-retrieval
+  - data-modeling
+  emphasize: []
+  jd_overlap:
+  - graph
+  - neo4j
+  probe: What does a multi-hop query actually look like here?
 - id: ev-blueleaves-analytics
-  score: 0.256
+  score: 0.248
   strength: supporting
   role: blueleaves-fullstack
   claim: Built data-driven analytics on large-scale transactional and stock-movement data
@@ -500,6 +585,7 @@ evidence_ranked:
   - anomaly-detection
   - business-intelligence
   - python
+  emphasize: []
   jd_overlap:
   - models
   - python
@@ -522,6 +608,7 @@ evidence_ranked:
   - reverse-engineering
   - embedded-integration
   - product-shipping
+  emphasize: []
   jd_overlap: []
   probe: How did you talk to a cluster you had no spec for?
 - id: ev-proj-northstar-traction
@@ -534,6 +621,7 @@ evidence_ranked:
   allowed_skills:
   - product-shipping
   - stakeholder-communication
+  emphasize: []
   jd_overlap: []
   probe: What came of the visit?
 skill_inventory:

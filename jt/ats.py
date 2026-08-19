@@ -183,13 +183,28 @@ def audit(pdf: Path, profile: dict, jd_text: str = "",
           "Keep the number as plain text; icons and ligatures break it.")
 
     # ---- 3. Links ---------------------------------------------------------
+    # Two legitimate forms, and the check reports which one it actually found.
+    # A bare URL survives extraction intact; anchor text ("GitHub") extracts as
+    # the word and the address is lost, which is the cost of the nicer-looking
+    # page. Aditya chose anchor knowingly, so anchor passes — but it passes
+    # loudly, naming what a parser will not recover.
+    labels = ident.get("link_labels") or {}
+    squashed = low_raw.replace(" ", "")
     for key, url in (ident.get("links") or {}).items():
         bare = re.sub(r"^https?://(www\.)?", "", str(url)).rstrip("/").lower()
-        check(f"link-{key}", bare in low_raw.replace(" ", ""), "medium",
-              f"{key} URL {'present' if bare in low_raw.replace(' ', '') else 'MISSING'} "
-              f"as text ({bare})",
-              "Anchor text must be the URL itself — a parser cannot follow "
-              "the link target behind the word 'GitHub'.")
+        label = str(labels.get(key, key)).lower()
+        has_url = bare in squashed
+        has_anchor = bool(label) and label in low_raw
+        if has_url:
+            detail = f"{key} URL present as text ({bare})"
+        elif has_anchor:
+            detail = (f"{key} present as anchor text ({label!r}) — the URL "
+                      f"{bare} is NOT recoverable by a text extractor")
+        else:
+            detail = f"{key} MISSING entirely ({bare})"
+        check(f"link-{key}", has_url or has_anchor, "medium", detail,
+              "Neither the URL nor its anchor text survived extraction — the "
+              "link is invisible to a parser and to anyone pasting the text.")
 
     # ---- 4. Sections ------------------------------------------------------
     sections = _find_sections(raw)

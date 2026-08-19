@@ -169,6 +169,22 @@ def ingest(root: Path, messages: list[dict], apply_status: bool = True,
     result = {"matched": 0, "unmatched": [], "noise": 0,
               "events_added": 0, "status_changes": [], "created": []}
 
+    # A thread this repo has ALREADY filed, whichever job it landed on.
+    #
+    # Dedup used to live only in append_event, on (kind, ref) — which stops a
+    # thread being logged twice on the same job, but not a thread creating a
+    # SECOND job. That is the hole the first routine run fell through: a later
+    # message on the Barclays thread produced a slightly different role guess,
+    # so match_job scored it below threshold and find_duplicate saw a new
+    # company/role pair, and auto-intake dutifully created a duplicate stub.
+    # A thread is identity. Once it belongs to a job it keeps belonging to it,
+    # regardless of what the next email in it calls the role.
+    thread_owner: dict[str, str] = {}
+    for _slug, _job in jobs_cache.items():
+        for e in _job.get("events", []) or []:
+            if e.get("ref"):
+                thread_owner.setdefault(str(e["ref"]), _slug)
+
     for msg in messages:
         cls = classify(msg.get("subject", ""), msg.get("body") or msg.get("snippet", ""))
         if cls is None:
@@ -176,7 +192,10 @@ def ingest(root: Path, messages: list[dict], apply_status: bool = True,
             continue
         kind, implied = cls
 
-        slug = msg.get("job_slug") or match_job(root, msg, jobs_cache)
+        ref = msg.get("thread_id") or msg.get("id") or ""
+        slug = (msg.get("job_slug")
+                or (thread_owner.get(str(ref)) if ref else None)
+                or match_job(root, msg, jobs_cache))
 
         # Most applications are submitted on a careers page and never pass
         # through Discord — the confirmation email is the only record. Create
@@ -198,7 +217,8 @@ def ingest(root: Path, messages: list[dict], apply_status: bool = True,
             continue
 
         result["matched"] += 1
-        ref = msg.get("thread_id") or msg.get("id") or ""
+        if ref:
+            thread_owner.setdefault(str(ref), slug)
         detail = f"{msg.get('subject','(no subject)')} — from {msg.get('from','?')}"
         added = append_event(root, slug, kind, detail=detail,
                              source=f"gmail:{ref}" if ref else "gmail",

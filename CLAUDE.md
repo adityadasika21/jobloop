@@ -109,15 +109,37 @@ allowlist enforces this, but honour it in interactive use too.
 stray email cannot demote a live process. Search the companies in `jt status`,
 not the whole inbox.
 
-## Referral messages
+## Outbound messages
 
-Fixed format, reproduced verbatim — only the middle paragraph varies.
+Five types — `referral`, `recruiter-reply`, `follow-up`, `thank-you`,
+`outreach`. Each has a fixed format reproduced verbatim; only the middle
+paragraph (`pitch`) varies, and it is a claim surface like any bullet.
 
 ```bash
-jt referral <slug> --scaffold --name "Priya"
-jt verify <slug> --referral
-jt referral <slug>
+jt message --types                                   # and who each is for
+jt message <slug> --type follow-up --scaffold --name "Neha"
+jt verify <slug> --message follow-up
+jt message <slug> --type follow-up
 ```
+
+The scaffold's `_instructions` say what THAT type's paragraph is for; follow
+them rather than writing a generic paragraph five times. A follow-up in
+particular must give them a reason to reply, and must never count the days.
+
+`jt referral <slug>` is `--type referral` and still works. A job recovered
+from an application email has no `tailored.yaml`, and `jt verify --message`
+works on it anyway — that is exactly when a follow-up gets written.
+
+## Emphasis
+
+`emphasize:` on an evidence unit lists the load-bearing terms it may render in
+bold — the system name, the framework, the one number worth arguing about.
+His own resume bolds `91.9%` and leaves `98.6%`, `10.98 RPS`, `87%` and `97%`
+plain, because bolding every number bolds nothing. Deriving emphasis from
+`metrics` is the obvious idea and it is wrong for that reason.
+
+A term is only honoured where it appears verbatim in the bullet, and `jt
+verify` rejects a term the cited evidence doesn't contain. Bold is a claim.
 
 ## Editing `profile/master.yaml`
 
@@ -143,8 +165,18 @@ go in `known_gaps`.
   *master profile* rather than loosening the check.
 - `jt` auto-commits with `git add -A`, so it sweeps unrelated working-tree
   changes into a commit labelled "mail sync". Commit your own work first.
-- `~/.gitconfig` had `CHANGE_ME@example.com`; this repo now sets its own
-  identity locally. Check `git log --format=%ae` if commits look mis-attributed.
+- `~/.gitconfig` was `CHANGE_ME@example.com`; fixed globally 2026-08-19, and
+  this repo also sets its identity locally. Check `git log --format=%ae` if
+  commits look mis-attributed.
+- `reference/resume-source.tex` is Aditya's own authoritative `.tex`.
+  `templates/resume.cls` was reverse-engineered from a compiled PDF before it
+  existed. **Where they disagree, his wins** — point size, margins, list
+  indents, tabular widths and heading weight are all his values now.
+- `on_master: false` on an evidence unit means true and tailorable but not on
+  his one-page master resume, so `jt build --master` still reproduces his page.
+- To rejoin two split units under space pressure, write ONE bullet citing both
+  ids; provenance is a list and `jt verify` checks the merged text against the
+  union.
 
 ## Tests
 

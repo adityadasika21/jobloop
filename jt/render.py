@@ -44,6 +44,56 @@ def tex_escape(s) -> str:
     return "".join(_LATEX_MAP.get(c, c) for c in str(s))
 
 
+# --------------------------------------------------------------------------- #
+# Emphasis
+#
+# Aditya's own resume bolds the load-bearing term in each bullet -- the system
+# name, the framework, the one number worth arguing about -- and a wall of
+# unbolted prose reads measurably flatter than his hand-written page.
+#
+# Emphasis is an explicit, provenance-bound list (`emphasize:` on an evidence
+# unit, or on a tailored bullet), NOT something derived from the metrics map.
+# Deriving it was the obvious idea and it is wrong: his source bolds 91.9% but
+# leaves 98.6%, 10.98 RPS, 87% and 97% plain, because bolding every number
+# bolds nothing. `jt verify` checks each term against the cited evidence, so a
+# model can no more invent a bold term than it can invent a claim.
+# --------------------------------------------------------------------------- #
+
+def _is_boundary(ch: str) -> bool:
+    """A term may only be bolded as a whole token, never mid-word."""
+    return not (ch.isalnum() or ch in "_-")
+
+
+def emphasis_terms(units: list[dict], extra=None) -> list[str]:
+    terms = []
+    for u in units:
+        terms += [str(t) for t in (u.get("emphasize") or [])]
+    terms += [str(t) for t in (extra or [])]
+    # Longest first so "Graph RAG" wins the alternation over "RAG".
+    return sorted({t for t in terms if t.strip()}, key=len, reverse=True)
+
+
+def tex_escape_emph(text, terms: list[str]) -> str:
+    """tex_escape, with every emphasis term wrapped in \\textbf{}."""
+    text = str(text)
+    if not terms:
+        return tex_escape(text)
+    pat = re.compile("|".join(re.escape(t) for t in terms), re.I)
+    out, pos = [], 0
+    for m in pat.finditer(text):
+        if m.start() < pos:
+            continue
+        before = text[m.start() - 1] if m.start() else " "
+        after = text[m.end()] if m.end() < len(text) else " "
+        if not (_is_boundary(before) and _is_boundary(after)):
+            continue
+        out.append(tex_escape(text[pos:m.start()]))
+        out.append(r"\textbf{" + tex_escape(m.group(0)) + "}")
+        pos = m.end()
+    out.append(tex_escape(text[pos:]))
+    return "".join(out)
+
+
 def _env(root: Path) -> Environment:
     env = Environment(
         loader=FileSystemLoader(str(root / "templates")),
@@ -83,9 +133,17 @@ def _fmt_dates(start: str, end: str) -> str:
 def _ctx_from_tailored(prof: dict, tailored: dict, root: Path,
                        variant: str) -> dict:
     roles = role_index(prof)
+    evidence = evidence_index(prof)
     identity = dict(prof["identity"])
     if tailored.get("headline"):
         identity["headline"] = tailored["headline"]
+    # tel: needs the bare international number, not the display form.
+    identity["phone_tel"] = re.sub(r"[^\d+]", "", str(identity.get("phone", "")))
+
+    def bullet(b: dict) -> dict:
+        units = [evidence[p] for p in (b.get("provenance") or []) if p in evidence]
+        terms = emphasis_terms(units, b.get("emphasize"))
+        return {"text": tex_escape_emph(b["text"], terms)}
 
     experience = []
     for r in tailored.get("experience", []) or []:
@@ -98,8 +156,7 @@ def _ctx_from_tailored(prof: dict, tailored: dict, root: Path,
             "company": tex_escape(base["company"]),
             "location": tex_escape(base.get("location", "")),
             "dates": tex_escape(_fmt_dates(base.get("start"), base.get("end"))),
-            "bullets": [{"text": tex_escape(b["text"])}
-                        for b in (r.get("bullets") or [])],
+            "bullets": [bullet(b) for b in (r.get("bullets") or [])],
         })
 
     projects = []
@@ -108,8 +165,7 @@ def _ctx_from_tailored(prof: dict, tailored: dict, root: Path,
         projects.append({
             "name": tex_escape(p.get("name", "")),
             "stack": tex_escape(", ".join(stack) if isinstance(stack, list) else stack),
-            "bullets": [{"text": tex_escape(b["text"])}
-                        for b in (p.get("bullets") or [])],
+            "bullets": [bullet(b) for b in (p.get("bullets") or [])],
         })
 
     groups = tailored.get("skill_groups") or prof["skill_groups"]
@@ -124,11 +180,18 @@ def _ctx_from_tailored(prof: dict, tailored: dict, root: Path,
         "dates": tex_escape(_fmt_dates(e.get("start"), e.get("end"))),
     } for e in prof.get("education", [])]
 
-    # ATS parsers read extracted TEXT, not link targets. Anchor text of
-    # "GitHub" loses the URL entirely, so the visible text is the bare URL.
+    # ATS parsers read extracted TEXT, not link targets: anchor text of
+    # "GitHub" extracts as the word "GitHub" and the address is lost, while a
+    # bare URL survives. Aditya's call (2026-08-19) is anchor text, because the
+    # page is read by a human first. `identity.link_style` records that choice
+    # so it is one line to reverse, and `jt ats` reports which form it found.
     links = identity["links"]
-    display = {k: re.sub(r"^https?://(www\.)?", "", str(v)).rstrip("/")
-               for k, v in links.items()}
+    labels = identity.get("link_labels") or {}
+    if str(identity.get("link_style", "bare")).lower() == "anchor":
+        display = {k: labels.get(k, k.title()) for k in links}
+    else:
+        display = {k: re.sub(r"^https?://(www\.)?", "", str(v)).rstrip("/")
+                   for k, v in links.items()}
 
     return {
         "identity": {k: (tex_escape(v) if isinstance(v, str) else v)
@@ -146,12 +209,15 @@ def _ctx_from_tailored(prof: dict, tailored: dict, root: Path,
 def master_tailored(prof: dict) -> dict:
     """The untailored master resume, expressed in tailored.yaml's own shape.
 
-    Used by `jt build --master` to prove the pipeline reproduces the original
-    PDF before any tailoring logic is trusted.
+    Used by `jt build --master` to prove the pipeline reproduces
+    reference/resume-source.tex before any tailoring logic is trusted.
     """
     by_role: dict[str, list[dict]] = {}
     projects: dict[str, dict] = {}
     for u in prof["evidence"]:
+        # `on_master: false` = true, tailorable, but not on his one-page master.
+        if not u.get("on_master", True):
+            continue
         item = {"text": " ".join(str(u["claim"]).split()), "provenance": [u["id"]]}
         if u.get("kind") == "project":
             parent = u.get("parent")
@@ -260,7 +326,9 @@ def worksheet(root: Path, slug: str, top: int = 14) -> Path:
             "is not in the cited unit's claim/metrics; (3) never name a "
             "technology the cited units don't mention; (4) rephrase in the "
             "JD's vocabulary but do not upgrade scope, seniority, or ownership; "
-            "(5) unmatched requirements stay gaps — report them, don't invent. "
+            "(5) unmatched requirements stay gaps — report them, don't invent; "
+            "(6) `emphasize:` on a bullet bolds load-bearing terms, but only "
+            "terms the cited units contain — default to the unit's own list. "
             "Run `jt verify " + slug + "` until clean."
         ),
         "job": {"company": job.get("company"), "role": job.get("role"),
@@ -278,6 +346,7 @@ def worksheet(root: Path, slug: str, top: int = 14) -> Path:
              "claim": " ".join(str(u["claim"]).split()),
              "metrics": u.get("metrics") or {},
              "allowed_skills": u.get("skills", []),
+             "emphasize": u.get("emphasize", []),
              "jd_overlap": hits[:12],
              "probe": u.get("probe", "")}
             for u, score, hits in ranked[:top]
@@ -290,21 +359,7 @@ def worksheet(root: Path, slug: str, top: int = 14) -> Path:
 
 
 def render_referral(root: Path, slug: str) -> str:
-    """Fixed-format LinkedIn referral ask. Only the pitch paragraph varies."""
-    d = job_dir(root, slug)
-    job = load_job(root, slug)
-    data = read_yaml(d / "referral.yaml", default={})
-    if not data.get("pitch"):
-        raise JobloopError(
-            f"{slug}: referral.yaml has no `pitch`. Run `jt referral {slug} "
-            f"--scaffold` and have Claude write the 2-4 sentence paragraph."
-        )
-    env = Environment(loader=FileSystemLoader(str(root / "templates")),
-                      trim_blocks=False, lstrip_blocks=False, autoescape=False)
-    tpl = env.get_template("referral.md.j2")
-    return tpl.render(
-        contact_name=data.get("contact_name") or "[Name]",
-        role=data.get("role") or job.get("role", "[Role]"),
-        company=data.get("company") or job.get("company", "[Company]"),
-        pitch=" ".join(str(data["pitch"]).split()),
-    )
+    """Kept as the old entry point; `jt message --type referral` is the same
+    fixed format and the same code."""
+    from .message import render
+    return render(root, slug, "referral")
