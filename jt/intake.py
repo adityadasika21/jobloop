@@ -74,10 +74,23 @@ ROLE_HINTS = [
     "manager", "lead", "analyst", "specialist", "consultant", "intern",
 ]
 
+# A Discord slash-command option is a SINGLE LINE, so `(.+)$` here captured
+# the entire job description as the company name: "company: Cure Fit. jd:
+# About the Role: The Growth Engineering team is responsible for d" — 80
+# characters of JD, slugified into the job's identity.
+#
+# The value is bounded instead: stop at a sentence break, a pipe, or the next
+# "word:" label. Periods only end it when followed by a space, so "Cure.fit"
+# and "Node.js" survive.
+_LABEL_VALUE = r"([^\n;|]{2,60}?)(?=\s*$|\.\s|\s*[;|]|\s+\w+\s*:)"
+
 _LABEL_RE = {
-    "company": re.compile(r"(?im)^\s*(?:company|employer|organization)\s*[:\-]\s*(.+)$"),
-    "role":    re.compile(r"(?im)^\s*(?:role|title|position|job\s*title)\s*[:\-]\s*(.+)$"),
-    "location": re.compile(r"(?im)^\s*(?:location|based in|office)\s*[:\-]\s*(.+)$"),
+    "company": re.compile(r"(?im)(?:^|[|;,]\s*)(?:company|employer|organization)\s*[:\-]\s*"
+                          + _LABEL_VALUE),
+    "role":    re.compile(r"(?im)(?:^|[|;,]\s*)(?:role|title|position|job\s*title)\s*[:\-]\s*"
+                          + _LABEL_VALUE),
+    "location": re.compile(r"(?im)(?:^|[|;,]\s*)(?:location|based in|office)\s*[:\-]\s*"
+                           + _LABEL_VALUE),
 }
 
 
@@ -138,6 +151,8 @@ def guess_fields(text: str, url: str) -> dict:
     if not out["role"]:
         for line in (text or "").splitlines()[:40]:
             line = line.strip()
+            if re.search(r"\b\w+\s*:", line):
+                continue          # "company: X | role: Y" is labels, not a title
             if 6 <= len(line) <= 70 and any(h in line.lower() for h in ROLE_HINTS):
                 out["role"] = line.strip(".,;:-")
                 break

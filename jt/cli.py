@@ -444,6 +444,11 @@ def cmd_work(root: Path, a) -> int:
     import subprocess
 
     items = inbox_mod.pending(root)
+    # jobs.db is derived and gitignored, so a job pulled from git is invisible
+    # to tailorable.py until the index is rebuilt. Without this the gate
+    # reported "idle" forever and every /jd was captured and never tailored —
+    # which is exactly what happened.
+    db_mod.reindex(root)
     tailorable = subprocess.run(
         [sys.executable, "scripts/tailorable.py", "3"],
         cwd=root, capture_output=True, text=True,
