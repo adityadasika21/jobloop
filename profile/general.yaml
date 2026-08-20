@@ -58,21 +58,14 @@ experience:
           audited review workflows.
         provenance: [ev-phenom-fraud-detection-engine]
       - text: >-
-          Built the configuration service behind it in FastAPI on MongoDB — a
-          global signal registry with versioned definitions, feature groups,
-          audience rules and tenant-scoped overrides — exposed through an
-          internal resolve endpoint that Temporal workflows call at workflow
-          start, replacing hardcoded per-tenant flags as the single source of
-          truth for what runs.
+          Built the platform underneath it — a FastAPI on MongoDB configuration
+          service with a versioned signal registry, resolved by Temporal
+          workflows at workflow start in place of hardcoded per-tenant flags,
+          and the self-hosted inference service as Helm releases with
+          OpenTelemetry instrumentation feeding metrics dashboards; raised one
+          service's test coverage from 63% to over 90%.
         provenance: [ev-phenom-frm-service, ev-phenom-frm-decides-what-runs,
-                     ev-phenom-fraud-policy-plane]
-      - text: >-
-          Ran the self-hosted inference service as a deployable platform — Helm
-          releases, custom chat templates per model, and OpenTelemetry
-          instrumentation feeding metrics dashboards — and took one service's
-          test coverage from 63% to over 90% while clearing static-analysis code
-          smells.
-        provenance: [ev-phenom-inference-platform, ev-phenom-analytics-service]
+                     ev-phenom-inference-platform, ev-phenom-analytics-service]
 
   - role_id: blueleaves-fullstack
     bullets:
@@ -83,6 +76,13 @@ experience:
           REST APIs, with role-based access control and CI/CD, cutting manual
           operational errors by roughly 90%.
         provenance: [ev-blueleaves-fullstack-delivery, ev-blueleaves-frontend]
+      - text: >-
+          Built data-driven analytics on large-scale transactional and
+          stock-movement data — demand forecasting, sales-trend and inventory
+          models that surfaced discrepancies and improved procurement and
+          replenishment decisions across 5+ locations and 10,000+ monthly
+          transactions.
+        provenance: [ev-blueleaves-analytics]
 
 projects:
   - name: IndexNotes — AI Knowledge Graph for Scientific Papers
