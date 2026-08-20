@@ -155,6 +155,46 @@ def test_requirement_kinds_are_separated():
     assert {"required", "nice_to_have", "responsibility"} <= kinds
 
 
+# Coinbase's careers page renders every bullet as a bare "-" with the text on
+# the NEXT line, and closes with inline-bulleted perks. Both together meant the
+# real requirements vanished and "Fertility Benefits" scored the resume.
+JD_DANGLING = """\
+Required Skills and Experience:
+
+-
+2+ years of professional experience in machine learning and software engineering.
+
+-
+Strong proficiency in Python and the ability to write well-tested production code.
+
+Benefits for India employees
+
+- Employee Stock Purchase Plan (ESPP)
+
+- Fertility Benefits
+
+- Generous Time Off/Leave Policy
+"""
+
+
+def test_bullet_marker_alone_on_its_line_still_yields_a_requirement():
+    texts = [r["text"] for r in extract_requirements(JD_DANGLING)]
+    assert any(t.startswith("2+ years of professional experience") for t in texts)
+    assert any("Strong proficiency in Python" in t for t in texts)
+
+
+def test_benefits_boilerplate_is_not_a_requirement():
+    texts = " ".join(r["text"] for r in extract_requirements(JD_DANGLING))
+    for junk in ("Fertility", "ESPP", "Leave Policy"):
+        assert junk not in texts
+
+
+def test_runs_of_empty_bullet_markers_do_not_glue_together():
+    """Scrape residue: several bare "-" lines in a row must produce nothing,
+    not swallow the next real line into a phantom requirement."""
+    assert extract_requirements("-\n-\n-\n\n-\n") == []
+
+
 def test_known_gap_does_not_veto_real_evidence(prof):
     """'LangChain, LangGraph, or DSPy' is MET — two of three are shipped —
     even though DSPy is a known gap. The gap rides along as a caveat."""

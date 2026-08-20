@@ -31,6 +31,19 @@ REQ_SECTION_RE = re.compile(
     r"who you are|must have|skills|experience|you should have|about you)"
 )
 NICE_RE = re.compile(r"(?i)\b(nice to have|preferred|bonus|plus|desirable)\b")
+# A bullet marker alone on its line, with the text on the NEXT line.
+LONE_MARKER_RE = re.compile(r"^\s*(?:[-*•▪]|\d+[.)])\s*$")
+# Tail-of-page sections that never state a candidate requirement. Their bullets
+# are perks and legal notices; counted as requirements they drown the real ones
+# and hand `jt ats` a keyword list of "fertility", "espp", "dental".
+BOILERPLATE_SECTION_RE = re.compile(
+    r"(?i)^(benefits|perks|what we offer|our benefits|disclosures|"
+    r"pay transparency|compensation and benefits|equal opportunity|"
+    r"legal|privacy)")
+# Chrome that survives a scrape of a careers page.
+BOILERPLATE_LINE_RE = re.compile(
+    r"(?i)^(skip to |apply now|back to jobs|sign in|get started|"
+    r"view employee rights|by submitting your application)")
 # Responsibilities are neither hard requirements nor nice-to-haves: they say
 # what the job IS. They belong in keyword coverage but must not be counted as
 # unmet qualifications, which would make every fit score look worse than it is.
@@ -82,11 +95,41 @@ def rank_evidence(prof: dict, jd_text: str) -> list[tuple[dict, float, list[str]
     return ranked
 
 
+def join_dangling_markers(lines: list[str]) -> list[str]:
+    """Rejoin a bullet whose marker sits alone on its own line.
+
+    Some career pages (Coinbase's, for one) render every requirement as a bare
+    "-" with the text on the following line. The marker line carries no text
+    and the text line carries no marker, so REQ_LINE_RE matched neither and the
+    entire "Required Skills and Experience" block vanished — leaving the
+    inline-bulleted benefits boilerplate at the foot of the page as the JD's
+    only "requirements", which then scored the resume.
+    """
+    out: list[str] = []
+    skip = False
+    for i, line in enumerate(lines):
+        if skip:
+            skip = False
+            continue
+        nxt = lines[i + 1] if i + 1 < len(lines) else ""
+        # Only a marker with nothing on it, and only when the next line is
+        # real text rather than another marker — runs of empty "-" are scrape
+        # residue and must stay unglued.
+        if (LONE_MARKER_RE.match(line) and nxt.strip()
+                and not LONE_MARKER_RE.match(nxt)
+                and not REQ_LINE_RE.match(nxt)):
+            out.append(f"- {nxt.strip()}")
+            skip = True
+        else:
+            out.append(line)
+    return out
+
+
 def extract_requirements(jd_text: str) -> list[dict]:
     """Pull requirement bullets out of a JD, flagging required vs nice-to-have."""
-    lines = jd_text.splitlines()
+    lines = join_dangling_markers(jd_text.splitlines())
     reqs: list[dict] = []
-    in_nice = in_resp = False
+    in_nice = in_resp = in_skip = False
     for i, line in enumerate(lines):
         stripped = line.strip()
         is_bullet = bool(REQ_LINE_RE.match(line))
@@ -96,20 +139,28 @@ def extract_requirements(jd_text: str) -> list[dict]:
         # block gets skipped as if it were a heading.
         is_heading = (not is_bullet and len(stripped) < 60
                       and stripped.endswith((":", "")) is not None)
+        # Checked before the requirement headings: "Benefits" and "Disclosures"
+        # must win even though a perks list can mention "experience".
+        if is_heading and BOILERPLATE_SECTION_RE.search(stripped):
+            in_nice = in_resp = False
+            in_skip = True
+            continue
         if is_heading and REQ_SECTION_RE.search(stripped):
-            in_nice, in_resp = bool(NICE_RE.search(stripped)), False
+            in_nice, in_resp, in_skip = bool(NICE_RE.search(stripped)), False, False
             continue
         if is_heading and NICE_RE.search(stripped):
-            in_nice, in_resp = True, False
+            in_nice, in_resp, in_skip = True, False, False
             continue
         if is_heading and RESP_RE.search(stripped):
-            in_nice, in_resp = False, True
+            in_nice, in_resp, in_skip = False, True, False
             continue
         m = REQ_LINE_RE.match(line)
         if not m:
             continue
         text = m.group(1).strip()
         if len(text) < 12 or text.endswith(":"):
+            continue
+        if in_skip or BOILERPLATE_LINE_RE.match(text):
             continue
         # Absorb indented wrapped continuation lines so a requirement isn't
         # truncated mid-sentence ("...at least 2 years building" / "production
