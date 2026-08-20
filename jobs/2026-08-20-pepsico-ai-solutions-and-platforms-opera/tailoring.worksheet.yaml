@@ -145,11 +145,12 @@ requirements:
   kind: responsibility
 - requirement: Automate onboarding for new agent use cases (templates, scaffolding, configuration
     checks)
-  status: partial
-  evidence: ev-phenom-chatbotcx-architecture
+  status: met
+  evidence: ev-phenom-frm-decides-what-runs
   caveat: null
   matched_terms:
-  - agent
+  - checks
+  - configuration
   known_gap: null
   gap_note: null
   kind: responsibility
@@ -263,10 +264,12 @@ requirements:
   kind: required
 - requirement: Familiarity with observability fundamentals (logs/metrics/traces) and production
     troubleshooting
-  status: partial
-  evidence: ev-phenom-chatbotcx-architecture
+  status: met
+  evidence: ev-phenom-frm-tenancy-ops
   caveat: null
   matched_terms:
+  - logs
+  - observability
   - production
   known_gap: null
   gap_note: null
@@ -482,6 +485,167 @@ evidence_ranked:
   - model
   probe: What does your judge rubric look like and how did you validate the judge itself?
     What happens on a release that regresses one node out of twelve?
+- id: ev-phenom-frm-tenancy-ops
+  score: 2.121
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Owned tenant provisioning and delivery for the platform — provision and unprovision
+    APIs with region-scoped tenant listing, containerised deployment via Docker and Helm across
+    staging environments, and production support debugging by querying service logs in ClickHouse
+    to resolve customer tickets.
+  metrics: {}
+  allowed_skills:
+  - multi-tenancy
+  - provisioning
+  - docker
+  - helm
+  - helm-charts
+  - deployment
+  - environment-configuration
+  - clickhouse
+  - log-analysis
+  - production-support
+  - debugging
+  - sre
+  emphasize:
+  - Docker
+  - Helm
+  - ClickHouse
+  jd_overlap:
+  - analysis
+  - apis
+  - configuration
+  - deployment
+  - environment
+  - environments
+  - incident
+  - logs
+  - observability
+  - onboarding
+  - platform
+  - production
+  probe: What does provisioning a tenant actually create, and how do you unprovision one safely?
+    Walk me through a ticket you closed from the ClickHouse logs.
+- id: ev-phenom-frm-service
+  score: 1.997
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built the fraud-risk configuration service greenfield in FastAPI on MongoDB — signal
+    registry, feature groups, audience and scope definitions, and tenant-scoped overrides
+    — exposed through an internal resolve endpoint that Temporal workflows call at workflow
+    start to decide which fraud signals apply to a candidate and job.
+  metrics: {}
+  allowed_skills:
+  - fastapi
+  - python
+  - mongodb
+  - rest-api
+  - api-design
+  - backend-architecture
+  - multi-tenancy
+  - configuration-management
+  - temporal
+  - workflow-orchestration
+  - greenfield-development
+  - service-design
+  emphasize:
+  - FastAPI
+  - MongoDB
+  - Temporal
+  jd_overlap:
+  - configuration
+  - detection
+  - distributed
+  - engineer
+  - engineering
+  - internal
+  - microservices
+  - orchestration
+  - platform
+  - python
+  - registry
+  - safety
+  probe: Why an internal resolve call at workflow start rather than the workflow reading config
+    itself? What happens to a running workflow when the config changes underneath it?
+- id: ev-phenom-inference-platform
+  score: 1.807
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Ran the self-hosted LLM inference service as a deployable platform — Helm-packaged
+    releases, custom chat templates per model, reasoning-model flags, and OpenTelemetry instrumentation
+    feeding a metrics dashboard so per-model latency and throughput were visible in production.
+  metrics: {}
+  allowed_skills:
+  - llm-serving
+  - vllm
+  - helm
+  - helm-charts
+  - docker
+  - deployment
+  - opentelemetry
+  - observability
+  - metrics
+  - monitoring
+  - chat-templates
+  - model-configuration
+  - mlops
+  - platform-engineering
+  emphasize:
+  - Helm
+  - OpenTelemetry
+  jd_overlap:
+  - dashboards
+  - deployment
+  - engineering
+  - latency
+  - metrics
+  - ml
+  - model
+  - monitoring
+  - observability
+  - opentelemetry
+  - per
+  - platform
+  probe: What do the OpenTelemetry spans actually cover on an inference request, and what
+    did the dashboard change about how you operate it?
+- id: ev-phenom-frm-decides-what-runs
+  score: 1.594
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Merged fraud-risk resolve into the interview-intelligence Temporal workflows and
+    removed the Policy Engine gating that had decided which checks to run, making the configuration
+    service the single source of truth for fraud enablement and replacing hardcoded per-tenant
+    flags with audience rules resolved per candidate.
+  metrics: {}
+  allowed_skills:
+  - temporal
+  - workflow-orchestration
+  - system-integration
+  - refactoring
+  - backend-architecture
+  - feature-flags
+  - policy-engine
+  - cross-repo-migration
+  - single-source-of-truth
+  emphasize:
+  - single source of truth
+  - Temporal
+  - Policy Engine
+  jd_overlap:
+  - checks
+  - configuration
+  - distributed
+  - engineering
+  - integration
+  - into
+  - orchestration
+  - per
+  - platform
+  - run
+  - workflows
+  probe: What broke when you took the Policy Engine out of that path, and how did you roll
+    it out without stopping live interviews? How do you know a tenant's behaviour did not
+    change silently?
 - id: ev-phenom-finetune-serving
   score: 1.485
   strength: core
@@ -646,6 +810,55 @@ evidence_ranked:
   - tool
   probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
     JSON mode or retry-on-parse-failure?
+- id: ev-phenom-qwen-production-hardening
+  score: 1.278
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Hardened the fine-tuned Qwen deployment for production serving — a custom Jinja2
+    chat template disabling the model's thinking mode, required tool-choice and temperature
+    pinned at 0.1 for deterministic tool calls, and eager execution forced because CUDA graphs
+    break on the model's hybrid Mamba-attention architecture — then held it to a golden baseline
+    of 1.0s median and 1.4s P95 latency with zero failures across 5,510 requests, taking the
+    service's test coverage from 7% to 78%.
+  metrics:
+    p50_latency: 1.0s
+    p95_latency: 1.4s
+    requests_without_failure: 5,510
+    temperature: '0.1'
+    test_coverage_before: 7%
+    test_coverage_after: 78%
+  allowed_skills:
+  - vllm
+  - model-serving
+  - inference-optimization
+  - latency-optimization
+  - jinja2
+  - chat-templates
+  - tool-calling
+  - cuda
+  - gpu-inference
+  - load-testing
+  - benchmarking
+  - regression-testing
+  - test-coverage
+  - production-readiness
+  emphasize:
+  - 1.4s
+  - 5,510
+  - 7% to 78%
+  jd_overlap:
+  - calls
+  - deployment
+  - execution
+  - gpu
+  - latency
+  - model
+  - production
+  - readiness
+  - testing
+  - tool
+  probe: Why does disabling thinking mode matter for tool calls, and what did --enforce-eager
+    cost you in throughput? What does the golden baseline gate — is it wired into CI?
 - id: ev-blueleaves-analytics
   score: 1.24
   strength: supporting
@@ -678,6 +891,37 @@ evidence_ranked:
   - python
   - reporting
   probe: What forecasting method, and what did you measure it against?
+- id: ev-blueleaves-frontend
+  score: 1.061
+  strength: strong
+  role: blueleaves-fullstack
+  claim: Sole engineer on the whole stack — built the CRM and the other internal tools as
+    React and Vite web applications, owning the interface as well as the services behind it.
+  metrics: {}
+  allowed_skills:
+  - react
+  - vite
+  - javascript
+  - frontend
+  - full-stack
+  - ui-development
+  - crm
+  - internal-tools
+  - sole-ownership
+  - spa
+  emphasize:
+  - React
+  - Vite
+  - Sole engineer
+  jd_overlap:
+  - applications
+  - dashboards
+  - engineer
+  - internal
+  - operations
+  - services
+  probe: What did you get wrong building a CRM alone that a second engineer would have caught?
+    How did you keep the UI maintainable without review?
 - id: ev-proj-indexnotes
   score: 1.055
   strength: strong
@@ -712,129 +956,6 @@ evidence_ranked:
   - retrieval
   probe: How do you keep a local quantized model's extractions consistent enough to build
     a graph on?
-- id: ev-phenom-fraud-policy-plane
-  score: 1.019
-  strength: strong
-  role: phenom-ai-llm-eng-ii
-  claim: 'Designed the configuration and policy plane for an enterprise hiring-integrity /
-    fraud-risk platform: a global fraud-signal registry with feature groups, tenant-scoped
-    overrides, and applicable-context gating, exposed through a resolve API consumed by the
-    reviewer console and the live detection pipeline — including a role-gated signal-lifecycle
-    state machine, versioned definitions that keep downstream consumers stable across config
-    changes, and CEL-evaluated decision policies (score / condition → action).'
-  metrics: {}
-  allowed_skills:
-  - system-design
-  - policy-engine
-  - multi-tenancy
-  - feature-flags
-  - cel
-  - api-design
-  - versioning
-  - rbac
-  - state-machine
-  - fraud-detection
-  - risk-scoring
-  - backend-architecture
-  emphasize:
-  - hiring-integrity / fraud-risk platform
-  - resolve API
-  jd_overlap:
-  - configuration
-  - detection
-  - engineering
-  - machine
-  - management
-  - platform
-  - registry
-  - safety
-  - versioning
-  probe: How do versioned definitions avoid breaking live consumers? Why CEL over a DSL you
-    own? How are tenant overrides resolved and cached?
-- id: ev-proj-indexnotes-schema
-  score: 0.78
-  strength: supporting
-  role: project
-  claim: Designed a Neo4j schema enabling multi-hop graph traversal and cross-document retrieval
-    across scientific domains.
-  metrics: {}
-  allowed_skills:
-  - neo4j
-  - graph-schema-design
-  - cypher
-  - multi-hop-retrieval
-  - data-modeling
-  emphasize: []
-  jd_overlap:
-  - data
-  - domains
-  - enabling
-  - retrieval
-  probe: What does a multi-hop query actually look like here?
-- id: ev-phenom-modernbert-nlu
-  score: 0.338
-  strength: strong
-  role: phenom-ai-llm-eng-ii
-  claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
-    from 87% to 97%.
-  metrics:
-    nlu_accuracy_before: 87%
-    nlu_accuracy_after: 97%
-  allowed_skills:
-  - pytorch
-  - modernbert
-  - bert
-  - transformers
-  - multi-task-learning
-  - intent-classification
-  - named-entity-recognition
-  - nlu
-  - fine-tuning
-  - model-training
-  emphasize:
-  - ModernBERT
-  jd_overlap:
-  - accuracy
-  - model
-  probe: Why multi-task over two separate heads? Where did the 10 points come from — data,
-    architecture, or labels?
-- id: ev-proj-northstar
-  score: 0.316
-  strength: strong
-  role: project
-  claim: Built and shipped a companion app for the Royal Enfield Tripper Dash, delivering
-    turn-by-turn navigation to the bike's connected instrument cluster and growing an organic
-    user base without paid distribution.
-  metrics:
-    distribution: organic, no paid acquisition
-  allowed_skills:
-  - android
-  - kotlin
-  - bluetooth-low-energy
-  - maps-sdk
-  - mobile-development
-  - reverse-engineering
-  - embedded-integration
-  - product-shipping
-  emphasize: []
-  jd_overlap:
-  - app
-  - instrument
-  probe: How did you talk to a cluster you had no spec for?
-- id: ev-proj-northstar-traction
-  score: 0.236
-  strength: strong
-  role: project
-  claim: Traction drew Royal Enfield's attention directly, leading to an on-site collaboration
-    visit at their HQ to discuss the work.
-  metrics: {}
-  allowed_skills:
-  - product-shipping
-  - stakeholder-communication
-  emphasize: []
-  jd_overlap:
-  - validation
-  probe: What came of the visit?
 skill_inventory:
 - name: Languages
   items:
@@ -857,6 +978,7 @@ skill_inventory:
 - name: Eval, Observability & Guardrails
   items:
   - LLM Evaluation (LLM-as-judge, pass@k)
+  - OpenTelemetry
   - Constrained Decoding (XGrammar)
   - Schema Validation
   - Langfuse
@@ -870,6 +992,7 @@ skill_inventory:
   - Transformers (BERT/ModernBERT)
   - HuggingFace PEFT
   - Unsloth
+  - Physics-Informed Neural Networks
   - vLLM
   - Embeddings / Vector Search (FAISS)
   - Neo4j
@@ -883,14 +1006,27 @@ skill_inventory:
   - REST APIs
   - Microservices
   - Docker
+  - Helm
+  - Temporal
+  - Kafka
   - AWS (EC2/S3/SageMaker)
   - GitHub Actions
   - CI/CD
   - Linux
+- name: Frontend & Auth
+  items:
+  - React
+  - Vite
+  - Micro-Frontends
+  - Keycloak
+  - OAuth / SSO
+  - Design Systems
+  - Role-Based Access Control
 - name: Databases
   items:
   - PostgreSQL
   - Neo4j
   - MongoDB
+  - ClickHouse
   - Redis
   - Firebase
