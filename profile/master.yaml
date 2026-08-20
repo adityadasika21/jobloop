@@ -344,6 +344,136 @@ evidence:
     strength: supporting
     probe: "What does a multi-hop query actually look like here?"
 
+  - id: ev-phenom-frm-service
+    role: phenom-ai-llm-eng-ii
+    claim: Built the fraud-risk configuration service greenfield in FastAPI on
+      MongoDB — signal registry, feature groups, audience and scope definitions,
+      and tenant-scoped overrides — exposed through an internal resolve endpoint
+      that Temporal workflows call at workflow start to decide which fraud signals
+      apply to a candidate and job.
+    skills: [fastapi, python, mongodb, rest-api, api-design, backend-architecture,
+      multi-tenancy, configuration-management, temporal, workflow-orchestration,
+      greenfield-development, service-design]
+    metrics: {}
+    keywords: [backend engineer, fastapi, python, rest api, api design, microservices,
+      mongodb, nosql, configuration service, control plane, multi-tenant, tenant
+        configuration, workflow orchestration, temporal, distributed systems,
+      platform engineering, greenfield, service ownership, trust and safety, fraud
+        detection, hr tech]
+    strength: core
+    emphasize: [FastAPI, MongoDB, Temporal]
+    probe: Why an internal resolve call at workflow start rather than the workflow
+      reading config itself? What happens to a running workflow when the config
+      changes underneath it?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Two months (mid-June to 2026-08-20) building Fraud Risk Management
+      end to end at Phenom: greenfield FastAPI/Mongo config-plane service with
+      a signal registry, feature groups, audiences/scopes and tenant overrides,
+      exposed as /internal/resolve and consumed by Temporal workflows at workflow
+      start; merged that resolve into chatbot-interview-intelligence''s Temporal
+      workflows and removed Policy Engine gating so FRM decides what runs; built
+      the React admin UI (feature store, audiences, tenants, case/action centre)
+      over the chatbot-authentication service with Keycloak; tenant provisioning
+      with dcRegion filtering; Docker/Helm staging deploys and ClickHouse log
+      debugging for production support tickets. He owns FRM backend, orchestration
+      and rules-engine; other people own interview-intelligence and its workflows.'
+
+  - id: ev-phenom-frm-decides-what-runs
+    role: phenom-ai-llm-eng-ii
+    claim: Merged fraud-risk resolve into the interview-intelligence Temporal
+      workflows and removed the Policy Engine gating that had decided which checks
+      to run, making the configuration service the single source of truth for
+      fraud enablement and replacing hardcoded per-tenant flags with audience
+      rules resolved per candidate.
+    skills: [temporal, workflow-orchestration, system-integration, refactoring,
+      backend-architecture, feature-flags, policy-engine, cross-repo-migration,
+      single-source-of-truth]
+    metrics: {}
+    keywords: [workflow orchestration, temporal, integration, migration, decoupling,
+      feature flags, configuration driven, policy engine, rules engine, refactoring,
+      legacy replacement, distributed systems, backend, platform engineering]
+    strength: core
+    emphasize: [single source of truth, Temporal, Policy Engine]
+    probe: What broke when you took the Policy Engine out of that path, and how
+      did you roll it out without stopping live interviews? How do you know a
+      tenant's behaviour did not change silently?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Two months (mid-June to 2026-08-20) building Fraud Risk Management
+      end to end at Phenom: greenfield FastAPI/Mongo config-plane service with
+      a signal registry, feature groups, audiences/scopes and tenant overrides,
+      exposed as /internal/resolve and consumed by Temporal workflows at workflow
+      start; merged that resolve into chatbot-interview-intelligence''s Temporal
+      workflows and removed Policy Engine gating so FRM decides what runs; built
+      the React admin UI (feature store, audiences, tenants, case/action centre)
+      over the chatbot-authentication service with Keycloak; tenant provisioning
+      with dcRegion filtering; Docker/Helm staging deploys and ClickHouse log
+      debugging for production support tickets. He owns FRM backend, orchestration
+      and rules-engine; other people own interview-intelligence and its workflows.'
+
+  - id: ev-phenom-frm-admin-ui
+    role: phenom-ai-llm-eng-ii
+    claim: Built the fraud administration front end in React — feature store,
+      audience rules, tenant provisioning, and a case and action centre for reviewers
+      — authenticated through the chatbot authentication service with Keycloak,
+      and built to an existing design system and Figma specs.
+    skills: [react, javascript, frontend, ui-development, design-systems, keycloak,
+      oauth, authentication, sso, csp, full-stack, figma]
+    metrics: {}
+    keywords: [react, frontend, full stack, ui, admin console, internal tools,
+      design system, figma, authentication, sso, keycloak, oauth, access control,
+      reviewer workflow, case management, dashboards]
+    strength: strong
+    emphasize: [React, Keycloak]
+    probe: How does the front end get a token, and what happens when it expires
+      mid-session? What did the Content-Security-Policy and iframe work actually
+      fix?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Two months (mid-June to 2026-08-20) building Fraud Risk Management
+      end to end at Phenom: greenfield FastAPI/Mongo config-plane service with
+      a signal registry, feature groups, audiences/scopes and tenant overrides,
+      exposed as /internal/resolve and consumed by Temporal workflows at workflow
+      start; merged that resolve into chatbot-interview-intelligence''s Temporal
+      workflows and removed Policy Engine gating so FRM decides what runs; built
+      the React admin UI (feature store, audiences, tenants, case/action centre)
+      over the chatbot-authentication service with Keycloak; tenant provisioning
+      with dcRegion filtering; Docker/Helm staging deploys and ClickHouse log
+      debugging for production support tickets. He owns FRM backend, orchestration
+      and rules-engine; other people own interview-intelligence and its workflows.'
+
+  - id: ev-phenom-frm-tenancy-ops
+    role: phenom-ai-llm-eng-ii
+    claim: Owned tenant provisioning and delivery for the platform — provision
+      and unprovision APIs with region-scoped tenant listing, containerised deployment
+      via Docker and Helm across staging environments, and production support
+      debugging by querying service logs in ClickHouse to resolve customer tickets.
+    skills: [multi-tenancy, provisioning, docker, helm, helm-charts,
+      deployment, environment-configuration, clickhouse, log-analysis, production-support,
+      debugging, sre]
+    metrics: {}
+    keywords: [multi-tenant, provisioning, tenant onboarding, docker, helm, deployment,
+      staging, environment configuration, devops, sre, observability, log analysis,
+      clickhouse, production support, incident, debugging, on-call]
+    strength: strong
+    emphasize: [Docker, Helm, ClickHouse]
+    probe: What does provisioning a tenant actually create, and how do you unprovision
+      one safely? Walk me through a ticket you closed from the ClickHouse logs.
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Two months (mid-June to 2026-08-20) building Fraud Risk Management
+      end to end at Phenom: greenfield FastAPI/Mongo config-plane service with
+      a signal registry, feature groups, audiences/scopes and tenant overrides,
+      exposed as /internal/resolve and consumed by Temporal workflows at workflow
+      start; merged that resolve into chatbot-interview-intelligence''s Temporal
+      workflows and removed Policy Engine gating so FRM decides what runs; built
+      the React admin UI (feature store, audiences, tenants, case/action centre)
+      over the chatbot-authentication service with Keycloak; tenant provisioning
+      with dcRegion filtering; Docker/Helm staging deploys and ClickHouse log
+      debugging for production support tickets. He owns FRM backend, orchestration
+      and rules-engine; other people own interview-intelligence and its workflows.'
+
   # <<< jt evidence add
   # New units are spliced in immediately above this marker. It exists so
   # master.yaml can be appended to without a YAML round-trip, which would
@@ -375,9 +505,13 @@ skill_groups:
             "Production MLOps"]
   - name: Backend & Infra
     items: [FastAPI, Node.js, Express.js, "REST APIs", Microservices, Docker,
-            "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux]
+            Helm, Temporal, "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD,
+            Linux]
+  - name: Frontend & Auth
+    items: [React, Keycloak, "OAuth / SSO", "Design Systems",
+            "Role-Based Access Control"]
   - name: Databases
-    items: [PostgreSQL, Neo4j, MongoDB, Redis, Firebase]
+    items: [PostgreSQL, Neo4j, MongoDB, ClickHouse, Redis, Firebase]
 
 # -----------------------------------------------------------------------------
 # KNOWN GAPS — things JDs ask for that are NOT in the evidence above.

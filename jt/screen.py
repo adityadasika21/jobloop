@@ -215,6 +215,16 @@ def extract_requirements(jd_text: str) -> list[dict]:
     return out[:40]
 
 
+# Words that appear in a requirement without discriminating anything. A hit on
+# one of these is not evidence: "Kubernetes and service mesh experience"
+# matched only on "service", which was enough to upgrade a declared gap to a
+# partial. Kubernetes is exactly the thing known_gaps says was never owned.
+_WEAK_MATCH = frozenset("""
+service services system systems platform platforms experience tool tools
+stack engineering development software solution solutions technology technologies
+""".split())
+
+
 def match_requirement(req_text: str, prof: dict,
                       threshold_full: int = 2) -> dict:
     """Classify one requirement as met / partial / gap against the evidence."""
@@ -250,7 +260,11 @@ def match_requirement(req_text: str, prof: dict,
         # the report so it can be spoken to in an interview.
         pass
     elif named_gap and status == "partial":
-        status = "partial"
+        # A requirement that names a declared gap is not rescued by an
+        # incidental generic word. Real overlap keeps it partial; filler
+        # does not.
+        if not [h for h in best_hits if h not in _WEAK_MATCH]:
+            status = "gap"
     elif named_gap:
         status = "gap"
 
