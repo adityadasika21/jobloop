@@ -474,6 +474,125 @@ evidence:
       debugging for production support tickets. He owns FRM backend, orchestration
       and rules-engine; other people own interview-intelligence and its workflows.'
 
+  - id: ev-phenom-analytics-service
+    role: phenom-ai-llm-eng-ii
+    claim: Built conversation analytics APIs covering both live-agent and WhatsApp
+      channels, raised the service's test coverage from 63% to over 90% while
+      clearing static-analysis code smells, and migrated the service to FastAPI.
+    skills: [python, fastapi, rest-api, api-design, analytics, testing, test-coverage,
+      pytest, static-analysis, code-quality, refactoring, service-migration]
+    metrics: {test_coverage_before: 63%, test_coverage_after: over 90%}
+    keywords: [backend, python, fastapi, rest api, api development, analytics,
+      reporting, conversation analytics, unit testing, test coverage, code quality,
+      static analysis, sonarqube, refactoring, migration, technical debt, maintainability]
+    strength: strong
+    emphasize: [63% to over 90%, FastAPI]
+    probe: What was untested at 63%, and did raising coverage actually catch anything?
+      Why migrate to FastAPI rather than leave it?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Mar-Aug 2026 at Phenom, alongside the agent and fraud work:
+      chatbot-analytics conversation APIs for agent and WhatsApp channels, test
+      coverage raised from 63% to over 90% and Sonar code smells cleared, plus
+      a FastAPI migration; chatbot-hub WhatsApp business messaging - templates,
+      the 24-hour session window, from-address lookup API, questionnaire id from
+      job; the chatbot-llm-inference-engine deployed by Helm with custom chat
+      templates, reasoning-model flags (DeepSeek R1), OpenTelemetry instrumentation
+      and a metrics dashboard; micro-frontend widget surfaces - summary API, integrity-check
+      modal, live-signals aggregation, typeahead locations, video player in a
+      modal; NLU work with Locust load tests, PII skip/classify and retraining
+      on failed intents; Kafka event-handler fixes.'
+
+  - id: ev-phenom-whatsapp-channel
+    role: phenom-ai-llm-eng-ii
+    claim: Delivered WhatsApp as a conversational channel — message templates,
+      the 24-hour customer-service window the API enforces, and a from-address
+      lookup API — so the assistant could reach candidates outside the web widget.
+    skills: [whatsapp-business-api, messaging, third-party-integration, rest-api,
+      api-design, nodejs, python, conversational-channels]
+    metrics: {session_window: "24-hour customer-service window"}
+    keywords: [whatsapp, messaging, business messaging, notifications, third party
+        integration, api integration, conversational ai, omnichannel, customer
+        engagement, templates, webhooks]
+    strength: supporting
+    emphasize: [WhatsApp]
+    probe: What actually happens when the 24-hour window closes mid-conversation,
+      and how did you handle template approval?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Mar-Aug 2026 at Phenom, alongside the agent and fraud work:
+      chatbot-analytics conversation APIs for agent and WhatsApp channels, test
+      coverage raised from 63% to over 90% and Sonar code smells cleared, plus
+      a FastAPI migration; chatbot-hub WhatsApp business messaging - templates,
+      the 24-hour session window, from-address lookup API, questionnaire id from
+      job; the chatbot-llm-inference-engine deployed by Helm with custom chat
+      templates, reasoning-model flags (DeepSeek R1), OpenTelemetry instrumentation
+      and a metrics dashboard; micro-frontend widget surfaces - summary API, integrity-check
+      modal, live-signals aggregation, typeahead locations, video player in a
+      modal; NLU work with Locust load tests, PII skip/classify and retraining
+      on failed intents; Kafka event-handler fixes.'
+
+  - id: ev-phenom-inference-platform
+    role: phenom-ai-llm-eng-ii
+    claim: Ran the self-hosted LLM inference service as a deployable platform
+      — Helm-packaged releases, custom chat templates per model, reasoning-model
+      flags, and OpenTelemetry instrumentation feeding a metrics dashboard so
+      per-model latency and throughput were visible in production.
+    skills: [llm-serving, vllm, helm, helm-charts, docker, deployment, opentelemetry,
+      observability, metrics, monitoring, chat-templates, model-configuration,
+      mlops, platform-engineering]
+    metrics: {}
+    keywords: [llm serving, self-hosted llm, model deployment, inference, mlops,
+      llmops, helm, helm charts, release packaging, observability, opentelemetry, tracing,
+      metrics, monitoring, dashboards, platform engineering, production ml, reasoning
+        models]
+    strength: strong
+    emphasize: [Helm, OpenTelemetry]
+    probe: What do the OpenTelemetry spans actually cover on an inference request,
+      and what did the dashboard change about how you operate it?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Mar-Aug 2026 at Phenom, alongside the agent and fraud work:
+      chatbot-analytics conversation APIs for agent and WhatsApp channels, test
+      coverage raised from 63% to over 90% and Sonar code smells cleared, plus
+      a FastAPI migration; chatbot-hub WhatsApp business messaging - templates,
+      the 24-hour session window, from-address lookup API, questionnaire id from
+      job; the chatbot-llm-inference-engine deployed by Helm with custom chat
+      templates, reasoning-model flags (DeepSeek R1), OpenTelemetry instrumentation
+      and a metrics dashboard; micro-frontend widget surfaces - summary API, integrity-check
+      modal, live-signals aggregation, typeahead locations, video player in a
+      modal; NLU work with Locust load tests, PII skip/classify and retraining
+      on failed intents; Kafka event-handler fixes.'
+
+  - id: ev-phenom-widget-frontend
+    role: phenom-ai-llm-eng-ii
+    claim: Built candidate-facing surfaces in the micro-frontend widget — a conversation
+      summary API and view, an integrity-check modal, live-signal aggregation,
+      location typeahead, and in-modal video playback.
+    skills: [react, micro-frontend, frontend, javascript, typescript, ui-development,
+      rest-api, component-design, video-playback]
+    metrics: {}
+    keywords: [frontend, react, micro frontend, mfe, widget, ui, components, user
+        experience, typeahead, autocomplete, modal, video, embed, candidate experience,
+      full stack]
+    strength: supporting
+    emphasize: [micro-frontend]
+    probe: Why a micro-frontend rather than a component in the host app, and how
+      do you keep the widget's bundle from bloating the page it embeds into?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'Mar-Aug 2026 at Phenom, alongside the agent and fraud work:
+      chatbot-analytics conversation APIs for agent and WhatsApp channels, test
+      coverage raised from 63% to over 90% and Sonar code smells cleared, plus
+      a FastAPI migration; chatbot-hub WhatsApp business messaging - templates,
+      the 24-hour session window, from-address lookup API, questionnaire id from
+      job; the chatbot-llm-inference-engine deployed by Helm with custom chat
+      templates, reasoning-model flags (DeepSeek R1), OpenTelemetry instrumentation
+      and a metrics dashboard; micro-frontend widget surfaces - summary API, integrity-check
+      modal, live-signals aggregation, typeahead locations, video player in a
+      modal; NLU work with Locust load tests, PII skip/classify and retraining
+      on failed intents; Kafka event-handler fixes.'
+
   # <<< jt evidence add
   # New units are spliced in immediately above this marker. It exists so
   # master.yaml can be appended to without a YAML round-trip, which would
@@ -495,7 +614,7 @@ skill_groups:
             "Context-Window Management", "RAG & Graph RAG",
             "LLM Fine-Tuning (QLoRA, SFT)"]
   - name: "Eval, Observability & Guardrails"
-    items: ["LLM Evaluation (LLM-as-judge, pass@k)",
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry,
             "Constrained Decoding (XGrammar)", "Schema Validation", Langfuse,
             LiteLLM, "Model Monitoring", "Hallucination Mitigation",
             "Role-Based Access Control"]
@@ -505,10 +624,10 @@ skill_groups:
             "Production MLOps"]
   - name: Backend & Infra
     items: [FastAPI, Node.js, Express.js, "REST APIs", Microservices, Docker,
-            Helm, Temporal, "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD,
-            Linux]
+            Helm, Temporal, Kafka, "AWS (EC2/S3/SageMaker)", "GitHub Actions",
+            CI/CD, Linux]
   - name: Frontend & Auth
-    items: [React, Keycloak, "OAuth / SSO", "Design Systems",
+    items: [React, "Micro-Frontends", Keycloak, "OAuth / SSO", "Design Systems",
             "Role-Based Access Control"]
   - name: Databases
     items: [PostgreSQL, Neo4j, MongoDB, ClickHouse, Redis, Firebase]
