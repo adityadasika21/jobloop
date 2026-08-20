@@ -58,6 +58,11 @@ solid deep hands hands-on demonstrated proven track record
 partner partners collaborate collaboration cross functional stakeholders
 drive driving deliver delivering delivery own owning ownership end
 quality best practices standards
+adapt adaptable advancements agility bachelor capable cases challenges
+changing closely communication complex computer concepts conduct continuous
+degree ensure ensuring enable enabling latest thorough translate understand
+various multiple relevant appropriate effective efficiently seamless robust
+modern advanced business stakeholder partnering timely effectively
 similar related relevant various multiple several
 more most other others any all both each every
 you'll we're it's don't

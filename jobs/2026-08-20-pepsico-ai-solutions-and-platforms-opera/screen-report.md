@@ -1,6 +1,6 @@
 # Screening report — AI Solutions and Platforms Operations Engineer @ Pepsico
 
-**Fit score: 52/100**  ·  keyword coverage 29%  ·  gate: FAIL
+**Fit score: 54/100**  ·  keyword coverage 32%  ·  gate: FAIL
 
 Required items — met 10 · partial 4 · gap 2 (of 16); 1 nice-to-have.
 
@@ -21,11 +21,11 @@ Experience asked: 5y · actual: 4.3y → within range
 |---|---|---|
 | AI Agent Operations Center (70%) | ✅ met *(responsibility)* | ev-phenom-chatbotcx-architecture |
 | Build “operations center” capabilities for agent runtime management: agent registry, versioning, deployment tracking, and run histories | ✅ met *(responsibility)* | ev-phenom-fraud-policy-plane |
-| Enable operational workflows such as incident triage, replay/debug runs, trace correlation, and root-cause analysis across agent steps | ✅ met *(responsibility)* | ev-phenom-chatbotcx-architecture |
+| Enable operational workflows such as incident triage, replay/debug runs, trace correlation, and root-cause analysis across agent steps | ✅ met *(responsibility)* | ev-phenom-frm-tenancy-ops |
 | Implement operational dashboards and views for agent health: success rate, latency, tool failure rate, cost per run, and loop detection | ✅ met *(responsibility)* | ev-phenom-eval-framework |
 | Instrument agent flows end-to-end using OpenTelemetry (or equivalent), enabling correlation across prompts, tool calls, retrieval, and respo | ✅ met *(responsibility)* | ev-phenom-chatbotcx-architecture |
 | Implement semantic conventions and tagging standards (agent name/version, tool name, model provider, environment, tenant/app) | ✅ met *(responsibility)* | ev-phenom-chatbotcx-architecture |
-| Partner with SRE/observability teams to ensure production-grade monitoring, alerting, and operational readiness | ✅ met *(responsibility)* | ev-phenom-eval-framework |
+| Partner with SRE/observability teams to ensure production-grade monitoring, alerting, and operational readiness | ✅ met *(responsibility)* | ev-phenom-frm-tenancy-ops |
 | Collaboration with Teams (10%) | ❌ gap *(responsibility)* | — |
 | Collaborate with transformation teams and business stakeholders to understand requirements and tailor AI agents to specific domains. | ✅ met *(responsibility)* | ev-phenom-fraud-detection-engine |
 | Work closely with AI platform teams to build scalable and cross-domain AI agents while ensuring end-to-end observability. | ✅ met *(responsibility)* | ev-phenom-fraud-detection-engine |
@@ -49,10 +49,10 @@ Experience asked: 5y · actual: 4.3y → within range
 | Knowledge of Responsible AI practices: data handling, safety guardrails, audit trails, and redaction strategies | ✅ met | ev-phenom-fraud-detection-engine |
 | FinOps exposure: token/GPU cost optimization and chargeback/showback reporting | ✅ met | ev-phenom-finetune-serving |
 | Technical Proficiency: Agent orchestration design (planning, tool execution, memory, RAG), Strong engineering discipline: testing, versionin | ✅ met | ev-phenom-chatbotcx-architecture |
-| Problem-Solving: Ability to translate business challenges into technical solutions. | 🟡 partial | ev-blueleaves-analytics |
+| Problem-Solving: Ability to translate business challenges into technical solutions. | 🟡 partial | ev-phenom-frm-decides-what-runs |
 | Collaboration Skills: Effective at working within cross-functional teams. | ❌ gap | — |
 | Agility: Flexibility to adapt to changing requirements and new technologies. | ❌ gap | — |
-| Communication Skills: Capable of explaining complex technical concepts to non-technical stakeholders. | 🟡 partial | ev-proj-indexnotes |
+| Communication Skills: Capable of explaining complex technical concepts to non-technical stakeholders. | 🟡 partial | ev-phenom-analytics-service |
 
 ## Real gaps — do not paper over these
 
@@ -65,4 +65,4 @@ These are the questions that will decide the screen. Answer them in the cover no
 
 Only add one if it is genuinely true — otherwise it is a gap, not a keyword to stuff.
 
-`adapt`, `advancements`, `agility`, `aks`, `alerting`, `analysis`, `app`, `audit`, `autogen`, `automate`, `automation`, `azure`, `bachelor`, `business`, `capabilities`, `capable`, `cases`, `center`, `challenges`, `changing`, `chargeback`, `checks`, `chunking`, `closely`, `communication`, `complex`, `components`, `computer`, `conduct`, `consoles`, `containerized`, `continuous`, `conventions`, `correlation`, `cost-effective`, `crew.ai`, `cross-domain`, `cross-functional`, `dashboards`, `data`
+`aks`, `alerting`, `analysis`, `app`, `applications`, `audit`, `autogen`, `automate`, `azure`, `calls`, `capabilities`, `center`, `chargeback`, `chunking`, `components`, `consoles`, `conventions`, `cost-effective`, `crew.ai`, `cross-domain`, `cross-functional`, `data`, `databases`, `debuggability`, `discipline`, `distributed`, `domains`, `education`, `eks`, `environment`, `equivalent`, `execution`, `existing`, `explaining`, `exposure`, `failure`, `field`, `finops`, `flexibility`, `flows`

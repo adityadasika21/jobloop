@@ -6,8 +6,8 @@ location: ''
 work_mode: ''
 status: analyzed
 priority: ''
-fit_score: 52
-keyword_coverage: 0.292
+fit_score: 54
+keyword_coverage: 0.321
 stretch: false
 posted_at: ''
 intake_at: '2026-08-20T04:19:08+00:00'
@@ -80,5 +80,77 @@ events:
 - ts: '2026-08-20T09:16:09+00:00'
   kind: screened
   detail: fit 52
+  source: jt
+- ts: '2026-08-20T11:33:21+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:33:21+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:33:32+00:00'
+  kind: screened
+  detail: fit 50
+  source: jt
+- ts: '2026-08-20T11:34:10+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:34:11+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:34:11+00:00'
+  kind: screened
+  detail: fit 50
+  source: jt
+- ts: '2026-08-20T11:34:20+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:34:20+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:34:21+00:00'
+  kind: screened
+  detail: fit 50
+  source: jt
+- ts: '2026-08-20T11:37:18+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:37:18+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:37:19+00:00'
+  kind: screened
+  detail: fit 52
+  source: jt
+- ts: '2026-08-20T11:38:12+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:38:12+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:38:13+00:00'
+  kind: screened
+  detail: fit 53
+  source: jt
+- ts: '2026-08-20T11:38:37+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T11:38:37+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T11:38:37+00:00'
+  kind: screened
+  detail: fit 54
   source: jt
 jd_fingerprint: 286233057bf53181

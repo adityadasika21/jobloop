@@ -1,158 +1,102 @@
-# Tailored for: AI Solutions and Platforms Operations Engineer — Pepsico
-# (Hyderabad, IN. Internal title in the overview: "AI Observability Engineer —
-# Agentic Frameworks & AI Agent Operations Center Developer".)
-#
-# Strategy: 70% of this role is an *operations centre* for agents — telemetry,
-# dashboards, run management, incident triage — not agent research. The first
-# pass at this JD read almost entirely as agentic AI, which was a profile gap
-# rather than a fit problem. With the enriched profile the platform-and-ops
-# evidence exists, so the page now opens on it: the self-hosted inference
-# platform (Helm releases + OpenTelemetry feeding a metrics dashboard) answers
-# the JD's OpenTelemetry and dashboard bullets literally, and tenancy/ops
-# answers provisioning, environments and production troubleshooting. Agent
-# orchestration and RAG follow, because that is where the JD goes next.
-#
-# The Qwen bullet merges two units (fine-tune/serving + production hardening)
-# under one provenance list: it has to carry both the FinOps line (GPU cost)
-# and the "thorough testing and validation" line, and they are one system.
-#
-# Gaps left as gaps (report, never a bullet):
-#   - Kubernetes / AKS / EKS — Docker and Helm in production, orchestration was
-#     not owned. This is a stated required item and the closest thing to a hard
-#     miss on the page.
-#   - Azure, Azure AI Search — the cloud evidence is AWS (EC2/S3/g5).
-#   - Crew.ai, Semantic Kernel, AutoGen — the agentic framework work is
-#     LangGraph and LangChain, which the JD's "or similar" admits.
-#   - Chargeback/showback reporting, redaction strategies — no evidence.
-#   - Bachelor's in CS/AI/ML — B.Tech Mechanical (structural, known gap).
-#   - "Effective within cross-functional teams" — nothing in the profile
-#     evidences it, so it stays unclaimed.
-#
-# Every bullet carries provenance into profile/master.yaml. `jt verify` fails
-# the build if any number or technology here is unsupported by its sources.
-
-headline: "AI Platform Engineer · Agent Orchestration on LangGraph · OpenTelemetry Observability & LLM Evaluation · Docker/Helm Deployment"
+headline: "AI Platform & Agent Operations · LangGraph Multi-Agent Systems · OpenTelemetry, Tracing & LLM Eval"
 headline_provenance:
   - ev-phenom-chatbotcx-architecture
-  - ev-phenom-inference-platform
   - ev-phenom-eval-framework
+  - ev-phenom-inference-platform
+  - ev-phenom-frm-service
   - ev-phenom-frm-tenancy-ops
+  - ev-blueleaves-fullstack-delivery
 
 experience:
   - role_id: phenom-ai-llm-eng-ii
     bullets:
       - text: >-
-          Ran the self-hosted LLM inference service as a deployable platform —
-          Helm-packaged releases, custom chat templates per model and
-          reasoning-model flags — instrumented with OpenTelemetry feeding a
-          metrics dashboard, so per-model latency and throughput were visible in
-          production.
-        provenance: [ev-phenom-inference-platform]
-
-      - text: >-
-          Owned tenant provisioning and delivery for the platform — provision
-          and unprovision APIs with region-scoped tenant listing and environment
-          configuration, containerised deployments via Docker and Helm across
-          staging environments — and ran
-          production support, troubleshooting by querying service logs in
-          ClickHouse to resolve customer tickets.
-        provenance: [ev-phenom-frm-tenancy-ops]
-
-      - text: >-
           Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating
-          every release across all 12 nodes, instrumented with LiteLLM and
+          every release across all 12 nodes, instrumented with LiteLLM +
           Langfuse for per-node cost, latency and full-trace auditability —
           continuously monitoring agent behaviour and curbing hallucinations.
         provenance: [ev-phenom-eval-framework]
-
+      - text: >-
+          Ran the self-hosted LLM inference service as a deployable platform —
+          Helm-packaged deployments, custom chat templates per model, and
+          OpenTelemetry instrumentation feeding metrics dashboards so
+          per-model latency and throughput were visible in production.
+        provenance: [ev-phenom-inference-platform]
+      - text: >-
+          Built the configuration service in FastAPI on MongoDB — a global
+          signal registry with definition versioning that keeps downstream
+          consumers stable across config changes, feature groups, audience and
+          scope rules, and tenant-scoped overrides — exposed through an
+          internal resolve endpoint that Temporal workflows call at workflow
+          start to decide which checks run for a given candidate and job.
+        provenance: [ev-phenom-frm-service, ev-phenom-fraud-policy-plane]
       - text: >-
           Architected chatbotCXAgent, a production multi-agent system on
-          LangGraph whose agent orchestration spans 12 nodes — intent
-          recognition, planning, dialogue-state management and tool routing —
-          with Graph RAG retrieval over enterprise knowledge and document
-          repositories via FAISS vector search and a Neo4j graph for multi-hop,
-          policy-aware grounding.
+          LangGraph (12 orchestrated nodes) spanning intent recognition,
+          planning, dialogue-state management and tool routing — with Graph RAG
+          retrieval over enterprise knowledge and document repositories via
+          FAISS vector search and a Neo4j graph for multi-hop, policy-aware
+          grounding.
         provenance: [ev-phenom-chatbotcx-architecture]
-
       - text: >-
-          Engineered tool-calling agents that execute governed actions —
-          database queries and structured extraction from unstructured documents
-          — under XGrammar constrained decoding and schema-validated JSON
-          guardrails, raising tool-routing accuracy to 91.9% and eliminating
-          malformed tool calls in live traffic.
+          Engineered tool-calling agents that execute governed actions under
+          XGrammar constrained decoding and schema-validated JSON guardrails,
+          raising tool-routing accuracy to 91.9% and eliminating malformed tool-call
+          failures in live traffic.
         provenance: [ev-phenom-toolcalling-guardrails]
-
       - text: >-
-          Fine-tuned and served Qwen models via QLoRA on vLLM / AWS g5.xlarge
-          (A10G) at roughly half the inference cost of hosted GPT-4.1, sustaining
-          10.98 RPS at 98.6% success under load, then hardened the deployment for
-          production — temperature pinned at 0.1 for deterministic tool calls,
-          load testing holding a golden baseline of 1.0s median and 1.4s P95
-          latency with zero failures across 5,510 requests, and test coverage
-          from 7% to 78%.
-        provenance:
-          - ev-phenom-finetune-serving
-          - ev-phenom-qwen-production-hardening
-
+          Held the production model deployment to a golden baseline of 1.0s
+          median and 1.4s P95 latency with zero failures across 5,510 requests,
+          taking the service's automated testing coverage from 7% to 78%.
+        provenance: [ev-phenom-qwen-production-hardening]
       - text: >-
-          Built the fraud-risk configuration service greenfield in FastAPI on
-          MongoDB — signal registry, feature groups, audience and scope
-          definitions, and tenant-scoped overrides — exposed through an internal
-          resolve endpoint that Temporal workflows call at workflow start to
-          decide which fraud signals apply to a candidate and job.
-        provenance: [ev-phenom-frm-service]
+          Built the detection and decisioning layer of an enterprise
+          hiring-integrity platform — an LLM orchestration engine that
+          performs evidence correlation across signals and produces reviewer-facing
+          assessments with supporting rationale — backed by a policy-driven
+          rules engine, per-tenant risk configuration, and audited review
+          workflows across the signal lifecycle.
+        provenance: [ev-phenom-fraud-detection-engine]
+      - text: >-
+          Owned deployment automation and production support — containerized deployments via
+          Docker and Helm across staging environments, and debug of production incidents
+          by querying service logs in ClickHouse to resolve customer tickets.
+        provenance: [ev-phenom-frm-tenancy-ops]
 
   - role_id: blueleaves-fullstack
     bullets:
       - text: >-
           Owned end-to-end delivery of production systems (POS, CRM, inventory,
           procurement, e-commerce) on Node.js, Firebase Cloud Functions and REST
-          APIs — with role-based access control and CI/CD pipelines — integrating multiple
+          APIs — with role-based access control and CI/CD — integrating multiple
           internal systems and cutting manual operational errors by roughly 90%.
         provenance: [ev-blueleaves-fullstack-delivery]
-
-      - text: >-
-          Sole engineer on the whole stack — built the CRM and the other internal
-          tools as React and Vite web applications, owning the interface as well
-          as the services behind it.
-        provenance: [ev-blueleaves-frontend]
 
 projects:
   - name: IndexNotes — AI Knowledge Graph for Scientific Papers
     stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
     bullets:
       - text: >-
-          Built an automated Graph RAG pipeline ingesting research papers (PDF to
-          local-LLM extraction to structured JSON to Neo4j), creating 40+ concepts
-          and 17+ typed relationships, with quantized local models via Ollama for
-          entity and relationship extraction.
+          Built an automated Graph RAG pipeline ingesting research papers (PDF →
+          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
+          and 17+ typed relationships, with quantized local models via Ollama
+          for entity/relationship extraction.
         provenance: [ev-proj-indexnotes]
-      - text: >-
-          Designed a Neo4j schema enabling multi-hop graph traversal and
-          cross-document retrieval across scientific domains.
-        provenance: [ev-proj-indexnotes-schema]
 
-# Ordered for what this JD screens on: agentic frameworks first, then the
-# observability and telemetry stack, then platform/deployment.
 skill_groups:
-  - name: "Agentic Frameworks & GenAI"
+  - name: "Eval, Observability & Guardrails"
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry, Langfuse,
+            LiteLLM, "Model Monitoring", "Constrained Decoding (XGrammar)",
+            "Schema Validation", "Hallucination Mitigation"]
+  - name: "GenAI & Agentic Frameworks"
     items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
-            "Tool/Function Calling", "Prompt Engineering", "Model Routing",
-            "Context-Window Management", "RAG & Graph RAG",
-            "LLM Fine-Tuning (QLoRA, SFT)"]
-  - name: "Observability, Evaluation & Guardrails"
-    items: [OpenTelemetry, Langfuse, LiteLLM, "Model Monitoring",
-            "LLM Evaluation (LLM-as-judge, pass@k)",
-            "Constrained Decoding (XGrammar)", "Schema Validation",
-            "Hallucination Mitigation", "Role-Based Access Control"]
-  - name: Languages
-    items: [Python, JavaScript, TypeScript, SQL, Bash]
-  - name: "Platform, Deployment & Infra"
-    items: [FastAPI, Docker, Helm, Temporal, Kafka, "REST APIs", Microservices,
-            "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux, Node.js]
-  - name: "ML & Serving"
-    items: [vLLM, PyTorch, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT",
-            Unsloth, "Embeddings / Vector Search (FAISS)", Neo4j, Ollama,
-            "Production MLOps"]
+            "Tool/Function Calling", "Model Routing", "RAG & Graph RAG",
+            "Prompt Engineering", "LLM Fine-Tuning (QLoRA, SFT)"]
+  - name: "Backend, Infra & Platforms"
+    items: [Python, FastAPI, "REST APIs", Microservices, Docker, Helm, Temporal,
+            Kafka, "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux]
+  - name: ML & Serving
+    items: [PyTorch, vLLM, "HuggingFace PEFT", Unsloth,
+            "Embeddings / Vector Search (FAISS)", "Production MLOps"]
   - name: Databases
-    items: [PostgreSQL, MongoDB, ClickHouse, Redis, Neo4j, Firebase]
+    items: [MongoDB, ClickHouse, PostgreSQL, Neo4j, Redis, Firebase]

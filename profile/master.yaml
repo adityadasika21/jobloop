@@ -467,7 +467,8 @@ evidence:
       debugging, sre]
     metrics: {}
     keywords: [multi-tenant, provisioning, tenant onboarding, docker, helm, deployment,
-      staging, environment configuration, devops, sre, observability, log analysis,
+      staging, environment configuration, devops, sre, operations, production operations, operational support,
+      observability, log analysis,
       clickhouse, production support, incident, debugging, on-call]
     strength: strong
     emphasize: [Docker, Helm, ClickHouse]
