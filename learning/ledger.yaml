@@ -32,3 +32,20 @@ weaknesses:
     quote: Ability to reason about scalability, latency, retries, resiliency, and production
       failure scenarios.
     recovered: false
+- id: opentelemetry-and-agent-telemetry-pipelines-sema
+  topic: 'OpenTelemetry and agent telemetry pipelines: semantic conventions, span correlation
+    across prompts/tool calls/retrieval'
+  category: observability
+  severity: medium
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-20T04:26:51+00:00'
+  last_seen: '2026-08-20T04:26:51+00:00'
+  notes: ''
+  evidence:
+  - ts: '2026-08-20T04:26:51+00:00'
+    kind: jd-gap
+    job_slug: 2026-08-20-pepsico-ai-solutions-and-platforms-opera
+    round: null
+    quote: Familiarity with OpenTelemetry, distributed tracing, and telemetry pipelines
+    recovered: false
