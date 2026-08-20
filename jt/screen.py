@@ -33,6 +33,9 @@ REQ_SECTION_RE = re.compile(
 NICE_RE = re.compile(r"(?i)\b(nice to have|preferred|bonus|plus|desirable)\b")
 # A bullet marker alone on its line, with the text on the NEXT line.
 LONE_MARKER_RE = re.compile(r"^\s*(?:[-*•▪]|\d+[.)])\s*$")
+# A list item that carries no marker at all and is a list item only because it
+# is indented under a heading.
+INDENTED_ITEM_RE = re.compile(r"^(?: {4,}|\t+)(\S.{11,})$")
 # Tail-of-page sections that never state a candidate requirement. Their bullets
 # are perks and legal notices; counted as requirements they drown the real ones
 # and hand `jt ats` a keyword list of "fertility", "espp", "dental".
@@ -125,9 +128,33 @@ def join_dangling_markers(lines: list[str]) -> list[str]:
     return out
 
 
+def mark_indented_items(lines: list[str]) -> list[str]:
+    """Promote marker-less indented lines to bullets, when nothing else is one.
+
+    iCIMS-rendered pages (PepsiCo's, for one) survive the scrape as pure
+    indentation: every responsibility and every required skill is a plain line
+    under a heading, with no `-` or `•` anywhere in the document. REQ_LINE_RE
+    needs a marker, so a JD listing ten hard requirements extracted zero and
+    screened against an empty matrix.
+
+    Gated on the document having essentially no real markers, because in a JD
+    that does use them an indented line is a wrapped continuation of the bullet
+    above — promoting those would chop requirements into fragments.
+    """
+    if sum(1 for ln in lines if REQ_LINE_RE.match(ln)) >= 3:
+        return lines
+    candidates = [i for i, ln in enumerate(lines) if INDENTED_ITEM_RE.match(ln)]
+    if len(candidates) < 5:
+        return lines
+    out = list(lines)
+    for i in candidates:
+        out[i] = f"- {lines[i].strip()}"
+    return out
+
+
 def extract_requirements(jd_text: str) -> list[dict]:
     """Pull requirement bullets out of a JD, flagging required vs nice-to-have."""
-    lines = join_dangling_markers(jd_text.splitlines())
+    lines = mark_indented_items(join_dangling_markers(jd_text.splitlines()))
     reqs: list[dict] = []
     in_nice = in_resp = in_skip = False
     for i, line in enumerate(lines):

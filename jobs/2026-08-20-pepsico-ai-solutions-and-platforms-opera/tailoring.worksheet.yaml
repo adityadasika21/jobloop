@@ -1,0 +1,530 @@
+_instructions: 'Write tailored.yaml from this worksheet. RULES: (1) every bullet needs `provenance:
+  [evidence-id]`; (2) never state a number that is not in the cited unit''s claim/metrics;
+  (3) never name a technology the cited units don''t mention; (4) rephrase in the JD''s vocabulary
+  but do not upgrade scope, seniority, or ownership; (5) unmatched requirements stay gaps
+  — report them, don''t invent; (6) `emphasize:` on a bullet bolds load-bearing terms, but
+  only terms the cited units contain — default to the unit''s own list. Run `jt verify 2026-08-20-pepsico-ai-solutions-and-platforms-opera`
+  until clean.'
+job:
+  company: Pepsico
+  role: AI Solutions and Platforms Operations Engineer
+  url: ''
+  work_mode: ''
+requirements: []
+known_gaps:
+- topic: dspy
+  status: aware-not-used
+  note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+- topic: llamaindex
+  status: aware-not-used
+  note: Comparable to LangChain work but not used in production.
+- topic: gcp-vertex-ai
+  status: adjacent
+  note: AWS-based (EC2/S3/SageMaker/g5). Vertex is transferable but unused.
+- topic: kubernetes
+  status: adjacent
+  note: Docker in production; orchestration was not owned.
+- topic: cs-degree
+  status: structural
+  note: B.Tech Mechanical. Flag when a JD hard-requires CS/related degree.
+- topic: years-of-experience
+  status: structural
+  note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+evidence_ranked:
+- id: ev-phenom-chatbotcx-architecture
+  score: 2.503
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  allowed_skills:
+  - langgraph
+  - multi-agent-systems
+  - agent-orchestration
+  - intent-recognition
+  - planning
+  - dialogue-state-management
+  - tool-routing
+  - graph-rag
+  - rag
+  - faiss
+  - neo4j
+  - vector-search
+  - production-systems
+  emphasize:
+  - chatbotCXAgent
+  - LangGraph
+  - Graph RAG
+  jd_overlap:
+  - agent
+  - agentic
+  - ai
+  - machine
+  - management
+  - ml
+  - orchestration
+  - pipelines
+  - planning
+  - production
+  - rag
+  - retrieval
+  probe: Why 12 nodes? How does dialogue state survive a tool failure mid-turn? Why a graph
+    alongside vectors instead of vectors alone?
+- id: ev-phenom-eval-framework
+  score: 2.356
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  allowed_skills:
+  - llm-evaluation
+  - llm-as-judge
+  - pass-at-k
+  - eval-harness
+  - langfuse
+  - litellm
+  - observability
+  - tracing
+  - cost-monitoring
+  - latency-monitoring
+  - regression-testing
+  - hallucination-mitigation
+  - ci-gating
+  emphasize:
+  - LLM evaluation framework
+  - LiteLLM + Langfuse
+  jd_overlap:
+  - agent
+  - ai
+  - cd
+  - ci
+  - cost
+  - evaluation
+  - guardrails
+  - latency
+  - learning
+  - machine
+  - ml
+  - model
+  probe: What does your judge rubric look like and how did you validate the judge itself?
+    What happens on a release that regresses one node out of twelve?
+- id: ev-phenom-finetune-serving
+  score: 1.485
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS g5.xlarge
+    (A10G), sustaining 10.98 RPS at 98.6% success under load at roughly half the inference
+    cost of hosted GPT-4.1.
+  metrics:
+    throughput: 10.98 RPS
+    success_rate: 98.6%
+    cost: ~50% of hosted GPT-4.1 inference cost
+    hardware: AWS g5.xlarge (A10G)
+  allowed_skills:
+  - fine-tuning
+  - qlora
+  - peft
+  - unsloth
+  - quantization
+  - nf4
+  - vllm
+  - qwen
+  - model-serving
+  - gpu-inference
+  - aws
+  - load-testing
+  - cost-optimization
+  - throughput-optimization
+  emphasize:
+  - QLoRA
+  - vLLM
+  jd_overlap:
+  - aws
+  - cost
+  - deployment
+  - gpu
+  - latency
+  - learning
+  - machine
+  - model
+  - optimization
+  - success
+  probe: What batch size and context length at 10.98 RPS? What was the 1.4% failure mode?
+    How did you construct the QLoRA training set?
+- id: ev-phenom-fraud-detection-engine
+  score: 1.451
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Building the detection and decisioning layer of an enterprise hiring-integrity /
+    fraud-risk platform — an LLM orchestration engine that investigates flagged candidate
+    activity, correlates evidence across signals, and produces reviewer-facing assessments
+    with supporting rationale — backed by a policy-driven rules engine (score / condition
+    → action), per-tenant risk configuration, and audited review workflows across the signal
+    lifecycle.
+  metrics: {}
+  allowed_skills:
+  - llm-orchestration
+  - agent-orchestration
+  - multi-agent-systems
+  - evidence-correlation
+  - decision-support
+  - explainability
+  - fraud-detection
+  - risk-scoring
+  - anomaly-investigation
+  - policy-engine
+  - rules-engine
+  - multi-tenancy
+  - audit-logging
+  - system-design
+  emphasize:
+  - hiring-integrity / fraud-risk platform
+  - LLM orchestration engine
+  - policy-driven rules engine
+  jd_overlap:
+  - agentic
+  - agents
+  - ai
+  - audit
+  - configuration
+  - detection
+  - engineering
+  - orchestration
+  - platform
+  - safety
+  - workflows
+  probe: What does the orchestration actually decide — does the LLM score, or does it assemble
+    evidence for a rules engine that scores? How do you keep a reviewer-facing rationale faithful
+    to the signals it cites? What is the false-positive cost of accusing a real candidate?
+- id: ev-blueleaves-fullstack-delivery
+  score: 1.428
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
+    e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs — with role-based access
+    control and CI/CD — integrating multiple internal systems and cutting manual operational
+    errors by roughly 90%.
+  metrics:
+    manual_error_reduction: ~90%
+  allowed_skills:
+  - nodejs
+  - firebase
+  - cloud-functions
+  - rest-api
+  - rbac
+  - ci-cd
+  - system-integration
+  - full-stack
+  - serverless
+  - product-ownership
+  - e-commerce
+  - crm
+  emphasize: []
+  jd_overlap:
+  - apis
+  - cd
+  - ci
+  - cloud
+  - end-to-end
+  - integrating
+  - integration
+  - internal
+  - microservices
+  - operational
+  - operations
+  - production
+  probe: What did 'owned end-to-end' include — did you handle on-call and incidents?
+- id: ev-phenom-toolcalling-guardrails
+  score: 1.396
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Engineered tool-calling agents that execute governed actions — database queries and
+    structured extraction from unstructured documents — under XGrammar constrained decoding
+    and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+    malformed tool calls in live traffic.
+  metrics:
+    tool_routing_accuracy: 91.9%
+    malformed_tool_calls: eliminated in live traffic
+  allowed_skills:
+  - tool-calling
+  - function-calling
+  - constrained-decoding
+  - xgrammar
+  - json-schema
+  - schema-validation
+  - guardrails
+  - structured-extraction
+  - sql
+  - agent-reliability
+  emphasize:
+  - XGrammar constrained decoding
+  - XGrammar
+  - 91.9%
+  jd_overlap:
+  - accuracy
+  - agent
+  - agents
+  - calls
+  - data
+  - function
+  - guardrails
+  - reliability
+  - tool
+  probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
+    JSON mode or retry-on-parse-failure?
+- id: ev-blueleaves-analytics
+  score: 1.24
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Built data-driven analytics on large-scale transactional and stock-movement data
+    — demand forecasting, sales-trend, and inventory models that surfaced discrepancies and
+    improved procurement/replenishment decisions across 5+ locations and 10,000+ monthly transactions.
+  metrics:
+    locations: 5+
+    monthly_transactions: 10,000+
+  allowed_skills:
+  - data-analytics
+  - demand-forecasting
+  - time-series
+  - inventory-modeling
+  - sql
+  - anomaly-detection
+  - business-intelligence
+  - python
+  emphasize: []
+  jd_overlap:
+  - 5+
+  - analysis
+  - business
+  - data
+  - detection
+  - locations
+  - operations
+  - optimization
+  - python
+  - reporting
+  probe: What forecasting method, and what did you measure it against?
+- id: ev-proj-indexnotes
+  score: 1.055
+  strength: strong
+  role: project
+  claim: Built an automated Graph RAG pipeline ingesting research papers (PDF → local-LLM
+    extraction → structured JSON → Neo4j), creating 40+ concepts and 17+ typed relationships,
+    with quantized local models via Ollama for entity/relationship extraction.
+  metrics:
+    concepts: 40+
+    typed_relationships: 17+
+  allowed_skills:
+  - graph-rag
+  - neo4j
+  - ollama
+  - local-llm
+  - quantization
+  - pymupdf
+  - document-ingestion
+  - structured-extraction
+  - knowledge-graph
+  - python
+  - docker
+  - etl
+  emphasize: []
+  jd_overlap:
+  - ai
+  - automated
+  - concepts
+  - information
+  - python
+  - rag
+  - retrieval
+  probe: How do you keep a local quantized model's extractions consistent enough to build
+    a graph on?
+- id: ev-phenom-fraud-policy-plane
+  score: 1.019
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: 'Designed the configuration and policy plane for an enterprise hiring-integrity /
+    fraud-risk platform: a global fraud-signal registry with feature groups, tenant-scoped
+    overrides, and applicable-context gating, exposed through a resolve API consumed by the
+    reviewer console and the live detection pipeline — including a role-gated signal-lifecycle
+    state machine, versioned definitions that keep downstream consumers stable across config
+    changes, and CEL-evaluated decision policies (score / condition → action).'
+  metrics: {}
+  allowed_skills:
+  - system-design
+  - policy-engine
+  - multi-tenancy
+  - feature-flags
+  - cel
+  - api-design
+  - versioning
+  - rbac
+  - state-machine
+  - fraud-detection
+  - risk-scoring
+  - backend-architecture
+  emphasize:
+  - hiring-integrity / fraud-risk platform
+  - resolve API
+  jd_overlap:
+  - configuration
+  - detection
+  - engineering
+  - machine
+  - management
+  - platform
+  - registry
+  - safety
+  - versioning
+  probe: How do versioned definitions avoid breaking live consumers? Why CEL over a DSL you
+    own? How are tenant overrides resolved and cached?
+- id: ev-proj-indexnotes-schema
+  score: 0.78
+  strength: supporting
+  role: project
+  claim: Designed a Neo4j schema enabling multi-hop graph traversal and cross-document retrieval
+    across scientific domains.
+  metrics: {}
+  allowed_skills:
+  - neo4j
+  - graph-schema-design
+  - cypher
+  - multi-hop-retrieval
+  - data-modeling
+  emphasize: []
+  jd_overlap:
+  - data
+  - domains
+  - enabling
+  - retrieval
+  probe: What does a multi-hop query actually look like here?
+- id: ev-phenom-modernbert-nlu
+  score: 0.338
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
+    from 87% to 97%.
+  metrics:
+    nlu_accuracy_before: 87%
+    nlu_accuracy_after: 97%
+  allowed_skills:
+  - pytorch
+  - modernbert
+  - bert
+  - transformers
+  - multi-task-learning
+  - intent-classification
+  - named-entity-recognition
+  - nlu
+  - fine-tuning
+  - model-training
+  emphasize:
+  - ModernBERT
+  jd_overlap:
+  - accuracy
+  - model
+  probe: Why multi-task over two separate heads? Where did the 10 points come from — data,
+    architecture, or labels?
+- id: ev-proj-northstar
+  score: 0.316
+  strength: strong
+  role: project
+  claim: Built and shipped a companion app for the Royal Enfield Tripper Dash, delivering
+    turn-by-turn navigation to the bike's connected instrument cluster and growing an organic
+    user base without paid distribution.
+  metrics:
+    distribution: organic, no paid acquisition
+  allowed_skills:
+  - android
+  - kotlin
+  - bluetooth-low-energy
+  - maps-sdk
+  - mobile-development
+  - reverse-engineering
+  - embedded-integration
+  - product-shipping
+  emphasize: []
+  jd_overlap:
+  - app
+  - instrument
+  probe: How did you talk to a cluster you had no spec for?
+- id: ev-proj-northstar-traction
+  score: 0.236
+  strength: strong
+  role: project
+  claim: Traction drew Royal Enfield's attention directly, leading to an on-site collaboration
+    visit at their HQ to discuss the work.
+  metrics: {}
+  allowed_skills:
+  - product-shipping
+  - stakeholder-communication
+  emphasize: []
+  jd_overlap:
+  - validation
+  probe: What came of the visit?
+skill_inventory:
+- name: Languages
+  items:
+  - Python
+  - JavaScript
+  - TypeScript
+  - SQL
+  - Bash
+- name: GenAI & Agentic
+  items:
+  - Agentic / Multi-Agent Systems
+  - LangGraph
+  - LangChain
+  - Tool/Function Calling
+  - Prompt Engineering
+  - Model Routing
+  - Context-Window Management
+  - RAG & Graph RAG
+  - LLM Fine-Tuning (QLoRA, SFT)
+- name: Eval, Observability & Guardrails
+  items:
+  - LLM Evaluation (LLM-as-judge, pass@k)
+  - Constrained Decoding (XGrammar)
+  - Schema Validation
+  - Langfuse
+  - LiteLLM
+  - Model Monitoring
+  - Hallucination Mitigation
+  - Role-Based Access Control
+- name: ML & Serving
+  items:
+  - PyTorch
+  - Transformers (BERT/ModernBERT)
+  - HuggingFace PEFT
+  - Unsloth
+  - vLLM
+  - Embeddings / Vector Search (FAISS)
+  - Neo4j
+  - Ollama
+  - Production MLOps
+- name: Backend & Infra
+  items:
+  - FastAPI
+  - Node.js
+  - Express.js
+  - REST APIs
+  - Microservices
+  - Docker
+  - AWS (EC2/S3/SageMaker)
+  - GitHub Actions
+  - CI/CD
+  - Linux
+- name: Databases
+  items:
+  - PostgreSQL
+  - Neo4j
+  - MongoDB
+  - Redis
+  - Firebase

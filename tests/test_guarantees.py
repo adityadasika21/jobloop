@@ -195,6 +195,51 @@ def test_runs_of_empty_bullet_markers_do_not_glue_together():
     assert extract_requirements("-\n-\n-\n\n-\n") == []
 
 
+# PepsiCo's iCIMS page has no bullet marker anywhere: every responsibility and
+# every required skill is a plain line indented under its heading. The JD
+# extracted zero requirements and screened against an empty matrix.
+JD_INDENT_ONLY = """\
+Req ID
+    2026-452960
+# of Openings
+    1
+
+Responsibilities
+
+    Build agent registry, versioning, deployment tracking, and run histories
+    Instrument agent flows end-to-end using OpenTelemetry
+    Partner with SRE teams on production-grade monitoring and alerting
+
+Qualifications
+
+    Required Expertise:
+
+        Hands-on experience with agentic frameworks (LangChain, AutoGen, or similar)
+        Proficiency in Python (primary) and familiarity with APIs/microservices
+        Strong experience with RAG patterns (embeddings, vector search, chunking)
+"""
+
+
+def test_marker_less_indented_items_are_requirements():
+    reqs = extract_requirements(JD_INDENT_ONLY)
+    texts = " ".join(r["text"] for r in reqs)
+    assert "agentic frameworks" in texts
+    assert "Proficiency in Python" in texts
+    assert "RAG patterns" in texts
+    # The posting-metadata block is too short to be mistaken for a requirement.
+    assert "2026-452960" not in texts
+    kinds = {r["kind"] for r in reqs}
+    assert {"required", "responsibility"} <= kinds
+
+
+def test_indented_continuations_are_not_promoted_when_the_jd_has_bullets():
+    """The promotion must stay off for a JD that does use markers, or a wrapped
+    continuation line becomes a requirement of its own and the real one is
+    truncated."""
+    reqs = extract_requirements(JD)
+    assert not any(r["text"].startswith("production machine learning") for r in reqs)
+
+
 def test_known_gap_does_not_veto_real_evidence(prof):
     """'LangChain, LangGraph, or DSPy' is MET — two of three are shipped —
     even though DSPy is a known gap. The gap rides along as a caveat."""
