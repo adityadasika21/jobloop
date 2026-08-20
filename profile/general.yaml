@@ -8,7 +8,7 @@
 #
 # Every bullet still cites evidence; `jt build --general` refuses to render if
 # any claim is unsupported.
-headline: "AI/ML Engineer · Agentic & Multi-Agent Systems · LLM Serving, Eval & Observability · Platform Engineering"
+headline: "AI/ML Engineer · Agentic & Multi-Agent Systems · RAG · LLM Fine-Tuning, Serving, Eval & Guardrails"
 headline_provenance:
   - ev-phenom-chatbotcx-architecture
   - ev-phenom-eval-framework
@@ -34,6 +34,22 @@ experience:
           eliminating malformed tool calls in live traffic.
         provenance: [ev-phenom-toolcalling-guardrails]
       - text: >-
+          Built an LLM evaluation framework (pass@k, LLM-as-judge rubric)
+          gating every release across all 12 nodes, instrumented with LiteLLM +
+          Langfuse for per-node cost, latency and full-trace auditability —
+          continuously monitoring agent behaviour and curbing hallucinations.
+        provenance: [ev-phenom-eval-framework]
+      - text: >-
+          Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
+          AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under load
+          at roughly half the inference cost of hosted GPT-4.1, and held the
+          deployment to a golden baseline of 1.0s median and 1.4s P95 latency
+          with zero failures across 5,510 requests; separately fine-tuned a
+          multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
+          from 87% to 97%.
+        provenance: [ev-phenom-finetune-serving, ev-phenom-qwen-production-hardening,
+                     ev-phenom-modernbert-nlu]
+      - text: >-
           Building the detection and decisioning layer of an enterprise
           hiring-integrity / fraud-risk platform — an LLM orchestration engine
           that investigates flagged candidate activity, correlates evidence
@@ -50,22 +66,6 @@ experience:
           truth for what runs.
         provenance: [ev-phenom-frm-service, ev-phenom-frm-decides-what-runs,
                      ev-phenom-fraud-policy-plane]
-      - text: >-
-          Built an LLM evaluation framework (pass@k, LLM-as-judge rubric)
-          gating every release across all 12 nodes, instrumented with LiteLLM +
-          Langfuse for per-node cost, latency and full-trace auditability —
-          continuously monitoring agent behaviour and curbing hallucinations.
-        provenance: [ev-phenom-eval-framework]
-      - text: >-
-          Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
-          AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under load
-          at roughly half the inference cost of hosted GPT-4.1, and held the
-          deployment to a golden baseline of 1.0s median and 1.4s P95 latency
-          with zero failures across 5,510 requests; separately fine-tuned a
-          multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
-          from 87% to 97%.
-        provenance: [ev-phenom-finetune-serving, ev-phenom-qwen-production-hardening,
-                     ev-phenom-modernbert-nlu]
       - text: >-
           Ran the self-hosted inference service as a deployable platform — Helm
           releases, custom chat templates per model, and OpenTelemetry
@@ -85,6 +85,15 @@ experience:
         provenance: [ev-blueleaves-fullstack-delivery, ev-blueleaves-frontend]
 
 projects:
+  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
+    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
+    bullets:
+      - text: >-
+          Built an automated Graph RAG pipeline ingesting research papers (PDF →
+          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
+          and 17+ typed relationships, with quantized local models via Ollama.
+        provenance: [ev-proj-indexnotes]
+
   - name: NorthStar — Motorcycle Navigation Companion App
     stack: [Android, Kotlin, BLE, MapLibre]
     bullets:
@@ -95,19 +104,6 @@ projects:
           navigation off-screen with MapLibre and OSRM so the phone's screen
           could stay off entirely, where the official app mirrors the display.
         provenance: [ev-proj-northstar, ev-proj-northstar-protocol, ev-proj-northstar-offscreen-maps]
-      - text: >-
-          Traction drew Royal Enfield's attention directly, leading to an
-          on-site visit at their HQ and a continuing relationship.
-        provenance: [ev-proj-northstar-traction]
-
-  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
-    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
-    bullets:
-      - text: >-
-          Built an automated Graph RAG pipeline ingesting research papers (PDF →
-          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
-          and 17+ typed relationships, with quantized local models via Ollama.
-        provenance: [ev-proj-indexnotes]
 
 skill_groups:
   - name: "GenAI & Agentic"
@@ -121,12 +117,10 @@ skill_groups:
             "Model Monitoring", "Hallucination Mitigation"]
   - name: "ML & Serving"
     items: [PyTorch, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT", Unsloth,
-            vLLM, "Embeddings / Vector Search (FAISS)", Ollama, "Production MLOps"]
+            vLLM, "Embeddings / Vector Search (FAISS)", Ollama, Neo4j,
+            "Production MLOps"]
   - name: "Backend & Infra"
     items: [Python, FastAPI, Node.js, "REST APIs", Microservices, Docker, Helm,
-            Temporal, Kafka, "AWS (EC2/S3/SageMaker)", CI/CD, Linux]
-  - name: "Frontend & Auth"
-    items: [React, Vite, "Micro-Frontends", Keycloak, "OAuth / SSO",
-            "Role-Based Access Control"]
+            Temporal, "AWS (EC2/S3/SageMaker)", CI/CD, Linux]
   - name: Databases
     items: [PostgreSQL, MongoDB, Neo4j, ClickHouse, Redis, Firebase]
