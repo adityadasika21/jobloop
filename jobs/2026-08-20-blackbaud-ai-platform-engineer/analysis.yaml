@@ -1,0 +1,28 @@
+fit_score: 35
+keyword_coverage: 0.095
+summary:
+  required_total: 0
+  met: 0
+  partial: 0
+  gap: 0
+  nice_to_have: 0
+  responsibilities: 0
+seniority:
+  years_required: 5
+  years_have: 4.3
+  stretch: false
+requirements: []
+scan_checks:
+- check: Headline names the JD's own role language
+  pass: true
+- check: Top experience bullet answers a required item
+  pass: false
+- check: Every bullet carries a metric or a concrete system
+  pass: true
+- check: Keyword coverage of stated requirements >= 60%
+  pass: false
+- check: No required item is an unacknowledged gap
+  pass: true
+- check: Fits one page (built PDF is 1)
+  pass: true
+screened_at: '2026-08-20T12:55:58+00:00'

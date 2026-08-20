@@ -878,6 +878,15 @@ known_gaps:
   - topic: kubernetes
     status: adjacent
     note: "Docker in production; orchestration was not owned."
+  - topic: csharp-dotnet
+    status: structural
+    note: "Python/JS/TS. Blackbaud's AI Platform Engineer hard-requires
+           'Proficient in C# .NET' — flag any JD that names a .NET stack."
+  - topic: vendor-agent-platforms
+    status: aware-not-used
+    note: "Microsoft Copilot Studio, Azure AI Foundry, Agentforce, IBM watsonx
+           Orchestrate. Agent orchestration built on LangGraph/Temporal instead;
+           the concepts transfer, the vendor consoles were never used."
   - topic: cs-degree
     status: structural
     note: "B.Tech Mechanical. Flag when a JD hard-requires CS/related degree."
