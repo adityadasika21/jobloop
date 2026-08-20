@@ -93,3 +93,7 @@ events:
   kind: verified
   detail: provenance clean
   source: jt
+- ts: '2026-08-20T04:20:27+00:00'
+  kind: screened
+  detail: fit 78
+  source: jt

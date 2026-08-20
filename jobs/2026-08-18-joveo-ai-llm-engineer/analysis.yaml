@@ -194,6 +194,6 @@ scan_checks:
   pass: true
 - check: No required item is an unacknowledged gap
   pass: true
-- check: Fits one page (<= 14 experience bullets)
+- check: Fits one page (built PDF is 1)
   pass: true
-screened_at: '2026-08-18T04:21:00+00:00'
+screened_at: '2026-08-20T04:20:27+00:00'

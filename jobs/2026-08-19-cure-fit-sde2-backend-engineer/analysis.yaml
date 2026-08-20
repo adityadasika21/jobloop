@@ -268,4 +268,4 @@ scan_checks:
   pass: false
 - check: Fits one page (built PDF is 1)
   pass: true
-screened_at: '2026-08-19T18:17:22+00:00'
+screened_at: '2026-08-20T04:20:27+00:00'

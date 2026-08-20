@@ -21,6 +21,7 @@ Keyword coverage **on extracted text**: 24% exact · 31% allowing word-form vari
 | ✅ | `glyphs` | no undecodable glyphs |
 | ✅ | `no-template-leakage` | no template artifacts |
 | ✅ | `ligatures` | 0 possible ligature splits |
+| ✅ | `content-fidelity` | 100.0% of intended terms survived extraction |
 | ❌ | `ats-keyword-coverage` _(HIGH)_ | 23% of JD requirement terms present in the EXTRACTED text |
 | ✅ | `no-overlap` | no overlapping text |
 | ✅ | `page-count` | 1 page(s) |

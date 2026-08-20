@@ -13,7 +13,7 @@ Experience asked: 3y · actual: 4.3y → within range
 - [x] Every bullet carries a metric or a concrete system
 - [x] Keyword coverage of stated requirements >= 60%
 - [x] No required item is an unacknowledged gap
-- [x] Fits one page (<= 14 experience bullets)
+- [x] Fits one page (built PDF is 1)
 
 ## Requirement matrix
 
