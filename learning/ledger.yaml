@@ -49,3 +49,20 @@ weaknesses:
     round: null
     quote: Familiarity with OpenTelemetry, distributed tracing, and telemetry pipelines
     recovered: false
+- id: quantifying-ai-delivery-impact-for-executives-cy
+  topic: 'Quantifying AI delivery impact for executives: cycle time, story-to-code conversion,
+    review acceleration'
+  category: experience
+  severity: medium
+  status: open
+  occurrences: 1
+  first_seen: '2026-08-20T12:51:44+00:00'
+  last_seen: '2026-08-20T12:51:44+00:00'
+  notes: ''
+  evidence:
+  - ts: '2026-08-20T12:51:44+00:00'
+    kind: jd_gap
+    job_slug: 2026-08-20-globallogic-forward-deployed-engineer-irc299
+    round: null
+    quote: ''
+    recovered: false

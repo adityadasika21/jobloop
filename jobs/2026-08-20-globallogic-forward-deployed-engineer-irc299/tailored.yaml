@@ -1,0 +1,118 @@
+headline: "Multi-Agent Systems on LangGraph · Graph RAG & FAISS Vector Search · LLM Evaluation, OpenTelemetry & Tool-Calling Guardrails"
+headline_provenance:
+  - ev-phenom-chatbotcx-architecture
+  - ev-phenom-eval-framework
+  - ev-phenom-toolcalling-guardrails
+  - ev-phenom-inference-platform
+
+experience:
+  - role_id: phenom-ai-llm-eng-ii
+    bullets:
+      - text: >-
+          Owned the architecture of chatbotCXAgent, a production multi-agent
+          system on LangGraph (12 orchestrated nodes) spanning intent
+          recognition, planning, dialogue-state management and tool routing —
+          with Graph RAG retrieval over enterprise knowledge and document
+          repositories via FAISS vector search and a Neo4j graph for
+          multi-hop, policy-aware grounding.
+        provenance: [ev-phenom-chatbotcx-architecture]
+      - text: >-
+          Engineered tool-calling agents that execute governed actions —
+          database queries and structured extraction from unstructured
+          documents — under XGrammar constrained decoding and schema-validated
+          JSON guardrails, raising tool-routing accuracy to 91.9% and
+          eliminating malformed tool calls in live traffic.
+        provenance: [ev-phenom-toolcalling-guardrails]
+      - text: >-
+          Built an LLM evaluation framework (pass@k, LLM-as-judge rubric)
+          gating every release across all 12 nodes, instrumented with LiteLLM +
+          Langfuse for per-node cost, latency and full-trace auditability —
+          continuously monitoring agent behaviour and curbing hallucinations.
+        provenance: [ev-phenom-eval-framework]
+      - text: >-
+          Ran the self-hosted LLM inference service as a deployable platform —
+          Helm-packaged releases, custom chat templates per model,
+          reasoning-model flags, and OpenTelemetry instrumentation feeding a
+          metrics dashboard so per-model latency and throughput were visible in
+          production.
+        provenance: [ev-phenom-inference-platform]
+      - text: >-
+          Building the detection and decisioning layer of an enterprise
+          hiring-integrity / fraud-risk platform — an LLM orchestration engine
+          that investigates flagged activity, correlates evidence across
+          signals and produces reviewer-facing assessments with supporting
+          rationale — backed by a policy-driven rules engine, per-tenant risk
+          configuration and audited review workflows across the signal
+          lifecycle.
+        provenance: [ev-phenom-fraud-detection-engine]
+      - text: >-
+          Designed the configuration and policy plane for that platform: a
+          global fraud-signal registry with feature groups, tenant-scoped
+          overrides and applicable-context gating, exposed through a resolve
+          API consumed by the reviewer console and the live detection pipeline
+          — including a role-gated signal-lifecycle state machine and versioned
+          definitions that keep downstream consumers stable across config
+          changes.
+        provenance: [ev-phenom-fraud-policy-plane]
+      - text: >-
+          Hardened the fine-tuned Qwen deployment for production readiness — a
+          custom Jinja2 chat template, required tool-choice and temperature
+          pinned at 0.1 for deterministic tool calls — then held it to a golden
+          baseline of 1.0s median and 1.4s P95 latency with zero failures
+          across 5,510 requests, taking the service's test coverage from 7% to
+          78%.
+        provenance: [ev-phenom-qwen-production-hardening]
+      - text: >-
+          Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
+          AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under
+          load at roughly half the inference cost of hosted GPT-4.1.
+        provenance: [ev-phenom-finetune-serving]
+      - text: >-
+          Built conversation analytics APIs covering both live-agent and
+          WhatsApp channels, raised the service's automated testing coverage
+          from 63% to over 90% while clearing static-analysis code smells, and
+          migrated the service to FastAPI.
+        provenance: [ev-phenom-analytics-service]
+
+  - role_id: blueleaves-fullstack
+    bullets:
+      - text: >-
+          Owned end-to-end delivery of production systems (POS, CRM, inventory,
+          procurement, e-commerce) on Node.js, Firebase Cloud Functions and REST
+          APIs — with role-based access control and CI/CD — integrating multiple
+          internal systems and cutting manual operational errors by roughly 90%.
+        provenance: [ev-blueleaves-fullstack-delivery]
+
+projects:
+  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
+    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
+    bullets:
+      - text: >-
+          Built an automated Graph RAG pipeline ingesting research papers (PDF →
+          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
+          and 17+ typed relationships, with quantized local models via Ollama
+          for entity/relationship extraction, on a Neo4j schema enabling
+          multi-hop graph traversal and cross-document retrieval.
+        provenance: [ev-proj-indexnotes, ev-proj-indexnotes-schema]
+
+skill_groups:
+  - name: "GenAI & Agentic"
+    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
+            "Tool/Function Calling", "Prompt Engineering", "RAG & Graph RAG",
+            "Model Routing", "Context-Window Management",
+            "LLM Fine-Tuning (QLoRA, SFT)"]
+  - name: "Evaluation, Observability & Governance"
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry, Langfuse,
+            LiteLLM, "Model Monitoring", "Constrained Decoding (XGrammar)",
+            "Schema Validation", "Hallucination Mitigation",
+            "Role-Based Access Control"]
+  - name: "Vector & Graph Retrieval"
+    items: ["Embeddings / Vector Search (FAISS)", Neo4j, MongoDB, PostgreSQL,
+            ClickHouse, Redis]
+  - name: "Backend, Platform & Delivery"
+    items: [Python, TypeScript, FastAPI, "Node.js", "REST APIs", Microservices,
+            Docker, Helm, Temporal, Kafka, "AWS (EC2/S3/SageMaker)",
+            "GitHub Actions", "CI/CD", Linux]
+  - name: ML & Serving
+    items: [PyTorch, vLLM, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT",
+            Unsloth, Ollama, "Production MLOps"]

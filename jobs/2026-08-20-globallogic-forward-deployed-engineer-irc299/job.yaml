@@ -4,11 +4,11 @@ url: ''
 source: discord
 location: ''
 work_mode: hybrid
-status: queued
+status: analyzed
 priority: ''
-fit_score: null
-keyword_coverage: null
-stretch: false
+fit_score: 7
+keyword_coverage: 0.125
+stretch: true
 posted_at: ''
 intake_at: '2026-08-20T12:45:55+00:00'
 applied_at: ''
@@ -21,4 +21,28 @@ events:
   kind: intake
   detail: via discord
   source: discord
+- ts: '2026-08-20T12:46:44+00:00'
+  kind: analyzed
+  detail: worksheet generated
+  source: jt
+- ts: '2026-08-20T12:48:14+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T12:48:17+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T12:48:54+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-08-20T12:48:54+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-08-20T12:49:03+00:00'
+  kind: screened
+  detail: fit 7
+  source: jt
 jd_fingerprint: e7fac121d1ad7281

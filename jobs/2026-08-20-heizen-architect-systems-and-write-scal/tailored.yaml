@@ -1,0 +1,104 @@
+headline: "Full-Stack Engineer · FastAPI, MongoDB & React · Greenfield Services, REST APIs & Production Delivery"
+headline_provenance:
+  - ev-phenom-frm-service
+  - ev-phenom-frm-admin-ui
+  - ev-blueleaves-fullstack-delivery
+  - ev-blueleaves-frontend
+
+experience:
+  - role_id: phenom-ai-llm-eng-ii
+    bullets:
+      - text: >-
+          Built the fraud-risk configuration service greenfield — a backend
+          service in FastAPI on MongoDB with a signal registry, feature groups,
+          audience and scope definitions, and tenant-scoped overrides — exposed
+          through an internal resolve endpoint that Temporal workflows call at
+          workflow start to decide which fraud signals apply to a candidate and
+          job.
+        provenance: [ev-phenom-frm-service]
+      - text: >-
+          Built the fraud administration front end in React — feature store,
+          audience rules, tenant provisioning, and a case and action centre for
+          reviewers — authenticated through the chatbot authentication service
+          with Keycloak, and built to an existing design system and Figma
+          specs.
+        provenance: [ev-phenom-frm-admin-ui]
+      - text: >-
+          Merged fraud-risk resolve into the interview-intelligence Temporal
+          workflows and removed the Policy Engine gating that had decided which
+          checks to run, making the configuration service the single source of
+          truth and replacing hardcoded per-tenant flags with audience rules
+          resolved per candidate.
+        provenance: [ev-phenom-frm-decides-what-runs]
+      - text: >-
+          Built conversation analytics APIs covering both live-agent and
+          WhatsApp channels, raised the service's test coverage from 63% to
+          over 90% while clearing static-analysis code smells, and migrated the
+          service to FastAPI.
+        provenance: [ev-phenom-analytics-service]
+      - text: >-
+          Built candidate-facing UI components in the micro-frontend widget — a
+          conversation summary API and view, an integrity-check modal,
+          live-signal aggregation, location typeahead, and in-modal video
+          playback.
+        provenance: [ev-phenom-widget-frontend]
+      - text: >-
+          Owned tenant provisioning and delivery for the platform — provision
+          and unprovision APIs with region-scoped tenant listing, containerised
+          deployment via Docker and Helm across staging environments, and
+          production support debugging by querying service logs in ClickHouse
+          to resolve customer tickets.
+        provenance: [ev-phenom-frm-tenancy-ops]
+      - text: >-
+          Architected chatbotCXAgent, a production multi-agent system on
+          LangGraph (12 orchestrated nodes) spanning intent
+          recognition, planning, dialogue-state management and tool routing —
+          with Graph RAG retrieval over enterprise knowledge and document
+          repositories via FAISS vector search and a Neo4j graph.
+        provenance: [ev-phenom-chatbotcx-architecture]
+      - text: >-
+          Ran the self-hosted LLM inference service as a deployable platform —
+          Helm-packaged releases, custom chat templates per model, and
+          OpenTelemetry instrumentation feeding a metrics dashboard so
+          per-model latency and throughput were visible in production.
+        provenance: [ev-phenom-inference-platform]
+
+  - role_id: blueleaves-fullstack
+    bullets:
+      - text: >-
+          Owned end-to-end delivery of production systems (POS, CRM, inventory,
+          procurement, e-commerce) on Node.js, Firebase Cloud Functions and
+          REST APIs — with role-based access control and CI/CD — integrating
+          multiple internal systems and cutting manual operational errors by
+          roughly 90%.
+        provenance: [ev-blueleaves-fullstack-delivery]
+      - text: >-
+          Sole engineer on the whole stack — built the CRM and the other
+          internal tools as React and Vite web applications, owning the
+          interface as well as the services behind it.
+        provenance: [ev-blueleaves-frontend]
+      - text: >-
+          Built data-driven analytics on large-scale transactional and
+          stock-movement data — demand forecasting, sales-trend and inventory
+          models that surfaced discrepancies and improved procurement and
+          replenishment decisions across 5+ locations and 10,000+ monthly
+          transactions.
+        provenance: [ev-blueleaves-analytics]
+
+skill_groups:
+  - name: Languages
+    items: [Python, JavaScript, TypeScript, SQL, Bash]
+  - name: "Backend & Cloud Infrastructure"
+    items: [FastAPI, "Node.js", "Express.js", "REST APIs", Microservices,
+            Docker, Helm, Temporal, Kafka, "AWS (EC2/S3/SageMaker)",
+            "GitHub Actions", "CI/CD", Linux]
+  - name: "Frontend & Auth"
+    items: [React, Vite, "Micro-Frontends", Keycloak, "OAuth / SSO",
+            "Design Systems", "Role-Based Access Control"]
+  - name: Databases
+    items: [PostgreSQL, MongoDB, ClickHouse, Redis, Neo4j, Firebase]
+  - name: "GenAI & Agentic"
+    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
+            "Tool/Function Calling", "RAG & Graph RAG", "Prompt Engineering",
+            "LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry,
+            "Embeddings / Vector Search (FAISS)", vLLM]

@@ -1,0 +1,676 @@
+_instructions: 'Write tailored.yaml from this worksheet. RULES: (1) every bullet needs `provenance:
+  [evidence-id]`; (2) never state a number that is not in the cited unit''s claim/metrics;
+  (3) never name a technology the cited units don''t mention; (4) rephrase in the JD''s vocabulary
+  but do not upgrade scope, seniority, or ownership; (5) unmatched requirements stay gaps
+  — report them, don''t invent; (6) `emphasize:` on a bullet bolds load-bearing terms, but
+  only terms the cited units contain — default to the unit''s own list. Run `jt verify 2026-08-20-globallogic-forward-deployed-engineer-irc299`
+  until clean.'
+job:
+  company: GlobalLogic
+  role: Forward Deployed Engineer IRC299929
+  url: ''
+  work_mode: hybrid
+requirements:
+- requirement: Client Engagement & Strategic Architecture
+  status: partial
+  evidence: ev-phenom-whatsapp-channel
+  caveat: null
+  matched_terms:
+  - engagement
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Value Measurement & Executive Alignment
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+known_gaps:
+- topic: dspy
+  status: aware-not-used
+  note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+- topic: llamaindex
+  status: aware-not-used
+  note: Comparable to LangChain work but not used in production.
+- topic: gcp-vertex-ai
+  status: adjacent
+  note: AWS-based (EC2/S3/SageMaker/g5). Vertex is transferable but unused.
+- topic: kubernetes
+  status: adjacent
+  note: Docker in production; orchestration was not owned.
+- topic: cs-degree
+  status: structural
+  note: B.Tech Mechanical. Flag when a JD hard-requires CS/related degree.
+- topic: years-of-experience
+  status: structural
+  note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+evidence_ranked:
+- id: ev-phenom-chatbotcx-architecture
+  score: 2.945
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  allowed_skills:
+  - langgraph
+  - multi-agent-systems
+  - agent-orchestration
+  - intent-recognition
+  - planning
+  - dialogue-state-management
+  - tool-routing
+  - graph-rag
+  - rag
+  - faiss
+  - neo4j
+  - vector-search
+  - production-systems
+  emphasize:
+  - chatbotCXAgent
+  - LangGraph
+  - Graph RAG
+  jd_overlap:
+  - agentic
+  - ai
+  - augmented
+  - enterprise
+  - generation
+  - intent
+  - management
+  - multi-agent
+  - orchestration
+  - over
+  - pipelines
+  - production
+  probe: Why 12 nodes? How does dialogue state survive a tool failure mid-turn? Why a graph
+    alongside vectors instead of vectors alone?
+- id: ev-phenom-fraud-detection-engine
+  score: 1.715
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Building the detection and decisioning layer of an enterprise hiring-integrity /
+    fraud-risk platform — an LLM orchestration engine that investigates flagged candidate
+    activity, correlates evidence across signals, and produces reviewer-facing assessments
+    with supporting rationale — backed by a policy-driven rules engine (score / condition
+    → action), per-tenant risk configuration, and audited review workflows across the signal
+    lifecycle.
+  metrics: {}
+  allowed_skills:
+  - llm-orchestration
+  - agent-orchestration
+  - multi-agent-systems
+  - evidence-correlation
+  - decision-support
+  - explainability
+  - fraud-detection
+  - risk-scoring
+  - anomaly-investigation
+  - policy-engine
+  - rules-engine
+  - multi-tenancy
+  - audit-logging
+  - system-design
+  emphasize:
+  - hiring-integrity / fraud-risk platform
+  - LLM orchestration engine
+  - policy-driven rules engine
+  jd_overlap:
+  - agentic
+  - agents
+  - ai
+  - backed
+  - engineering
+  - enterprise
+  - human-in-the-loop
+  - lifecycle
+  - orchestration
+  - platform
+  - recruitment
+  - tech
+  probe: What does the orchestration actually decide — does the LLM score, or does it assemble
+    evidence for a rules engine that scores? How do you keep a reviewer-facing rationale faithful
+    to the signals it cites? What is the false-positive cost of accusing a real candidate?
+- id: ev-phenom-frm-service
+  score: 1.712
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built the fraud-risk configuration service greenfield in FastAPI on MongoDB — signal
+    registry, feature groups, audience and scope definitions, and tenant-scoped overrides
+    — exposed through an internal resolve endpoint that Temporal workflows call at workflow
+    start to decide which fraud signals apply to a candidate and job.
+  metrics: {}
+  allowed_skills:
+  - fastapi
+  - python
+  - mongodb
+  - rest-api
+  - api-design
+  - backend-architecture
+  - multi-tenancy
+  - configuration-management
+  - temporal
+  - workflow-orchestration
+  - greenfield-development
+  - service-design
+  emphasize:
+  - FastAPI
+  - MongoDB
+  - Temporal
+  jd_overlap:
+  - engineer
+  - engineering
+  - enterprise
+  - orchestration
+  - platform
+  - recruitment
+  - start
+  - systems
+  - tech
+  - through
+  - which
+  - workflows
+  probe: Why an internal resolve call at workflow start rather than the workflow reading config
+    itself? What happens to a running workflow when the config changes underneath it?
+- id: ev-phenom-qwen-production-hardening
+  score: 1.661
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Hardened the fine-tuned Qwen deployment for production serving — a custom Jinja2
+    chat template disabling the model's thinking mode, required tool-choice and temperature
+    pinned at 0.1 for deterministic tool calls, and eager execution forced because CUDA graphs
+    break on the model's hybrid Mamba-attention architecture — then held it to a golden baseline
+    of 1.0s median and 1.4s P95 latency with zero failures across 5,510 requests, taking the
+    service's test coverage from 7% to 78%.
+  metrics:
+    p50_latency: 1.0s
+    p95_latency: 1.4s
+    requests_without_failure: 5,510
+    temperature: '0.1'
+    test_coverage_before: 7%
+    test_coverage_after: 78%
+  allowed_skills:
+  - vllm
+  - model-serving
+  - inference-optimization
+  - latency-optimization
+  - jinja2
+  - chat-templates
+  - tool-calling
+  - cuda
+  - gpu-inference
+  - load-testing
+  - benchmarking
+  - regression-testing
+  - test-coverage
+  - production-readiness
+  emphasize:
+  - 1.4s
+  - 5,510
+  - 7% to 78%
+  jd_overlap:
+  - architecture
+  - calling
+  - enterprise
+  - hybrid
+  - load
+  - model
+  - performance
+  - production
+  - readiness
+  - recruitment
+  - tech
+  - testing
+  probe: Why does disabling thinking mode matter for tool calls, and what did --enforce-eager
+    cost you in throughput? What does the golden baseline gate — is it wired into CI?
+- id: ev-phenom-frm-decides-what-runs
+  score: 1.594
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Merged fraud-risk resolve into the interview-intelligence Temporal workflows and
+    removed the Policy Engine gating that had decided which checks to run, making the configuration
+    service the single source of truth for fraud enablement and replacing hardcoded per-tenant
+    flags with audience rules resolved per candidate.
+  metrics: {}
+  allowed_skills:
+  - temporal
+  - workflow-orchestration
+  - system-integration
+  - refactoring
+  - backend-architecture
+  - feature-flags
+  - policy-engine
+  - cross-repo-migration
+  - single-source-of-truth
+  emphasize:
+  - single source of truth
+  - Temporal
+  - Policy Engine
+  jd_overlap:
+  - engineering
+  - enterprise
+  - into
+  - orchestration
+  - per
+  - platform
+  - recruitment
+  - systems
+  - tech
+  - which
+  - workflows
+  probe: What broke when you took the Policy Engine out of that path, and how did you roll
+    it out without stopping live interviews? How do you know a tenant's behaviour did not
+    change silently?
+- id: ev-phenom-eval-framework
+  score: 1.472
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  allowed_skills:
+  - llm-evaluation
+  - llm-as-judge
+  - pass-at-k
+  - eval-harness
+  - langfuse
+  - litellm
+  - observability
+  - tracing
+  - cost-monitoring
+  - latency-monitoring
+  - regression-testing
+  - hallucination-mitigation
+  - ci-gating
+  emphasize:
+  - LLM evaluation framework
+  - LiteLLM + Langfuse
+  jd_overlap:
+  - ai
+  - continuously
+  - enterprise
+  - evaluation
+  - learning
+  - model
+  - observability
+  - recruitment
+  - responsible
+  - tech
+  probe: What does your judge rubric look like and how did you validate the judge itself?
+    What happens on a release that regresses one node out of twelve?
+- id: ev-phenom-toolcalling-guardrails
+  score: 1.396
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Engineered tool-calling agents that execute governed actions — database queries and
+    structured extraction from unstructured documents — under XGrammar constrained decoding
+    and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+    malformed tool calls in live traffic.
+  metrics:
+    tool_routing_accuracy: 91.9%
+    malformed_tool_calls: eliminated in live traffic
+  allowed_skills:
+  - tool-calling
+  - function-calling
+  - constrained-decoding
+  - xgrammar
+  - json-schema
+  - schema-validation
+  - guardrails
+  - structured-extraction
+  - sql
+  - agent-reliability
+  emphasize:
+  - XGrammar constrained decoding
+  - XGrammar
+  - 91.9%
+  jd_overlap:
+  - agents
+  - calling
+  - data
+  - enterprise
+  - function
+  - generation
+  - recruitment
+  - tech
+  - tool
+  probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
+    JSON mode or retry-on-parse-failure?
+- id: ev-phenom-finetune-serving
+  score: 1.336
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS g5.xlarge
+    (A10G), sustaining 10.98 RPS at 98.6% success under load at roughly half the inference
+    cost of hosted GPT-4.1.
+  metrics:
+    throughput: 10.98 RPS
+    success_rate: 98.6%
+    cost: ~50% of hosted GPT-4.1 inference cost
+    hardware: AWS g5.xlarge (A10G)
+  allowed_skills:
+  - fine-tuning
+  - qlora
+  - peft
+  - unsloth
+  - quantization
+  - nf4
+  - vllm
+  - qwen
+  - model-serving
+  - gpu-inference
+  - aws
+  - load-testing
+  - cost-optimization
+  - throughput-optimization
+  emphasize:
+  - QLoRA
+  - vLLM
+  jd_overlap:
+  - enterprise
+  - learning
+  - load
+  - model
+  - models
+  - open
+  - recruitment
+  - stack
+  - tech
+  probe: What batch size and context length at 10.98 RPS? What was the 1.4% failure mode?
+    How did you construct the QLoRA training set?
+- id: ev-phenom-inference-platform
+  score: 1.291
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Ran the self-hosted LLM inference service as a deployable platform — Helm-packaged
+    releases, custom chat templates per model, reasoning-model flags, and OpenTelemetry instrumentation
+    feeding a metrics dashboard so per-model latency and throughput were visible in production.
+  metrics: {}
+  allowed_skills:
+  - llm-serving
+  - vllm
+  - helm
+  - helm-charts
+  - docker
+  - deployment
+  - opentelemetry
+  - observability
+  - metrics
+  - monitoring
+  - chat-templates
+  - model-configuration
+  - mlops
+  - platform-engineering
+  emphasize:
+  - Helm
+  - OpenTelemetry
+  jd_overlap:
+  - engineering
+  - enterprise
+  - model
+  - models
+  - observability
+  - per
+  - platform
+  - production
+  - recruitment
+  - tech
+  probe: What do the OpenTelemetry spans actually cover on an inference request, and what
+    did the dashboard change about how you operate it?
+- id: ev-blueleaves-frontend
+  score: 1.237
+  strength: strong
+  role: blueleaves-fullstack
+  claim: Sole engineer on the whole stack — built the CRM and the other internal tools as
+    React and Vite web applications, owning the interface as well as the services behind it.
+  metrics: {}
+  allowed_skills:
+  - react
+  - vite
+  - javascript
+  - frontend
+  - full-stack
+  - ui-development
+  - crm
+  - internal-tools
+  - sole-ownership
+  - spa
+  emphasize:
+  - React
+  - Vite
+  - Sole engineer
+  jd_overlap:
+  - engineer
+  - full
+  - full-stack
+  - retail
+  - services
+  - stack
+  - tools
+  probe: What did you get wrong building a CRM alone that a second engineer would have caught?
+    How did you keep the UI maintainable without review?
+- id: ev-phenom-frm-admin-ui
+  score: 1.225
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Built the fraud administration front end in React — feature store, audience rules,
+    tenant provisioning, and a case and action centre for reviewers — authenticated through
+    the chatbot authentication service with Keycloak, and built to an existing design system
+    and Figma specs.
+  metrics: {}
+  allowed_skills:
+  - react
+  - javascript
+  - frontend
+  - ui-development
+  - design-systems
+  - keycloak
+  - oauth
+  - authentication
+  - sso
+  - csp
+  - full-stack
+  - figma
+  emphasize:
+  - React
+  - Keycloak
+  jd_overlap:
+  - enterprise
+  - full
+  - full-stack
+  - management
+  - recruitment
+  - stack
+  - tech
+  - through
+  - tools
+  probe: How does the front end get a token, and what happens when it expires mid-session?
+    What did the Content-Security-Policy and iframe work actually fix?
+- id: ev-phenom-modernbert-nlu
+  score: 1.183
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising NLU accuracy
+    from 87% to 97%.
+  metrics:
+    nlu_accuracy_before: 87%
+    nlu_accuracy_after: 97%
+  allowed_skills:
+  - pytorch
+  - modernbert
+  - bert
+  - transformers
+  - multi-task-learning
+  - intent-classification
+  - named-entity-recognition
+  - nlu
+  - fine-tuning
+  - model-training
+  emphasize:
+  - ModernBERT
+  jd_overlap:
+  - enterprise
+  - intent
+  - model
+  - models
+  - recruitment
+  - tech
+  - training
+  probe: Why multi-task over two separate heads? Where did the 10 points come from — data,
+    architecture, or labels?
+- id: ev-phenom-analytics-service
+  score: 1.143
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Built conversation analytics APIs covering both live-agent and WhatsApp channels,
+    raised the service's test coverage from 63% to over 90% while clearing static-analysis
+    code smells, and migrated the service to FastAPI.
+  metrics:
+    test_coverage_before: 63%
+    test_coverage_after: over 90%
+  allowed_skills:
+  - python
+  - fastapi
+  - rest-api
+  - api-design
+  - analytics
+  - testing
+  - test-coverage
+  - pytest
+  - static-analysis
+  - code-quality
+  - refactoring
+  - service-migration
+  emphasize:
+  - 63% to over 90%
+  - FastAPI
+  jd_overlap:
+  - code
+  - development
+  - enterprise
+  - over
+  - recruitment
+  - tech
+  - technical
+  - testing
+  probe: What was untested at 63%, and did raising coverage actually catch anything? Why migrate
+    to FastAPI rather than leave it?
+- id: ev-proj-northstar-offscreen-maps
+  score: 1.131
+  strength: strong
+  role: project
+  claim: Rendered navigation off-screen with MapLibre and OpenFreeMap tiles and routed through
+    OSRM, streaming the result to the bike's cluster so the phone's screen could stay off
+    entirely — where the official app mirrors the phone display — with destinations arriving
+    through Android's share sheet.
+  metrics: {}
+  allowed_skills:
+  - android
+  - kotlin
+  - maplibre
+  - osrm
+  - offscreen-rendering
+  - opengl
+  - geospatial
+  - routing
+  - mobile-development
+  - battery-optimization
+  - system-integration
+  emphasize:
+  - MapLibre
+  - OSRM
+  - off-screen
+  jd_overlap:
+  - life
+  - 'off'
+  - performance
+  - phone
+  - product
+  - share
+  - through
+  - where
+  probe: What is the actual frame path from an off-screen surface to the cluster, and what
+    did rendering off-screen cost you in power or latency versus mirroring?
+skill_inventory:
+- name: Languages
+  items:
+  - Python
+  - JavaScript
+  - TypeScript
+  - SQL
+  - Bash
+- name: GenAI & Agentic
+  items:
+  - Agentic / Multi-Agent Systems
+  - LangGraph
+  - LangChain
+  - Tool/Function Calling
+  - Prompt Engineering
+  - Model Routing
+  - Context-Window Management
+  - RAG & Graph RAG
+  - LLM Fine-Tuning (QLoRA, SFT)
+- name: Eval, Observability & Guardrails
+  items:
+  - LLM Evaluation (LLM-as-judge, pass@k)
+  - OpenTelemetry
+  - Constrained Decoding (XGrammar)
+  - Schema Validation
+  - Langfuse
+  - LiteLLM
+  - Model Monitoring
+  - Hallucination Mitigation
+  - Role-Based Access Control
+- name: ML & Serving
+  items:
+  - PyTorch
+  - Transformers (BERT/ModernBERT)
+  - HuggingFace PEFT
+  - Unsloth
+  - Physics-Informed Neural Networks
+  - vLLM
+  - Embeddings / Vector Search (FAISS)
+  - Neo4j
+  - Ollama
+  - Production MLOps
+- name: Backend & Infra
+  items:
+  - FastAPI
+  - Node.js
+  - Express.js
+  - REST APIs
+  - Microservices
+  - Docker
+  - Helm
+  - Temporal
+  - Kafka
+  - AWS (EC2/S3/SageMaker)
+  - GitHub Actions
+  - CI/CD
+  - Linux
+- name: Frontend & Auth
+  items:
+  - React
+  - Vite
+  - Micro-Frontends
+  - Keycloak
+  - OAuth / SSO
+  - Design Systems
+  - Role-Based Access Control
+- name: Databases
+  items:
+  - PostgreSQL
+  - Neo4j
+  - MongoDB
+  - ClickHouse
+  - Redis
+  - Firebase

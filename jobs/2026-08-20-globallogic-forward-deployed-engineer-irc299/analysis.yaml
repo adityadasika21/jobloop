@@ -1,0 +1,45 @@
+fit_score: 7
+keyword_coverage: 0.125
+summary:
+  required_total: 2
+  met: 0
+  partial: 1
+  gap: 1
+  nice_to_have: 0
+  responsibilities: 0
+seniority:
+  years_required: 15
+  years_have: 4.3
+  stretch: true
+requirements:
+- requirement: Client Engagement & Strategic Architecture
+  status: partial
+  evidence: ev-phenom-whatsapp-channel
+  caveat: null
+  matched_terms:
+  - engagement
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Value Measurement & Executive Alignment
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+scan_checks:
+- check: Headline names the JD's own role language
+  pass: false
+- check: Top experience bullet answers a required item
+  pass: false
+- check: Every bullet carries a metric or a concrete system
+  pass: true
+- check: Keyword coverage of stated requirements >= 60%
+  pass: false
+- check: No required item is an unacknowledged gap
+  pass: false
+- check: Fits one page (built PDF is 1)
+  pass: true
+screened_at: '2026-08-20T12:49:03+00:00'
