@@ -247,6 +247,9 @@ evidence:
     probe: "Why multi-task over two separate heads? Where did the 10 points come from —
             data, architecture, or labels?"
     emphasize: [ModernBERT]
+    # Confirmed by Aditya 2026-08-20. His notes elsewhere say "mmBERT" — that
+    # is loose shorthand, not the shipped model. ModernBERT is correct and is
+    # what his own resume source says. Do not "fix" this.
 
   # ---- Blueleaves Farms : full stack ---------------------------------------
   - id: ev-blueleaves-analytics
@@ -304,12 +307,22 @@ evidence:
     parent: ev-proj-northstar
     claim: >-
       Traction drew Royal Enfield's attention directly, leading to an on-site
-      collaboration visit at their HQ to discuss the work.
-    skills: [product-shipping, stakeholder-communication]
+      visit at their HQ and a continuing relationship — they have since
+      approached him about a role and about collaborating on other
+      motorcycle-accessory work.
+    skills: [product-shipping, stakeholder-communication, industry-partnership]
     metrics: {}
-    keywords: [impact, recognition, traction, industry validation, initiative]
+    keywords: [impact, recognition, traction, industry validation, initiative,
+               partnership, inbound interest, business development]
     strength: strong
-    probe: "What came of the visit?"
+    emphasize: [Royal Enfield]
+    # Confirmed by Aditya 2026-08-20: the visit was not a dead end. What ended
+    # was the app — the repo is archived and he was asked to stop distributing
+    # it. The relationship is what continued, which is the stronger fact and
+    # the one the claim states. Do not let the claim imply the app is live.
+    probe: "What did they actually want from the visit, and where did the app
+            itself end up? Be ready to say plainly that you were asked to stop
+            distributing it and why that did not end the relationship."
 
   - id: ev-proj-indexnotes
     kind: project

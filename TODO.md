@@ -59,6 +59,20 @@ What remains needs Aditya, or needs a deploy.
       you ask for a sync. If that bites, the fix is one queued `mail` request
       a day — ~1/24th of what it used to cost — say the word.
 
+## 2c. Settled 2026-08-20
+
+- [x] **ModernBERT**, not mmBERT — his notes use mmBERT loosely; the shipped
+      model is ModernBERT and the resume is right. Noted in the unit so it does
+      not get "corrected" later.
+- [x] **Blueleaves started May 2022**, not September — the profile was already
+      right, so years-of-experience stands at ~4.3.
+- [x] **NorthStar** is a better story than the profile told: the HQ visit led
+      to a continuing relationship — Royal Enfield approached him about a role
+      and about other motorcycle-accessory collaborations. The app itself is
+      archived and he was asked to stop distributing it; that is in the unit's
+      probe, not the claim, so he is prepared for the question without putting
+      the negative on the page.
+
 ## 3. Small and deliberate
 
 - [ ] Education dates render as "August 2018 – May 2022"; his source writes
