@@ -24,7 +24,8 @@ from . import screen as screen_mod
 from . import verify as verify_mod
 from .model import STATUS_ORDER, status_rank, utcnow
 from .store import (
-    JobloopError, all_jobs, append_event, commit_push, job_dir, load_job,
+    JobloopError, all_jobs, append_event, commit_push, evidence_index,
+    job_dir, load_job,
     load_profile, rank_jobs, repo_root, resolve_slug, save_job, read_yaml,
     write_text, write_yaml,
 )
@@ -108,6 +109,42 @@ def cmd_verify(root: Path, a) -> int:
 
 
 def cmd_build(root: Path, a) -> int:
+    if getattr(a, "general", False):
+        # The resume you send when nobody gave you a JD. Not the master — that
+        # one mirrors Aditya's own hand-written page and stays that way — but a
+        # curated variant chosen for RANGE, because a recruiter with no role in
+        # mind is deciding what kind of engineer you are, not scoring you
+        # against a list.
+        prof = load_profile(root)
+        tailored = read_yaml(root / "profile" / "general.yaml")
+        problems = verify_mod.verify_profile(prof)
+        for role in tailored.get("experience", []) or []:
+            problems += verify_mod.verify_bullets(
+                role.get("bullets", []) or [], evidence_index(prof),
+                label=f"general[{role.get('role_id')}]",
+                vocab=verify_mod.profile_vocab(prof))
+        for proj in tailored.get("projects", []) or []:
+            problems += verify_mod.verify_bullets(
+                proj.get("bullets", []) or [], evidence_index(prof),
+                label=f"general[{proj.get('name')}]",
+                vocab=verify_mod.profile_vocab(prof))
+        if problems:
+            print(_c(f"FAIL — {len(problems)} provenance violation(s)", BAD))
+            for pr in problems:
+                print(f"  {_c('x', BAD)} {pr}")
+            return 1
+        tex = render_mod.render_tex(root, tailored, variant="general")
+        tex_path = root / "profile" / "general-resume.tex"
+        write_text(tex_path, tex)
+        import shutil
+        shutil.copy(root / "templates" / "resume.cls", root / "profile" / "resume.cls")
+        print(f"{_c('tex', OK)} {tex_path.relative_to(root)}")
+        if not a.no_pdf:
+            pdf = render_mod.build_pdf(tex_path)
+            print(f"{_c('pdf', OK)} {pdf.relative_to(root)}")
+            _warn_if_long(pdf, root, "general")
+        return 0
+
     if a.master:
         prof = load_profile(root)
         tailored = render_mod.master_tailored(prof)
@@ -653,6 +690,8 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("slug", nargs="?", default="")
     s.add_argument("--master", action="store_true",
                    help="build the untailored master resume")
+    s.add_argument("--general", action="store_true",
+                   help="build profile/general.yaml — the no-JD resume")
     s.add_argument("--no-pdf", action="store_true")
     s.set_defaults(fn=cmd_build)
 
