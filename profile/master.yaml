@@ -593,6 +593,217 @@ evidence:
       modal; NLU work with Locust load tests, PII skip/classify and retraining
       on failed intents; Kafka event-handler fixes.'
 
+  - id: ev-proj-northstar-protocol
+    kind: project
+    parent: ev-proj-northstar
+    claim: Reverse-engineered the dash's undocumented wire protocol — an RSA-1024
+      plus AES-256 handshake over UDP with auto-discovery of any dash advertising
+      itself on the local network, and an H.264 over RTP video plane on a separate
+      port.
+    skills: [reverse-engineering, network-protocols, udp, rtp, h264, video-streaming,
+      cryptography, rsa, aes, packet-analysis, embedded-integration, android]
+    metrics: {}
+    keywords: [reverse engineering, protocol, binary protocol, networking, udp,
+      rtp, streaming, video, h264, encryption, cryptography, handshake, service
+        discovery, embedded, iot, device integration, low level]
+    strength: strong
+    emphasize: [RSA-1024, AES-256, H.264]
+    probe: How did you recover the handshake without a spec — traffic capture,
+      firmware, or both? What happens if a second phone tries to pair while you
+      are connected?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
+  - id: ev-proj-northstar-offscreen-maps
+    kind: project
+    parent: ev-proj-northstar
+    claim: Rendered navigation off-screen with MapLibre and OpenFreeMap tiles
+      and routed through OSRM, streaming the result to the bike's cluster so the
+      phone's screen could stay off entirely — where the official app mirrors
+      the phone display — with destinations arriving through Android's share sheet.
+    skills: [android, kotlin, maplibre, osrm, offscreen-rendering, opengl, geospatial,
+      routing, mobile-development, battery-optimization, system-integration]
+    metrics: {}
+    keywords: [android, mobile, maps, mapping, geospatial, routing, navigation,
+      rendering, graphics, offscreen rendering, performance, battery life, share
+        sheet, intents, product thinking]
+    strength: strong
+    emphasize: [MapLibre, OSRM, off-screen]
+    probe: What is the actual frame path from an off-screen surface to the cluster,
+      and what did rendering off-screen cost you in power or latency versus mirroring?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
+  - id: ev-phenom-qwen-production-hardening
+    role: phenom-ai-llm-eng-ii
+    claim: Hardened the fine-tuned Qwen deployment for production serving — a
+      custom Jinja2 chat template disabling the model's thinking mode, required
+      tool-choice and temperature pinned at 0.1 for deterministic tool calls,
+      and eager execution forced because CUDA graphs break on the model's hybrid
+      Mamba-attention architecture — then held it to a golden baseline of 1.0s
+      median and 1.4s P95 latency with zero failures across 5,510 requests, taking
+      the service's test coverage from 7% to 78%.
+    skills: [vllm, model-serving, inference-optimization, latency-optimization,
+      jinja2, chat-templates, tool-calling, cuda, gpu-inference, load-testing,
+      benchmarking, regression-testing, test-coverage, production-readiness]
+    metrics: {p50_latency: 1.0s, p95_latency: 1.4s, requests_without_failure: '5,510',
+      temperature: '0.1', test_coverage_before: 7%, test_coverage_after: 78%}
+    keywords: [llm serving, inference, vllm, latency, p95, benchmarking, load
+        testing, golden baseline, regression testing, tool calling, deterministic
+        output, gpu, cuda, production readiness, slo, performance tuning, test
+        coverage, mlops]
+    strength: core
+    emphasize: [1.4s, '5,510', 7% to 78%]
+    probe: Why does disabling thinking mode matter for tool calls, and what did
+      --enforce-eager cost you in throughput? What does the golden baseline gate
+      — is it wired into CI?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
+  - id: ev-blueleaves-frontend
+    role: blueleaves-fullstack
+    claim: Sole engineer on the whole stack — built the CRM and the other internal
+      tools as React and Vite web applications, owning the interface as well as
+      the services behind it.
+    skills: [react, vite, javascript, frontend, full-stack, ui-development, crm,
+      internal-tools, sole-ownership, spa]
+    metrics: {}
+    keywords: [react, vite, frontend, full stack, single page application, internal
+        tools, crm, dashboards, sole developer, ownership, end to end, web application]
+    strength: strong
+    emphasize: [React, Vite, Sole engineer]
+    probe: What did you get wrong building a CRM alone that a second engineer
+      would have caught? How did you keep the UI maintainable without review?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
+  - id: ev-proj-pinns
+    kind: project
+    name: Physics-Informed Neural Networks from scratch
+    stack: [PyTorch, NumPy, L-BFGS]
+    claim: Implemented physics-informed neural networks from scratch across three
+      PDEs — the heat equation to roughly 3% error, Burgers' equation using two-phase
+      Adam then L-BFGS optimisation reproducing the published benchmark, and the
+      Schrodinger equation with complex-valued outputs, periodic boundary conditions
+      and Latin-hypercube sampling.
+    skills: [pytorch, physics-informed-neural-networks, scientific-computing,
+      numerical-methods, partial-differential-equations, optimization, lbfgs,
+      automatic-differentiation, numpy, research-implementation]
+    metrics: {heat_equation_error: ~3%}
+    keywords: [scientific machine learning, physics informed neural networks,
+      pinns, numerical methods, differential equations, simulation, optimization,
+      pytorch, autograd, research, applied mathematics, computational physics,
+      modelling]
+    strength: strong
+    emphasize: [PyTorch, L-BFGS]
+    probe: Why does a naive PINN fail on Burgers without the two-phase optimiser?
+      What did you use as ground truth for the 3% figure?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
+  - id: ev-proj-corpus
+    kind: project
+    name: Corpus — personal finance tracker
+    stack: [Android, Kotlin, SQLite]
+    claim: Built and shipped an Android personal-finance tracker that ingests
+      payments automatically by parsing SMS and email rather than asking for manual
+      entry, tracks instalment schedules, and runs on his own phone daily.
+    skills: [android, kotlin, mobile-development, text-parsing, information-extraction,
+      local-storage, product-design, shipping]
+    metrics: {}
+    keywords: [android, mobile, kotlin, personal finance, fintech, parsing, text
+        extraction, automation, on-device, side project, shipped]
+    strength: supporting
+    emphasize: [Android]
+    probe: How reliable is the SMS parsing across banks, and what happens when
+      a bank changes its message format?
+    on_master: false
+    added_at: '2026-08-20'
+    source_note: 'From Aditya''s own project summary, 2026-08-20. NorthStar internals:
+      RSA-1024 + AES-256 handshake over UDP:2000, auto-discovery of any RE_* dash
+      on WiFi, H.264/RTP video over UDP:5000; maps rendered off-screen with MapLibre
+      and OpenFreeMap tiles, routed via OSRM, so the phone screen could stay off,
+      destination arriving through Android''s share sheet. Qwen3.5-2B QLoRA in
+      production on vLLM: temp 0.1, tool_choice required, thinking disabled via
+      a custom Jinja2 chat template, --enforce-eager because CUDA graphs break
+      on the hybrid Mamba+attention architecture; golden baseline P50 1.0s, P95
+      1.4s, zero failures over 5,510 requests; test coverage 7% to 78%. Blueleaves:
+      sole full-stack engineer, CRM and internal tools as React + Vite web apps.
+      PINNs from scratch: heat equation ~3% error, Burgers via two-phase Adam
+      then L-BFGS matching Raissi et al., Schrodinger complex-valued with periodic
+      boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
+      SMS and email ingestion, installed and working on his phone.'
+
   # <<< jt evidence add
   # New units are spliced in immediately above this marker. It exists so
   # master.yaml can be appended to without a YAML round-trip, which would
@@ -620,6 +831,7 @@ skill_groups:
             "Role-Based Access Control"]
   - name: ML & Serving
     items: [PyTorch, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT", Unsloth,
+            "Physics-Informed Neural Networks",
             vLLM, "Embeddings / Vector Search (FAISS)", Neo4j, Ollama,
             "Production MLOps"]
   - name: Backend & Infra
@@ -627,7 +839,7 @@ skill_groups:
             Helm, Temporal, Kafka, "AWS (EC2/S3/SageMaker)", "GitHub Actions",
             CI/CD, Linux]
   - name: Frontend & Auth
-    items: [React, "Micro-Frontends", Keycloak, "OAuth / SSO", "Design Systems",
+    items: [React, Vite, "Micro-Frontends", Keycloak, "OAuth / SSO", "Design Systems",
             "Role-Based Access Control"]
   - name: Databases
     items: [PostgreSQL, Neo4j, MongoDB, ClickHouse, Redis, Firebase]
