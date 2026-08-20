@@ -1,0 +1,158 @@
+# Tailored for: Machine Learning Engineer (IC4, Remote - India) — Coinbase
+#
+# NOTE: the generated worksheet's requirement list is usable this time, but the
+# JD page renders each bullet as a bare "-" line followed by its text, so read
+# jd.md alongside it. Requirements below are answered in the JD's own order.
+#
+# Strategy: the team is CX Intelligence — the multi-agent platform behind
+# Coinbase chat, Help Center and agent tooling — and the role is explicitly an
+# orchestration layer managing state transitions, context sharing and intent
+# routing across LLM frameworks. chatbotCXAgent is the same shape of system, so
+# it leads. Then, in the JD's order: reliable handoff/tool routing, production
+# hardening (they ask for "reliable" and "measurable"), eval + cost, deep
+# learning and serving, an NLP domain, production-grade well-tested Python
+# services, and finally system design under security and compliance.
+#
+# Re-tailored 2026-08-20 against the enriched profile. What is new since the
+# first pass: ev-phenom-qwen-production-hardening (deterministic tool calls,
+# golden latency baseline, 7% → 78% coverage) answers "reliable" and
+# "well-tested production code" far better than anything available before, and
+# ev-phenom-analytics-service is the literal "production-grade Python services"
+# + conversation-analytics bullet this JD asks for. NorthStar's ending is now
+# recorded, so the project bullet states the real outcome.
+#
+# Gaps left as gaps (they go in the screening report, not into a bullet):
+# LangSmith (the eval work is LiteLLM + Langfuse), Google ADK, Vertex AI and
+# AWS Bedrock. Serving evidence is vLLM on AWS g5/EC2, which is adjacent to
+# Bedrock but is not Bedrock. Coinbase also asks for design reviews against
+# security and compliance standards — the fraud-risk policy plane is the
+# closest true evidence, and it is platform work rather than a review process,
+# so it lost the page-budget fight to the ML and Python bullets and stays out.
+#
+# Every bullet carries provenance into profile/master.yaml. `jt verify` fails
+# the build if any number or technology here is unsupported by its sources.
+
+headline: "Machine Learning Engineer · Multi-Agent Orchestration on LangGraph · Conversational AI & Graph RAG · LLM Evaluation & Serving"
+headline_provenance:
+  - ev-phenom-chatbotcx-architecture
+  - ev-phenom-eval-framework
+  - ev-phenom-finetune-serving
+
+experience:
+  - role_id: phenom-ai-llm-eng-ii
+    bullets:
+      - text: >-
+          Architected chatbotCXAgent, a production multi-agent conversational
+          system on LangGraph whose orchestration layer coordinates 12 nodes
+          spanning intent recognition, planning, dialogue-state management and
+          tool routing, with Graph RAG information retrieval over enterprise
+          knowledge and document repositories via FAISS vector search and a
+          Neo4j graph for multi-hop, policy-aware grounding.
+        provenance: [ev-phenom-chatbotcx-architecture]
+
+      - text: >-
+          Engineered tool-calling agents that execute governed actions — database
+          queries and structured extraction from unstructured documents — under
+          XGrammar constrained decoding and schema-validated JSON guardrails,
+          raising tool-routing accuracy to 91.9% and eliminating malformed tool
+          calls in live traffic.
+        provenance: [ev-phenom-toolcalling-guardrails]
+
+      - text: >-
+          Hardened the fine-tuned Qwen deployment for production serving —
+          required tool-choice and temperature pinned at 0.1 for deterministic
+          tool calls — and held it to a golden baseline of 1.0s median and 1.4s
+          P95 latency with zero failures across 5,510 requests, taking the
+          service's test coverage from 7% to 78%.
+        provenance: [ev-phenom-qwen-production-hardening]
+
+      - text: >-
+          Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating
+          every release across all 12 nodes, instrumented with LiteLLM and
+          Langfuse for per-node cost, latency and full-trace auditability —
+          continuously monitoring agent behaviour and curbing hallucinations.
+        provenance: [ev-phenom-eval-framework]
+
+      - text: >-
+          Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM /
+          AWS g5.xlarge (A10G), sustaining 10.98 RPS at 98.6% success under load
+          at roughly half the inference cost of hosted GPT-4.1.
+        provenance: [ev-phenom-finetune-serving]
+
+      - text: >-
+          Fine-tuned a multi-task ModernBERT (intent + NER) in PyTorch, raising
+          NLU accuracy from 87% to 97%.
+        provenance: [ev-phenom-modernbert-nlu]
+
+      - text: >-
+          Developed production-grade Python services — conversation analytics
+          APIs covering both live-agent and WhatsApp channels — raising test
+          coverage from 63% to over 90% and clearing static-analysis code smells
+          for clean, maintainable code, and migrated the service to FastAPI.
+        provenance: [ev-phenom-analytics-service]
+
+  - role_id: blueleaves-fullstack
+    bullets:
+      - text: >-
+          Owned end-to-end delivery of production systems (POS, CRM, inventory,
+          procurement, e-commerce) on Node.js, Firebase Cloud Functions and REST
+          APIs — with role-based access control and CI/CD — integrating multiple
+          internal systems and cutting manual operational errors by roughly 90%.
+        provenance: [ev-blueleaves-fullstack-delivery]
+
+      - text: >-
+          Built data-driven analytics on large-scale transactional data — demand
+          forecasting and inventory modeling across 5+ locations and 10,000+
+          monthly transactions.
+        provenance: [ev-blueleaves-analytics]
+
+projects:
+  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
+    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
+    bullets:
+      - text: >-
+          Built an automated Graph RAG pipeline ingesting research papers (PDF to
+          local-LLM extraction to structured JSON to Neo4j), creating 40+ concepts
+          and 17+ typed relationships, with quantized local models via Ollama for
+          entity and relationship extraction.
+        provenance: [ev-proj-indexnotes]
+      - text: >-
+          Designed a Neo4j schema enabling multi-hop graph traversal and
+          cross-document information retrieval across scientific domains.
+        provenance: [ev-proj-indexnotes-schema]
+
+  - name: NorthStar — Motorcycle Navigation Companion App
+    stack: [Android, BLE, Maps SDK]
+    bullets:
+      - text: >-
+          Built and shipped a companion app for the Royal Enfield Tripper Dash,
+          delivering turn-by-turn navigation to the bike's connected instrument
+          cluster and growing an organic user base without paid distribution;
+          the traction drew Royal Enfield's attention directly, leading to an
+          on-site visit at their HQ and a continuing relationship.
+        provenance: [ev-proj-northstar, ev-proj-northstar-traction]
+
+# Reordered so the groups the JD screens for are read first: it names LangGraph
+# by name, then Python, then an NLP / information-retrieval domain.
+skill_groups:
+  - name: "Generative AI, LLMs & Agentic Tools"
+    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
+            "Tool/Function Calling", "Prompt Engineering", "Model Routing",
+            "Context-Window Management", "RAG & Graph RAG",
+            "LLM Fine-Tuning (QLoRA, SFT)"]
+  - name: Languages
+    items: [Python, JavaScript, TypeScript, SQL, Bash]
+  - name: "Eval, Observability & Guardrails"
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry,
+            "Constrained Decoding (XGrammar)", "Schema Validation", Langfuse,
+            LiteLLM, "Model Monitoring", "Hallucination Mitigation",
+            "Role-Based Access Control"]
+  - name: "ML, Deep Learning & Serving"
+    items: [PyTorch, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT", Unsloth,
+            vLLM, "Embeddings / Vector Search (FAISS)", Neo4j, Ollama,
+            "Production MLOps"]
+  - name: Backend & Infra
+    items: [FastAPI, Node.js, "REST APIs", Microservices, Docker, Helm,
+            "AWS (EC2/S3/SageMaker)", "GitHub Actions", CI/CD, Linux]
+  - name: Databases
+    items: [PostgreSQL, Neo4j, MongoDB, ClickHouse, Redis, Firebase]
