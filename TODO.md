@@ -2,9 +2,11 @@
 
 ## 2026-09-04 — merge + cloud
 
-- [ ] **Enable one cloud path.** The Claude cloud routine
-      (`trig_01HsVsc8q3YNSLY5pYUqmeUr`) is created but disabled until a
-      manual run proves it can install, tailor and push. `routine.yml` waits
+- [ ] **Cloud is parked.** The Claude cloud routine
+      (`trig_01HsVsc8q3YNSLY5pYUqmeUr`) was tested (clone, TeX install, jt
+      all fine; Discord egress blocked) and then DISABLED on 2026-09-04 at
+      Aditya's request so it does not spend subscription tokens on its own.
+      Re-enable from https://claude.ai/code/routines when wanted. `routine.yml` waits
       on the `CLAUDE_CODE_OAUTH_TOKEN` secret (`claude setup-token` →
       `gh secret set CLAUDE_CODE_OAUTH_TOKEN`). Once either works, disable the
       workstation timer: `systemctl --user disable --now jobloop.timer`.
