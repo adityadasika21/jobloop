@@ -1,0 +1,111 @@
+headline: "AI/LLM Engineer · Production AI Agents on LangGraph · RAG, Evaluation & Langfuse · REST Integration & Customer Discovery"
+headline_provenance:
+  - ev-phenom-chatbotcx-architecture
+  - ev-phenom-fraud-detection-engine
+  - ev-phenom-eval-framework
+  - ev-blueleaves-fullstack-delivery
+  - ev-blueleaves-stakeholder-discovery
+
+experience:
+  - role_id: phenom-ai-llm-eng-ii
+    bullets:
+      - text: >-
+          Architected chatbotCXAgent, a production multi-agent orchestration
+          system on LangGraph (12 orchestrated nodes) spanning intent
+          recognition, planning, dialogue-state management and tool routing —
+          with Graph RAG pipelines over enterprise knowledge and document
+          repositories via FAISS vector search and a Neo4j graph for multi-hop,
+          policy-aware grounding.
+        provenance: [ev-phenom-chatbotcx-architecture]
+      - text: >-
+          Engineered tool-calling agents that execute governed actions —
+          database queries and structured extraction from unstructured
+          documents — under XGrammar constrained decoding and schema-validated
+          JSON guardrails, raising tool-routing accuracy to 91.9% and
+          eliminating malformed tool calls in live traffic.
+        provenance: [ev-phenom-toolcalling-guardrails]
+      - text: >-
+          Built an LLM evaluation framework (pass@k, LLM-as-judge rubric)
+          gating every release across all 12 nodes, instrumented with LiteLLM +
+          Langfuse for per-node cost, latency and full-trace observability —
+          monitoring agent behaviour in production and curbing hallucinations.
+        provenance: [ev-phenom-eval-framework]
+      - text: >-
+          Building the detection and decisioning layer of an enterprise HR tech
+          hiring-integrity / fraud-risk platform — an LLM orchestration engine
+          that investigates flagged candidate activity, correlates evidence
+          across signals and produces reviewer-facing HR decision support with
+          supporting rationale — backed by a policy-driven rules engine,
+          per-tenant risk configuration and audited review workflows.
+        provenance: [ev-phenom-fraud-detection-engine]
+      - text: >-
+          Built a greenfield FastAPI configuration service on MongoDB with
+          tenant-scoped overrides, exposed through an internal resolve REST API
+          that Temporal workflows call at workflow start to decide which checks
+          apply to a candidate and job.
+        provenance: [ev-phenom-frm-service]
+      - text: >-
+          Worked extensively with MCP (Model Context Protocol) servers —
+          ClickHouse, Playwright and Atlassian — as the tool layer in
+          day-to-day agent development, debugging and issue tracking.
+        provenance: [ev-phenom-mcp-tooling]
+      - text: >-
+          Delivered WhatsApp as a conversational channel through the WhatsApp
+          Business API — message templates, the 24-hour customer-service window
+          and a from-address lookup API — so the assistant could reach
+          candidates outside the web widget.
+        provenance: [ev-phenom-whatsapp-channel]
+      - text: >-
+          Owned tenant provisioning and deployment for enterprise customers —
+          provision and unprovision APIs with region-scoped tenant listing,
+          containerised deployment via Docker and Helm across staging
+          environments, and production support resolving customer tickets from
+          service logs in ClickHouse.
+        provenance: [ev-phenom-frm-tenancy-ops]
+
+  - role_id: blueleaves-fullstack
+    bullets:
+      - text: >-
+          Ran customer discovery directly with shareholders, company VPs and
+          external partner businesses (including farming companies),
+          translating their operational asks into technical designs and
+          delivering each implementation end to end.
+        provenance: [ev-blueleaves-stakeholder-discovery]
+      - text: >-
+          Owned end-to-end delivery of production systems (POS, CRM, inventory,
+          procurement, e-commerce) on Node.js, event-driven Firebase Cloud
+          Functions and REST APIs — with role-based access control and CI/CD —
+          integrating multiple internal systems and cutting manual operational
+          errors by roughly 90%.
+        provenance: [ev-blueleaves-fullstack-delivery]
+
+projects:
+  - name: IndexNotes — AI Knowledge Graph for Scientific Papers
+    stack: [Neo4j, Ollama, PyMuPDF, Python, Docker]
+    bullets:
+      - text: >-
+          Built an automated Graph RAG pipeline ingesting research papers (PDF →
+          local-LLM extraction → structured JSON → Neo4j), creating 40+ concepts
+          and 17+ typed relationships, with quantized local models via Ollama
+          for entity/relationship extraction on a schema enabling multi-hop
+          traversal and cross-document retrieval.
+        provenance: [ev-proj-indexnotes, ev-proj-indexnotes-schema]
+
+skill_groups:
+  - name: "GenAI & Agentic"
+    items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain, "MCP Servers",
+            "Tool/Function Calling", "Prompt Engineering", "RAG & Graph RAG",
+            "LLM Fine-Tuning (QLoRA, SFT)", "Model Routing"]
+  - name: "Evaluation & Observability"
+    items: ["LLM Evaluation (LLM-as-judge, pass@k)", Langfuse, LiteLLM, OpenTelemetry,
+            "Model Monitoring", "Constrained Decoding (XGrammar)", "Schema Validation",
+            "Hallucination Mitigation"]
+  - name: "Integrations, Backend & Auth"
+    items: [Python, TypeScript, FastAPI, "Node.js", "REST APIs", Microservices,
+            Temporal, Kafka, "OAuth / SSO", Keycloak, "Role-Based Access Control",
+            "AWS (EC2/S3/SageMaker)", Docker, Helm, "GitHub Actions", "CI/CD"]
+  - name: "ML & Serving"
+    items: [PyTorch, vLLM, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT",
+            Unsloth, Ollama, "Production MLOps"]
+  - name: Databases
+    items: [PostgreSQL, MongoDB, Neo4j, ClickHouse, Redis, Firebase]

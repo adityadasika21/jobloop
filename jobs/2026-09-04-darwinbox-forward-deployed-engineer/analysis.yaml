@@ -1,0 +1,242 @@
+fit_score: 39
+keyword_coverage: 0.271
+summary:
+  required_total: 2
+  met: 0
+  partial: 2
+  gap: 0
+  nice_to_have: 4
+  responsibilities: 11
+seniority:
+  years_required: 4
+  years_have: 4.3
+  stretch: false
+requirements:
+- requirement: Embed with 2–3 strategic enterprise customers in parallel as the technical
+    owner of the Darwinbox deployment in their environment.
+  status: met
+  evidence: ev-phenom-frm-tenancy-ops
+  caveat: null
+  matched_terms:
+  - deployment
+  - enterprise
+  - environment
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Run discovery with CHROs, HRBPs, and HRIS leads to surface the real problem
+    behind the stated ask and translate it into a working technical design.
+  status: met
+  evidence: ev-blueleaves-stakeholder-discovery
+  caveat: null
+  matched_terms:
+  - discovery
+  - into
+  - technical
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Deliver a working prototype within ~1 week of engagement kick-off, codify repeatable
+    deployment patterns, and channel field insights into the Darwinbox platform roadmap.
+  status: met
+  evidence: ev-phenom-frm-decides-what-runs
+  caveat: null
+  matched_terms:
+  - into
+  - platform
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Design and ship production-grade AI agents on the Darwinbox platform for HR
+    workflows including leave, performance, attendance, onboarding/exit automation, and HR
+    decision support.
+  status: met
+  evidence: ev-phenom-fraud-detection-engine
+  caveat: null
+  matched_terms:
+  - agents
+  - ai
+  - decision
+  - hr
+  - platform
+  - workflows
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Architect custom integrations between Darwinbox and customer-side payroll,
+    ATS, SSO/IDP, learning platforms, and ERP stacks using REST APIs, webhooks, and event-driven
+    patterns.
+  status: met
+  evidence: ev-blueleaves-fullstack-delivery
+  caveat: null
+  matched_terms:
+  - apis
+  - rest
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Travel 25–40 percent of the time to customer sites across India, Southeast
+    Asia, and the Middle East as required.
+  status: partial
+  evidence: ev-blueleaves-analytics
+  caveat: null
+  matched_terms:
+  - time
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Hands-on production Python engineering for enterprise SaaS, integrations, and
+    AI agent development.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - agent
+  - ai
+  - enterprise
+  - production
+  - saas
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: 'Production deployment of LLM applications: prompt engineering at scale, RAG
+    pipelines, agent orchestration, and evaluation frameworks.'
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - agent
+  - llm
+  - orchestration
+  - pipelines
+  - production
+  - rag
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: REST API and webhook integration design for systems interoperability (payroll,
+    ATS, SSO/IDP, learning, ERP) with production-grade auth.
+  status: met
+  evidence: ev-blueleaves-fullstack-delivery
+  caveat: null
+  matched_terms:
+  - api
+  - integration
+  - rest
+  - systems
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Customer discovery and technical translation with senior enterprise stakeholders
+    (CHROs, HRBPs, HRIS leads).
+  status: met
+  evidence: ev-blueleaves-stakeholder-discovery
+  caveat: null
+  matched_terms:
+  - customer
+  - discovery
+  - senior
+  - technical
+  - translation
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Production LLM experience and willingness to travel 25–40 percent — candidates
+    with only academic/demo AI exposure or hard travel constraints are unlikely to be the
+    right fit.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - ai
+  - llm
+  - production
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: HCM domain knowledge across payroll, performance, attendance, talent, and recruitment
+    workflows.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - recruitment
+  - talent
+  - workflows
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: MCP server implementation or agent framework experience (LangGraph, CrewAI,
+    AutoGen) and AI observability tools (LangSmith, Langfuse).
+  status: met
+  evidence: ev-phenom-eval-framework
+  caveat: 'mcp-server-implementation: Consumes MCP servers daily (ClickHouse, Playwright,
+    Atlassian) but has not implemented one. Flag JDs that prefer MCP *server implementation*.'
+  matched_terms:
+  - agent
+  - ai
+  - framework
+  - langfuse
+  - observability
+  known_gap: mcp-server-implementation
+  gap_note: Consumes MCP servers daily (ClickHouse, Playwright, Atlassian) but has not implemented
+    one. Flag JDs that prefer MCP *server implementation*.
+  kind: nice_to_have
+- requirement: TypeScript or Java in addition to Python; multilingual capability across Hindi,
+    English, or additional Indian / SEA languages.
+  status: partial
+  evidence: ev-blueleaves-analytics
+  caveat: null
+  matched_terms:
+  - python
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: Former technical founder experience, or experience in enterprise SaaS environments
+    such as Salesforce (Agentforce), Atlassian, Databricks, Uniphore, UnifyApps, Sprinklr,
+    Freshworks, Zoho, or similar settings with hands-on AI deployment work.
+  status: met
+  evidence: ev-phenom-frm-tenancy-ops
+  caveat: null
+  matched_terms:
+  - deployment
+  - enterprise
+  - environments
+  - saas
+  known_gap: null
+  gap_note: null
+  kind: nice_to_have
+- requirement: 1–4 years of professional software engineering experience, including customer-facing
+    (Hard requirement).
+  status: partial
+  evidence: ev-phenom-fraud-detection-engine
+  caveat: null
+  matched_terms:
+  - engineering
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Bachelor's degree in computer science, Engineering, or related quantitative
+    discipline; no certifications required.
+  status: partial
+  evidence: ev-phenom-fraud-detection-engine
+  caveat: null
+  matched_terms:
+  - engineering
+  known_gap: null
+  gap_note: null
+  kind: required
+scan_checks:
+- check: Headline names the JD's own role language
+  pass: true
+- check: Top experience bullet answers a required item
+  pass: false
+- check: Every bullet carries a metric or a concrete system
+  pass: true
+- check: Keyword coverage of stated requirements >= 60%
+  pass: false
+- check: No required item is an unacknowledged gap
+  pass: true
+- check: Fits one page (built PDF is 1)
+  pass: true
+screened_at: '2026-09-03T18:40:21+00:00'

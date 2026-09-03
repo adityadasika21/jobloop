@@ -1,0 +1,125 @@
+name: routine (cloud)
+
+# The judgment half of jobloop, in the cloud. Until 2026-09-04 this ran only
+# on Aditya's workstation (scripts/run-routine.sh on a systemd timer) because
+# Actions had no way to run Claude against his subscription. It does now:
+# `claude setup-token` mints a long-lived OAuth token for Claude Code, and
+# claude-code-action accepts it as `claude_code_oauth_token` — no API key, no
+# per-token billing, and the laptop can be closed.
+#
+# SETUP (once, on the workstation):
+#   claude setup-token                      # prints a token
+#   gh secret set CLAUDE_CODE_OAUTH_TOKEN   # paste it
+#
+# Same gate as the workstation: `jt work` decides for free whether there is
+# anything to do; Claude and the TeX install only happen when there is.
+# Fires after every Discord command lands (workflow_run), on a slow cron as a
+# fallback, and by hand. Gmail is not reachable from here — a `kind: mail`
+# request still needs the workstation routine or the Claude cloud routine.
+
+on:
+  workflow_run:
+    workflows: ["discord commands"]
+    types: [completed]
+  schedule:
+    - cron: "23 */3 * * *"
+  workflow_dispatch:
+    inputs:
+      force:
+        description: "Run even when jt work says idle"
+        required: false
+        default: "false"
+
+permissions:
+  contents: write
+
+concurrency:
+  # Same group as discord.yml and build.yml: one writer to main at a time.
+  group: jobloop-write
+  cancel-in-progress: false
+
+jobs:
+  routine:
+    runs-on: ubuntu-latest
+    env:
+      DISCORD_POST_URL: ${{ secrets.DISCORD_POST_URL }}
+      DISCORD_CHANNEL_ID: ${{ vars.DISCORD_CHANNEL_ID || '1539333966384074923' }}
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up jt
+        run: |
+          curl -LsSf https://astral.sh/uv/install.sh | sh
+          export PATH="$HOME/.local/bin:$PATH"
+          uv venv && uv pip install -e .
+          echo "$PWD/.venv/bin" >> "$GITHUB_PATH"
+
+      # --- the gate -------------------------------------------------------
+      # Everything above this line is cheap. Nothing below it is.
+      - name: Anything to do?
+        id: gate
+        run: |
+          if [ "${{ inputs.force }}" = "true" ] || jt work; then
+            echo "work=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "work=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Install TeX toolchain
+        if: steps.gate.outputs.work == 'true'
+        run: |
+          sudo apt-get update -qq
+          sudo apt-get install -y --no-install-recommends \
+            texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
+            texlive-xetex poppler-utils
+
+      - name: Configure git
+        if: steps.gate.outputs.work == 'true'
+        run: |
+          git config user.name  "jobloop-routine"
+          git config user.email "actions@github.com"
+
+      - name: Run the routine
+        if: steps.gate.outputs.work == 'true'
+        uses: anthropics/claude-code-action@v1
+        with:
+          claude_code_oauth_token: ${{ secrets.CLAUDE_CODE_OAUTH_TOKEN }}
+          prompt: |
+            You are the jobloop routine, running in GitHub Actions rather than on
+            Aditya's workstation. Read CLAUDE.md first, then scripts/routine-prompt.md,
+            and follow them exactly. `.venv/bin/jt` is on PATH as `jt`; pdflatex,
+            xelatex and pdftotext are installed, so build the real PDFs and run
+            `jt ats`. There is no Gmail tool here: if a `kind: mail` inbox request is
+            queued, mark it done and say in Discord that mail sync needs the
+            workstation. Do not push — the workflow pushes after you finish. Never
+            work around a `jt verify` failure.
+          claude_args: >-
+            --allowedTools "Bash,Read,Write,Edit,Glob,Grep"
+            --permission-mode acceptEdits
+            --max-turns 80
+
+      - name: Commit and push
+        if: always() && steps.gate.outputs.work == 'true'
+        run: |
+          git add -A
+          git rm --cached -q --ignore-unmatch '*.aux' '*.log' '*.out' || true
+          if ! git diff --cached --quiet; then
+            git commit -m "routine: cloud run $(date -u +%Y-%m-%dT%H:%MZ)"
+          fi
+          if [ -z "$(git log --oneline origin/main..HEAD)" ]; then
+            echo "nothing to push"; exit 0
+          fi
+          for i in 1 2 3; do
+            git pull --rebase --autostash origin main && git push && exit 0
+            echo "push race, retrying ($i)"; sleep 5
+          done
+          echo "could not push after 3 attempts" >&2
+          exit 1
+
+      - name: Report failure
+        if: failure() && steps.gate.outputs.work == 'true' && env.DISCORD_POST_URL != ''
+        run: |
+          printf 'jobloop cloud routine failed: %s' "$GITHUB_SERVER_URL/$GITHUB_REPOSITORY/actions/runs/$GITHUB_RUN_ID" \
+            | python3 scripts/discord_post.py || true

@@ -1,0 +1,51 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Cover Letter - TCS, Gen AI Developer
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\documentclass[]{cover}
+\usepackage{fancyhdr}
+
+\pagestyle{fancy}
+\fancyhf{}
+
+\rfoot{Page \thepage \hspace{0pt}}
+\thispagestyle{empty}
+\renewcommand{\headrulewidth}{0pt}
+\begin{document}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     TITLE NAME
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+\namesection{}{\Huge{Aditya Dasika}}{  \href{mailto:akhil.dasika47@gmail.com}{akhil.dasika47@gmail.com} | +91-96184-33030 |  \urlstyle{same}\href{https://linkedin.com/in/aditya-dasika}{LinkedIn}
+}
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%     MAIN COVER LETTER CONTENT
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+\currentdate{\today}
+\lettercontent{Dear Anandha,}
+
+\lettercontent{Thank you for reaching out about the Gen AI Developer role in Bengaluru. I build agentic LLM systems end to end, from orchestration down to eval, and shipped one to production this year: chatbotCXAgent, a 12-node LangGraph platform now handling live enterprise workflows at Phenom People.}
+
+\lettercontent{TCS's push into agentic AI, from MasterCraft's GenAI-driven legacy modernization (50 million lines of COBOL migrated to Java for a financial services client) to the orchestration layer in WisdomNext, is the kind of problem I want to work on: agents doing real, measured work inside large systems. Here's what I'd bring to the Gen AI Developer scope:}
+
+{\raggedright\fontspec[Path = OpenFonts/fonts/raleway/, BoldFont = Raleway-Bold.otf]{Raleway-Medium}\fontsize{11pt}{13pt}\selectfont
+\begin{itemize}
+    \item \textbf{Agentic orchestration}: Designed and shipped a 12-node LangGraph platform (intent recognition, dialogue state, tool-routing, Graph RAG) to production users
+    \item \textbf{Tool-call reliability}: XGrammar constrained decoding, schema-validated outputs, 91.9\% tool-routing accuracy and zero malformed calls in production
+    \item \textbf{RAG and retrieval}: FAISS-based Graph RAG pipelines, including an independent project turning scientific PDFs into a queryable Neo4j knowledge graph
+    \item \textbf{Fine-tuning, serving, and eval}: QLoRA on vLLM at 10.98 RPS / 98.6\% success, roughly halving inference cost, gated by a pass@k and LLM-judge framework
+\end{itemize}\par}
+\vspace{6pt}
+
+\lettercontent{I gate my own releases behind eval frameworks rather than shipping on faith, and I own systems past the demo stage, including the reliability and cost work a production agent needs once real traffic hits it. That is the standard I would bring to a GenAI Developer role at TCS.}
+
+\lettercontent{I look forward to the interview on the 29th.}
+
+\begin{flushright}
+\closing{Kind regards,}
+
+\signature{Aditya Dasika}
+\end{flushright}
+\end{document}

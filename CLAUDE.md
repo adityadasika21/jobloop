@@ -22,38 +22,42 @@ worse — the whole point is being *un-rejectable when probed*.
 ```
 Discord ──▶ discordBot (Cloud Run) ──▶ repository_dispatch ──▶ GitHub Actions
                                                                      │
-   systemd timer (this machine, hourly :53) ──▶ claude -p ───────────┤
+   Claude cloud routine (every 3h, Gmail attached) ──────────────────┤
+   GitHub Actions routine.yml (after each Discord command + 3h cron) ┤
+   systemd timer on the workstation (fallback, hourly :53) ──────────┤
                                                                      ▼
                                     tailor → verify → build → ats → screen
-                                    Gmail sync → commit → push → Discord
+                                    → commit → push → build.yml → Discord
 ```
 
-The routine runs **locally**, not in the cloud: a cloud routine cannot reach a
-private repo without the Claude GitHub App connection, which is gated behind
-Team/Enterprise settings this account can't configure. Proven — a probe routine
-against the public `NorthStar` repo creates fine (200), the identical call
-against private `jobloop` returns 403. Local also means `pdflatex` is available,
-so the real PDF and ATS audit happen; the cloud path couldn't do that.
+**Judgment runs in the cloud now (2026-09-04).** Two paths, either is enough;
+both use the Claude subscription, neither needs an API key:
 
-`scripts/run-routine.sh` + `scripts/routine-prompt.md` are the routine.
-`systemctl --user list-timers jobloop.timer` shows when it next fires.
+1. **Claude cloud routine** — `jobloop routine (cloud)` at
+   https://claude.ai/code/routines (id `trig_01HsVsc8q3YNSLY5pYUqmeUr`). The
+   2026-08-19 finding that a cloud routine gets 403 on this private repo no
+   longer holds — creating one against `adityadasika21/jobloop` returned 200.
+   It has the Gmail connector attached, so `kind: mail` requests can be
+   answered there. Manage it with `/schedule`.
+2. **`.github/workflows/routine.yml`** — `claude-code-action` with
+   `claude_code_oauth_token` (from `claude setup-token`, stored as the
+   `CLAUDE_CODE_OAUTH_TOKEN` secret). Fires after every Discord command lands,
+   on a 3-hourly cron, and by hand. Has the TeX toolchain, so it builds and
+   audits the real PDF. No Gmail.
 
-**There is no `ANTHROPIC_API_KEY` in GitHub Actions and there is not going to
-be one.** Actions does the deterministic half of a Discord command — intake,
-scaffolds, LaTeX, verification — and drops anything needing judgment in
-`inbox/`. The routine drains it, answers in the channel, and `jt inbox done`s
-it. Never add a `claude-code-action` step to a workflow in this repo; it would
-be dead code that silently does nothing.
+Both are gated by `jt work`: Claude does not start unless a Discord request is
+queued or a JD is untailored. `scripts/run-routine.sh` + `scripts/routine-prompt.md`
+remain the workstation fallback; `systemctl --user list-timers jobloop.timer`
+shows it. Running two of the three at once is safe but wasteful — they take
+the same `jobloop-write` concurrency group in Actions and rebase before
+pushing, but the workstation timer does not know about the others. Disable it
+(`systemctl --user disable --now jobloop.timer`) once a cloud path is
+confirmed working.
 
-```
-Discord ──▶ Actions ──▶ inbox/ ──▶ routine (this machine) ──▶ Discord
-            no judgment            all judgment
-```
-
-`scripts/drain-inbox.sh` is the fast path: same section-1 work, run often,
-exits before starting Claude when the inbox is empty. Both runners take
-`.jobloop.lock`, because two `claude -p` runs in one repo race on the working
-tree and on the push.
+`discord.yml` still does only the deterministic half (intake, scaffolds,
+inbox). Keep it that way — the test `test_the_discord_workflow_does_no_thinking`
+pins it — so a Discord command answers in seconds and the judgment run
+follows.
 
 ## State model
 
@@ -74,7 +78,13 @@ jt verify <slug>           # MUST pass
 jt build <slug>            # tailored.yaml → resume.tex → resume.pdf
 jt ats <slug>              # audits the compiled PDF as a parser sees it
 jt screen <slug>           # fit score, requirement matrix, 6-second scan
+jt cover <slug> --scaffold # → cover.yaml; fill it, then:
+jt verify <slug> --cover && jt cover <slug>   # → cover.tex → cover.pdf (xelatex)
 ```
+
+In an interactive session, `/apply <jd>` runs all of that plus the qualitative
+fit (`docs/fit-rubric.md` + `profile/preferences.md` → `fit.md`) and interview
+prep (`/prep`). `/fit`, `/cover`, `/prep`, `/scrape`, `/upskill` are the parts.
 
 ### Writing `tailored.yaml`
 
@@ -92,6 +102,36 @@ Work from the top of the worksheet's ranked evidence. Then:
 Look for non-obvious matches before declaring a gap. The hiring-integrity
 platform is HR-tech domain experience; the local-LLM project is on-device
 inference experience. `jt worksheet` surfaces role domains for this reason.
+
+## Merged from ai-job-search (2026-09-04)
+
+`adityadasika21/ai-job-search` (a fork of MadsLorentzen's Danish-market
+framework, moderncv CVs) was folded into this repo and retired. What came
+across, and where it lives:
+
+| was | now |
+|---|---|
+| `cover_letters/cover.cls` + Lato/Raleway fonts | `templates/cover.cls`, `templates/OpenFonts/`, rendered by `jt cover` |
+| 04-job-evaluation (scoring dimensions, motivation filter) | `docs/fit-rubric.md`, applied by `/fit` and `/apply` on top of `jt screen` |
+| 03-writing-style | `docs/writing-style.md`; the mechanical rules are enforced by `jt cover` |
+| 07-interview-prep (STAR stories, tough questions) | `docs/interview-prep.md`, used by `/prep` |
+| 02-behavioral-profile + CLAUDE.md preferences | `profile/preferences.md` — wants, not claims |
+| job-scraper search queries | `docs/search-queries.md`, used by `/scrape` |
+| `/apply`, `/upskill` | `.claude/commands/` (rewritten around `jt`) |
+| tracker CSV | `jobs/` — TCS imported as `2026-09-04-tcs-gen-ai-developer` with its old CV/letter under `legacy/` |
+
+Dropped on purpose: moderncv CVs (he wants the Jake template `resume.cls`),
+Danish portal CLIs, salary tools, `/setup` `/reset` `/expand` (onboarding for
+a fork; `jt evidence` replaces `/expand`).
+
+### Cover letters — the third claim surface
+
+`jobs/<slug>/cover.yaml` → `jt cover` → `cover.tex` → `cover.pdf`. `opening`,
+every bullet and `closing` cite evidence ids and go through the same
+`verify_bullets` as resume bullets. `why_company` is about them, so
+provenance cannot apply — instead it must list the `sources` (URLs actually
+fetched) or it is rejected. `jt verify --cover` also rejects em-dashes and a
+body over 320 words. One page, always; read the PDF before sending it.
 
 ## Resolving a job from what someone said
 
@@ -215,7 +255,12 @@ go in `known_gaps`.
 
 - `jobs.db` is derived. Rebuild with `jt reindex`, don't fix it in place.
 - LaTeX: `moderncv` and `altacv` are **not installed**. `templates/resume.cls`
-  is self-contained. Check `kpsewhich` before adding a package.
+  is self-contained. Check `kpsewhich` before adding a package. Cover letters
+  are the one **xelatex** document — `cover.cls` loads fontspec and the
+  bundled fonts by relative path, so `jt cover` compiles in a scratch dir with
+  `templates/cover.cls` and `templates/OpenFonts/` copied beside the .tex.
+  Never `\lettercontent{...\end{itemize}}` — its trailing `\\` errors; the
+  template already puts the list outside, in a Raleway wrapper.
 - Negative `\vspace` in `resume.cls` is load-bearing and fragile. Overlapping
   text still extracts fine, so `jt ats`'s collision check is the only thing that
   catches it. Always run `jt ats` after touching the class.
@@ -223,8 +268,9 @@ go in `known_gaps`.
   Python attribute names.
 - `jt verify` is deliberately strict. If it flags something true, fix the
   *master profile* rather than loosening the check.
-- `jt` auto-commits with `git add -A`, so it sweeps unrelated working-tree
-  changes into a commit labelled "mail sync". Commit your own work first.
+- `jt` auto-commits **and pushes** with `git add -A` — `intake`, `evidence
+  add`, `advance`, `debrief`, `mail ingest`. It sweeps unrelated working-tree
+  changes into that commit. Commit your own work first, or pass `--no-commit`.
 - `~/.gitconfig` was `CHANGE_ME@example.com`; fixed globally 2026-08-19, and
   this repo also sets its identity locally. Check `git log --format=%ae` if
   commits look mis-attributed.

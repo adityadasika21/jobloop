@@ -823,10 +823,10 @@ evidence:
     claim: Worked extensively with MCP (Model Context Protocol) servers — ClickHouse,
       Playwright, and Atlassian — as the tool layer in day-to-day agent development,
       debugging, and issue tracking at Phenom.
-    skills: [mcp, model-context-protocol, mcp-servers, clickhouse, playwright,
+    skills: [claude-code, mcp, model-context-protocol, mcp-servers, clickhouse, playwright,
       atlassian, tool-integration, agent-tooling, browser-automation, developer-tooling]
     metrics: {}
-    keywords: [mcp, mcp servers, model context protocol, agent tools, tool integration,
+    keywords: [Claude Code, agentic coding, mcp, mcp servers, model context protocol, agent tools, tool integration,
       agent frameworks, browser automation, playwright, clickhouse, atlassian,
       jira, developer productivity, ai tooling, agentic workflows]
     strength: strong
@@ -888,7 +888,7 @@ skill_groups:
     items: ["Agentic / Multi-Agent Systems", LangGraph, LangChain,
             "Tool/Function Calling", "Prompt Engineering", "Model Routing",
             "Context-Window Management", "RAG & Graph RAG",
-            "LLM Fine-Tuning (QLoRA, SFT)"]
+            "LLM Fine-Tuning (QLoRA, SFT)", "MCP Servers"]
   - name: "Eval, Observability & Guardrails"
     items: ["LLM Evaluation (LLM-as-judge, pass@k)", OpenTelemetry,
             "Constrained Decoding (XGrammar)", "Schema Validation", Langfuse,
@@ -945,3 +945,12 @@ known_gaps:
     status: structural
     note: "~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled.
            Flag JDs requiring 6+ yrs so the application is a deliberate stretch."
+  - topic: mcp-server-implementation
+    status: adjacent
+    note: "Consumes MCP servers daily (ClickHouse, Playwright, Atlassian) but has
+           not implemented one. Flag JDs that prefer MCP *server implementation*."
+  - topic: hcm-system-integrations
+    status: adjacent
+    note: "REST/webhook-style integrations at Blueleaves (POS/CRM/inventory) and
+           WhatsApp at Phenom; no payroll, ATS, SSO/IDP-as-integration, LMS or
+           ERP integration on record. Keycloak/OAuth used for app auth only."

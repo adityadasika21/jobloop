@@ -1,0 +1,155 @@
+%% CV - Aditya Dasika, tailored for TCS: Gen AI Developer (Bengaluru)
+%%
+%% Compile with: lualatex main_tcs.tex
+%% (pdflatex often fails on modern MiKTeX with fontawesome5 font-expansion errors.)
+
+\documentclass[11pt,a4paper,sans]{moderncv}
+\moderncvstyle{banking}
+\moderncvcolor{blue}
+
+\renewcommand*{\firstnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
+\renewcommand*{\lastnamestyle}[1]{{\fontsize{34}{36}\bfseries\upshape\color{color1}#1}}
+\renewcommand*{\sectionstyle}[1]{{\sectionfont\color{color1}#1}}
+
+\usepackage[utf8]{inputenc}
+\usepackage{needspace}
+\usepackage{hyperref}
+\hypersetup{
+    colorlinks=true,
+    linkcolor=blue,
+    filecolor=magenta,
+    urlcolor=blue,
+    pdftitle={Aditya Dasika - CV - TCS Gen AI Developer},
+    pdfpagemode=FullScreen,
+}
+\usepackage[scale=0.80]{geometry}
+\usepackage{import}
+
+% personal data
+\name{Aditya}{Dasika}
+\address{Hyderabad, Telangana, India}{}{}
+\phone[mobile]{+91-96184-33030}
+\email{akhil.dasika47@gmail.com}
+\extrainfo{\href{https://linkedin.com/in/aditya-dasika}{LinkedIn}, \href{https://github.com/aditya-dasika}{GitHub}}
+
+\begin{document}
+
+\makecvtitle
+
+% ============================================================
+%     PROFILE STATEMENT
+% ============================================================
+
+\vspace{6pt}
+\small{Production AI/ML engineer specializing in agentic and generative AI systems. At Phenom People, architected chatbotCXAgent, a 12-node LangGraph orchestration platform handling intent recognition, dialogue state management, tool-routing, and Graph RAG retrieval, shipped to production users. Built the full agentic stack end to end: LangChain/LangGraph orchestration, FAISS-based RAG, OpenAI and Anthropic API integration, and XGrammar-enforced tool-calling reliability (91.9\% routing accuracy, zero malformed calls in production). Strong core Python fundamentals (OOP, decorators, typing, data structures) developed across 4+ years of production software engineering, including QLoRA fine-tuning on vLLM (10.98 RPS at 98.6\% success) and multi-task NLP with PyTorch. Built with Claude Code.}
+
+% ============================================================
+%     CORE COMPETENCIES
+% ============================================================
+
+\section{Core Competencies}
+\vspace{1pt}
+\begin{itemize}
+
+\item \textbf{Generative \& Agentic AI}: LangGraph (production orchestration, LangGraph agents), LangChain, RAG and Graph RAG, FAISS vector search, OpenAI \& Anthropic APIs, tool/function calling, XGrammar constrained decoding
+
+\item \textbf{Core Python}: OOP, decorators, typing/dataclasses, iterators/generators, exception handling, design patterns, data structures \& algorithms, applied across 4+ years of production systems
+
+\item \textbf{ML \& NLP}: PyTorch, Transformers (BERT/ModernBERT), multi-task learning, NLU/NER/intent recognition, NumPy, Pandas, classical forecasting models
+
+\item \textbf{LLM Fine-Tuning \& Serving}: QLoRA, SFT, Unsloth, HuggingFace PEFT, NF4 quantization, vLLM, Ollama
+
+\item \textbf{Eval \& Observability}: pass@k, LLM-as-judge rubrics, LiteLLM, Langfuse, production MLOps
+
+\item \textbf{Backend \& Cloud}: FastAPI, Node.js, Docker, AWS (EC2/S3/SageMaker), PostgreSQL, SQL, CI/CD; cloud ML pipeline patterns (training, serving, cost monitoring) built on AWS, transferable to GCP-equivalent services
+
+\end{itemize}
+
+% ============================================================
+%     PROFESSIONAL EXPERIENCE
+% ============================================================
+
+\section{Professional Experience}
+\vspace{3pt}
+\begin{itemize}
+
+\needspace{5\baselineskip}
+\item{\cventry{Apr 2025--Present}{AI/LLM Engineer II}{Phenom People}{Hyderabad, Telangana}{}{\vspace{1pt}
+\begin{itemize}
+    \item Architected \textbf{chatbotCXAgent}, a production \textbf{agentic} platform on \textbf{LangGraph} (12 orchestrated nodes) handling intent recognition, dialogue state management, tool-routing, and \textbf{Graph RAG} retrieval across enterprise workflows, shipped to real users in production
+    \item Enforced tool-calling reliability with XGrammar constrained decoding and schema-validated JSON outputs, raising tool-routing accuracy to \textbf{91.9\%} and eliminating malformed tool calls in production
+    \item Fine-tuned and served Qwen models via QLoRA (Unsloth, NF4) on vLLM / AWS EC2 g5.xlarge (A10G), sustaining \textbf{10.98 RPS at 98.6\% success} under load and roughly halving inference cost vs.\ hosted GPT-4.1
+    \item Built a custom eval framework (pass@k, LLM-judge rubric) gating every pipeline change across all 12 nodes before release; instrumented LiteLLM + Langfuse tracing for per-node cost and latency observability
+    \item Fine-tuned a multi-task \textbf{PyTorch} ModernBERT model (intent classification + NER) improving NLU accuracy from \textbf{87\% to 97\%} via differential learning rates, label smoothing, and uncertainty-weighted multi-task loss
+\end{itemize}}}
+
+\vspace{3pt}
+
+\needspace{5\baselineskip}
+\item{\cventry{May 2022--Feb 2025}{Full Stack Engineer}{Blueleaves Farms}{Hyderabad, Telangana}{}{\vspace{1pt}
+\begin{itemize}
+    \item Built data-driven forecasting and analytics, including demand estimation, sales-trend, and inventory-planning models on transaction and stock-movement data, improving procurement and replenishment decisions
+    \item Owned end-to-end delivery of production systems across POS, CRM, inventory, procurement, and e-commerce, serving \textbf{5+ locations and 10,000+ monthly transactions} while cutting manual operational errors by $\sim$90\%
+    \item Designed scalable backend workflows on Firebase Cloud Functions, Node.js, and REST APIs, including invoicing, inventory synchronization, order lifecycle, and role-based access control, integrating multiple internal systems end to end
+\end{itemize}}}
+
+\end{itemize}
+
+% ============================================================
+%     PROJECTS
+% ============================================================
+
+\needspace{8\baselineskip}
+\section{Projects}
+\vspace{3pt}
+\begin{itemize}
+
+\needspace{4\baselineskip}
+\item{\cventry{}{IndexNotes --- AI Knowledge Graph for Scientific Papers}{Neo4j, Ollama, PyMuPDF, Python, Docker}{}{}{\vspace{1pt}
+\begin{itemize}
+    \item Built an automated \textbf{RAG} pipeline ingesting scientific papers (PDF to local-LLM extraction to structured JSON to Neo4j), creating 40+ concepts and 17+ typed relationships across 3 research papers, designed for \textbf{Graph RAG} queries
+\end{itemize}}}
+
+\vspace{3pt}
+
+\needspace{4\baselineskip}
+\item{\cventry{}{Physics-Informed Neural Networks (PINNs)}{PyTorch, Autograd, L-BFGS, Latin Hypercube Sampling}{}{}{\vspace{1pt}
+\begin{itemize}
+    \item Implemented PINNs from scratch in \textbf{PyTorch} solving 3 PDEs: Heat equation ($\sim$3\% error), Burgers' equation (matching Raissi et al.), and Schr\"{o}dinger equation (complex-valued, final loss 0.000083)
+\end{itemize}}}
+
+\end{itemize}
+
+% ============================================================
+%     EDUCATION
+% ============================================================
+
+\section{Education}
+\vspace{1pt}
+\begin{itemize}
+
+\item{\cventry{Aug 2018--May 2022}{Bachelor of Technology in Mechanical Engineering}{Andhra Loyola Institute of Engineering and Technology}{Vijayawada, Andhra Pradesh}{}{}}
+
+\end{itemize}
+
+% ============================================================
+%     LANGUAGES
+% ============================================================
+
+\section{Languages}
+\vspace{1pt}
+\begin{itemize}
+\item{English (fluent), Telugu (native)}
+\end{itemize}
+
+% ============================================================
+%     REFERENCES
+% ============================================================
+
+\section{References}
+\vspace{1pt}
+\begin{itemize}
+\item{Available upon request.}
+\end{itemize}
+
+\end{document}

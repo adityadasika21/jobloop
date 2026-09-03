@@ -872,3 +872,61 @@ def test_the_master_resume_still_fits_one_page_after_a_class_change():
     out = sp.run(["pdfinfo", str(ROOT / "profile" / "master-resume.pdf")],
                  capture_output=True, text=True).stdout
     assert "Pages:           1" in out
+
+
+# --------------------------------------------------------------------------- #
+# 12. Cover letters (merged from ai-job-search, 2026-09-04) — same bar as bullets
+# --------------------------------------------------------------------------- #
+
+from jt.cover import verify_data as cover_verify, WORD_BUDGET  # noqa: E402
+
+
+def _cover(**over):
+    base = {
+        "opening": {"text": "I build agentic LLM systems end to end and shipped "
+                            "chatbotCXAgent, a 12-node LangGraph platform, to production.",
+                    "provenance": ["ev-phenom-chatbotcx-architecture"]},
+        "why_company": {"text": "", "sources": []},
+        "bullets": [{"label": "Tool-call reliability",
+                     "text": "XGrammar constrained decoding, 91.9% tool-routing accuracy.",
+                     "provenance": ["ev-phenom-toolcalling-guardrails"]}],
+        "closing": {"text": "", "provenance": []},
+        "signoff": "I look forward to hearing from you.",
+    }
+    base.update(over)
+    return base
+
+
+def test_cover_clean_passes(prof):
+    assert cover_verify(prof, _cover()) == []
+
+
+def test_cover_inflated_number_is_caught(prof):
+    bad = _cover(bullets=[{"label": "Reliability",
+                           "text": "Raised tool-routing accuracy to 99.4%.",
+                           "provenance": ["ev-phenom-toolcalling-guardrails"]}])
+    assert any("99.4%" in p for p in cover_verify(prof, bad))
+
+
+def test_cover_company_claims_need_sources(prof):
+    bad = _cover(why_company={"text": "Your MasterCraft product migrated 50 million lines.",
+                              "sources": []})
+    assert any("sources" in p for p in cover_verify(prof, bad))
+    ok = _cover(why_company={"text": "Your MasterCraft product migrated 50 million lines.",
+                             "sources": ["https://example.com/press"]})
+    assert cover_verify(prof, ok) == []
+
+
+def test_cover_rejects_em_dash_and_overlength(prof):
+    bad = _cover(opening={"text": "I build agents — and ship them.",
+                          "provenance": ["ev-phenom-chatbotcx-architecture"]})
+    assert any("em-dash" in p for p in cover_verify(prof, bad))
+    long = _cover(closing={"text": "word " * (WORD_BUDGET + 5),
+                           "provenance": ["ev-phenom-chatbotcx-architecture"]})
+    assert any("budget" in p for p in cover_verify(prof, long))
+
+
+def test_cover_template_and_class_ship():
+    assert (ROOT / "templates" / "cover.tex.j2").exists()
+    assert (ROOT / "templates" / "cover.cls").exists()
+    assert (ROOT / "templates" / "OpenFonts" / "fonts" / "raleway" / "Raleway-Medium.otf").exists()

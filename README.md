@@ -76,6 +76,19 @@ jt learn list
 Weaknesses escalate on repeat. Closing one **requires** recorded recovery in a
 later real interview — reading about a topic isn't resolution.
 
+## Cover letters and the rest of the application
+
+```bash
+jt cover <slug> --scaffold            # cover.yaml with the JD's top evidence attached
+#   → Claude fills opening / why_company / bullets / closing
+jt verify <slug> --cover && jt cover <slug>   # xelatex → jobs/<slug>/cover.pdf, one page
+```
+
+Same bar as the resume: every claim about you cites evidence; every claim
+about the company cites a URL that was actually fetched. In an interactive
+Claude Code session, `/apply <jd>` does the whole thing — intake, fit
+(`docs/fit-rubric.md`), resume, cover letter, interview prep (`/prep`).
+
 ## Messages
 
 Five kinds of outbound message, one mechanism. The format of each is fixed and
@@ -154,6 +167,13 @@ corrupt. Query it freely:
 jt sql "SELECT * FROM pipeline"
 jt sql "SELECT * FROM open_weaknesses"
 ```
+
+## Running in the cloud
+
+Nothing needs the laptop on. A Claude cloud routine (manage at
+https://claude.ai/code/routines) and `.github/workflows/routine.yml` both run
+the same gated routine against the Claude subscription. The Actions path
+needs one secret: `claude setup-token`, then `gh secret set CLAUDE_CODE_OAUTH_TOKEN`.
 
 ## Setup
 

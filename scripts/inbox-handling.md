@@ -47,6 +47,10 @@ What he is probably doing, and what to run:
 - **He built or shipped something** → treat it as `kind: context` below.
 - **He wants a message** → `jt message <slug> --type <type> --scaffold`, then
   the pitch rules below.
+- **He wants a cover letter** → `jt cover <slug> --scaffold`, fill `cover.yaml`
+  per `docs/writing-style.md` (company facts only from URLs you fetched, in
+  `sources`), `jt verify <slug> --cover && jt cover <slug>`. Push; build.yml
+  compiles `cover.tex` and posts the PDF to Discord.
 - **He pasted a job posting** → `jt intake`, then tailor it in section 2.
 - **He asked a question** → answer from `jt status`, `jt show`, `jt sql`.
 

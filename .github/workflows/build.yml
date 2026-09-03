@@ -10,8 +10,10 @@ on:
   push:
     paths:
       - "jobs/**/resume.tex"
+      - "jobs/**/cover.tex"
       - "profile/master-resume.tex"
       - "templates/resume.cls"
+      - "templates/cover.cls"
   workflow_dispatch:
     inputs:
       slug:
@@ -39,7 +41,7 @@ jobs:
           sudo apt-get update -qq
           sudo apt-get install -y --no-install-recommends \
             texlive-latex-recommended texlive-latex-extra texlive-fonts-recommended \
-            poppler-utils python3-yaml python3-jinja2
+            texlive-xetex poppler-utils python3-yaml python3-jinja2
           # enumitem + titlesec live in latex-extra; fail loudly now rather than
           # mid-build. Keep this list in step with resume.cls's RequirePackage
           # lines — a package the class wants and CI lacks fails every push.
@@ -88,6 +90,41 @@ jobs:
           echo "failed=$failed" >> "$GITHUB_OUTPUT"
           [ -z "$failed" ]
 
+      - name: Compile cover letters
+        id: covers
+        run: |
+          # cover.cls needs xelatex + the bundled Lato/Raleway fonts. Compiled
+          # in a scratch dir with the class and fonts beside the .tex, so the
+          # job directory only ever holds cover.tex and cover.pdf.
+          if [ "${{ github.event_name }}" = "push" ]; then
+            changed=$(git diff --name-only HEAD^ HEAD -- 'jobs/*/cover.tex' | tr '\n' ' ')
+            git diff --name-only HEAD^ HEAD | grep -q 'templates/cover.cls' \
+              && changed=$(ls jobs/*/cover.tex 2>/dev/null | tr '\n' ' ')
+          elif [ -n "${{ inputs.slug }}" ]; then
+            changed="jobs/${{ inputs.slug }}/cover.tex"
+          else
+            changed=$(ls jobs/*/cover.tex 2>/dev/null | tr '\n' ' ')
+          fi
+          built=""
+          for tex in $changed; do
+            [ -f "$tex" ] || continue
+            dir=$(dirname "$tex"); tmp=$(mktemp -d)
+            cp "$tex" templates/cover.cls "$tmp/" && cp -r templates/OpenFonts "$tmp/"
+            echo "::group::$tex"
+            if (cd "$tmp" && xelatex -interaction=nonstopmode -halt-on-error cover.tex >/dev/null \
+                          && xelatex -interaction=nonstopmode -halt-on-error cover.tex >/dev/null); then
+              cp "$tmp/cover.pdf" "$dir/cover.pdf"; built="$built $dir/cover.pdf"
+              pages=$(pdfinfo "$dir/cover.pdf" | awk '/^Pages/{print $2}')
+              [ "$pages" = "1" ] || echo "::warning file=$tex::cover letter is $pages pages, not 1"
+              echo "ok ($pages page)"
+            else
+              tail -30 "$tmp/cover.log" || true
+              echo "::error file=$tex::xelatex failed"
+            fi
+            echo "::endgroup::"
+          done
+          echo "built=$built" >> "$GITHUB_OUTPUT"
+
       - name: ATS audit
         id: ats
         if: steps.compile.outputs.built != ''
@@ -124,11 +161,11 @@ jobs:
           PY
 
       - name: Commit artifacts
-        if: steps.compile.outputs.built != ''
+        if: steps.compile.outputs.built != '' || steps.covers.outputs.built != ''
         run: |
           git config user.name  "jobloop-ci"
           git config user.email "actions@github.com"
-          git add -f ${{ steps.compile.outputs.built }} jobs/*/ats-report.md 2>/dev/null || true
+          git add -f ${{ steps.compile.outputs.built }} ${{ steps.covers.outputs.built }} jobs/*/ats-report.md 2>/dev/null || true
           git rm --cached -q --ignore-unmatch '*.aux' '*.log' '*.out' || true
           if git diff --cached --quiet; then
             echo "no artifact changes"

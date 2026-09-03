@@ -1,0 +1,176 @@
+_instructions: 'Cover letter for this JD, one page. Fill: `greeting` (a named person if the
+  posting has one, else ''Dear <Company> hiring team,''); `opening` (2-3 sentences: the role,
+  and the single most relevant thing actually built — cite evidence); `why_company` (2-3 sentences
+  about THEM, forward-looking: which of their stated problems you would work on; every company
+  fact must come from a URL you fetched, listed in `sources`); 3-5 `bullets` with a bold `label`
+  and a one-line `text`, each citing evidence; `closing` (2 sentences: how you work, e.g.
+  gating releases on evals, and what that means for them — cite evidence). RULES: every number
+  and technology must be in the cited units; no em-dashes; total body under 320 words; first
+  person, active voice, no cliches (''passionate'', ''great fit'', ''hit the ground running'').
+  Then: jt verify 2026-09-04-darwinbox-forward-deployed-engineer --cover && jt cover 2026-09-04-darwinbox-forward-deployed-engineer'
+contact_name: ''
+greeting: ''
+company: Darwinbox
+role: Forward Deployed Engineer
+date: ''
+opening:
+  text: ''
+  provenance: []
+why_company:
+  text: ''
+  sources: []
+bullets:
+- label: ''
+  text: ''
+  provenance: []
+- label: ''
+  text: ''
+  provenance: []
+- label: ''
+  text: ''
+  provenance: []
+- label: ''
+  text: ''
+  provenance: []
+closing:
+  text: ''
+  provenance: []
+signoff: I look forward to hearing from you.
+_candidate_evidence:
+- id: ev-phenom-mcp-tooling
+  claim: Worked extensively with MCP (Model Context Protocol) servers — ClickHouse, Playwright,
+    and Atlassian — as the tool layer in day-to-day agent development, debugging, and issue
+    tracking at Phenom.
+  metrics: {}
+  jd_overlap:
+  - agent
+  - agentic
+  - ai
+  - atlassian
+  - automation
+  - development
+  - enterprise
+  - frameworks
+  - hiring
+  - hr
+- id: ev-phenom-frm-decides-what-runs
+  claim: Merged fraud-risk resolve into the interview-intelligence Temporal workflows and
+    removed the Policy Engine gating that had decided which checks to run, making the configuration
+    service the single source of truth for fraud enablement and replacing hardcoded per-tenant
+    flags with audience rules resolved per candidate.
+  metrics: {}
+  jd_overlap:
+  - configuration
+  - driven
+  - engineering
+  - enterprise
+  - hiring
+  - hr
+  - integration
+  - into
+  - orchestration
+  - platform
+- id: ev-phenom-frm-service
+  claim: Built the fraud-risk configuration service greenfield in FastAPI on MongoDB — signal
+    registry, feature groups, audience and scope definitions, and tenant-scoped overrides
+    — exposed through an internal resolve endpoint that Temporal workflows call at workflow
+    start to decide which fraud signals apply to a candidate and job.
+  metrics: {}
+  jd_overlap:
+  - api
+  - configuration
+  - engineer
+  - engineering
+  - enterprise
+  - hiring
+  - hr
+  - orchestration
+  - platform
+  - python
+- id: ev-phenom-fraud-detection-engine
+  claim: Building the detection and decisioning layer of an enterprise hiring-integrity /
+    fraud-risk platform — an LLM orchestration engine that investigates flagged candidate
+    activity, correlates evidence across signals, and produces reviewer-facing assessments
+    with supporting rationale — backed by a policy-driven rules engine (score / condition
+    → action), per-tenant risk configuration, and audited review workflows across the signal
+    lifecycle.
+  metrics: {}
+  jd_overlap:
+  - agentic
+  - agents
+  - ai
+  - backed
+  - configuration
+  - decision
+  - engineering
+  - enterprise
+  - hiring
+  - hr
+- id: ev-phenom-chatbotcx-architecture
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  jd_overlap:
+  - agent
+  - agentic
+  - ai
+  - enterprise
+  - hiring
+  - hr
+  - langgraph
+  - llm
+  - orchestration
+  - pipelines
+- id: ev-phenom-frm-tenancy-ops
+  claim: Owned tenant provisioning and delivery for the platform — provision and unprovision
+    APIs with region-scoped tenant listing, containerised deployment via Docker and Helm across
+    staging environments, and production support debugging by querying service logs in ClickHouse
+    to resolve customer tickets.
+  metrics: {}
+  jd_overlap:
+  - apis
+  - configuration
+  - customer
+  - deployment
+  - enterprise
+  - environment
+  - environments
+  - hiring
+  - hr
+  - observability
+- id: ev-phenom-eval-framework
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  jd_overlap:
+  - agent
+  - ai
+  - enterprise
+  - evaluation
+  - framework
+  - hiring
+  - hr
+  - langfuse
+  - learning
+  - llm
+- id: ev-phenom-inference-platform
+  claim: Ran the self-hosted LLM inference service as a deployable platform — Helm-packaged
+    releases, custom chat templates per model, reasoning-model flags, and OpenTelemetry instrumentation
+    feeding a metrics dashboard so per-model latency and throughput were visible in production.
+  metrics: {}
+  jd_overlap:
+  - custom
+  - deployment
+  - engineering
+  - enterprise
+  - hiring
+  - hr
+  - llm
+  - model
+  - observability
+  - platform

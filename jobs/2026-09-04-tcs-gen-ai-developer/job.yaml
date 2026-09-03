@@ -1,0 +1,33 @@
+company: TCS
+role: Gen AI Developer
+url: ''
+source: manual
+location: ''
+work_mode: ''
+status: interview
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-09-03T18:49:11+00:00'
+applied_at: '2026-09-03T18:49:11+00:00'
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-09-03T18:49:11+00:00'
+  kind: intake
+  detail: via manual
+  source: manual
+- ts: '2026-09-03T18:49:11+00:00'
+  kind: applied
+  detail: applied 2026-08-24 via recruiter (Anandha Madhavan); moderncv CV + cover letter
+    from the old repo
+  source: manual
+- ts: '2026-09-03T18:49:11+00:00'
+  kind: note
+  detail: in-person interview 2026-08-29 Bengaluru, outcome pending
+  source: manual
+jd_fingerprint: 065e56e5752180da

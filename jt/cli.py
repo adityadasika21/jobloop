@@ -12,6 +12,7 @@ import sys
 from pathlib import Path
 
 from . import ats as ats_mod
+from . import cover as cover_mod
 from . import db as db_mod
 from . import evidence as evidence_mod
 from . import inbox as inbox_mod
@@ -91,12 +92,14 @@ def cmd_verify(root: Path, a) -> int:
         # A job recovered from an application email has no tailored.yaml and
         # never will — but its outreach still has to survive the provenance
         # rule, and that is exactly when a follow-up gets written.
-        if not wanted:
+        if not wanted and not getattr(a, "cover", False):
             raise
         print(f"{DIM}no tailored.yaml — checking the message only{OFF}")
         problems = verify_mod.verify_profile(load_profile(root))
     for mtype in wanted:
         problems += verify_mod.verify_message(root, slug, mtype)
+    if getattr(a, "cover", False):
+        problems += cover_mod.verify(root, slug)
     if problems:
         print(_c(f"FAIL — {len(problems)} provenance violation(s)", BAD))
         for p in problems:
@@ -484,6 +487,42 @@ def cmd_message(root: Path, a) -> int:
     return 0
 
 
+def cmd_cover(root: Path, a) -> int:
+    """Cover letter: cover.yaml → cover.tex → cover.pdf, one page, every
+    claim about Aditya provenance-checked, every claim about the company
+    sourced. Ported from ai-job-search on 2026-09-04."""
+    slug = resolve_slug(root, a.slug)
+    data_path, tex_path, pdf_path = cover_mod.paths(root, slug)
+
+    if a.scaffold or not data_path.exists():
+        path = cover_mod.scaffold(root, slug, name=a.name)
+        print(f"{_c('scaffold', OK)} {path.relative_to(root)}")
+        print(f"Claude: fill it in, then `jt verify {slug} --cover && jt cover {slug}`")
+        return 0
+
+    problems = cover_mod.verify(root, slug)
+    if problems and not a.force:
+        print(_c(f"FAIL — {len(problems)} problem(s) in cover.yaml", BAD))
+        for p in problems:
+            print(f"  {_c('x', BAD)} {p}")
+        return 1
+    write_text(tex_path, cover_mod.render_tex(root, slug))
+    print(f"{_c('tex', OK)} {tex_path.relative_to(root)}")
+    if not a.no_pdf:
+        try:
+            pdf = cover_mod.build_pdf(root, tex_path)
+            print(f"{_c('pdf', OK)} {pdf.relative_to(root)}")
+            pages = cover_mod.page_count(pdf)
+            if pages > 1:
+                print(f"{_c('!', WARN)} {pages} pages. A cover letter is one page: "
+                      f"cut a bullet or shorten why_company. Read the PDF before "
+                      f"sending it — the signature block must sit with the body.")
+        except JobloopError as exc:
+            print(f"{_c('pdf skipped', WARN)} — {exc}")
+    append_event(root, slug, "note", "cover letter rendered", "jt")
+    return 0
+
+
 def cmd_referral(root: Path, a) -> int:
     """Kept because it is in muscle memory and in CLAUDE.md; `jt message
     --type referral` is the same code path."""
@@ -684,6 +723,8 @@ def build_parser() -> argparse.ArgumentParser:
                    help="also check the referral pitch (= --message referral)")
     s.add_argument("--message", default="",
                    help="also check an outbound message's pitch, by type")
+    s.add_argument("--cover", action="store_true",
+                   help="also check the cover letter (cover.yaml)")
     s.set_defaults(fn=cmd_verify)
 
     s = sub.add_parser("build", help="render resume.tex (+pdf)")
@@ -774,6 +815,14 @@ def build_parser() -> argparse.ArgumentParser:
     s.add_argument("--types", dest="list_types", action="store_true",
                    help="list the message types and who each is for")
     s.set_defaults(fn=cmd_message)
+
+    s = sub.add_parser("cover", help="cover letter: cover.yaml → cover.tex → cover.pdf (xelatex)")
+    s.add_argument("slug")
+    s.add_argument("--scaffold", action="store_true")
+    s.add_argument("--name", default="", help="addressee's name, if the posting has one")
+    s.add_argument("--force", action="store_true")
+    s.add_argument("--no-pdf", action="store_true")
+    s.set_defaults(fn=cmd_cover)
 
     s = sub.add_parser("referral", help="LinkedIn referral ask (= message --type referral)")
     s.add_argument("slug")

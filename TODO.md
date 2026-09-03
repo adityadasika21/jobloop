@@ -1,5 +1,20 @@
 # TODO
 
+## 2026-09-04 — merge + cloud
+
+- [ ] **Enable one cloud path.** The Claude cloud routine
+      (`trig_01HsVsc8q3YNSLY5pYUqmeUr`) is created but disabled until a
+      manual run proves it can install, tailor and push. `routine.yml` waits
+      on the `CLAUDE_CODE_OAUTH_TOKEN` secret (`claude setup-token` →
+      `gh secret set CLAUDE_CODE_OAUTH_TOKEN`). Once either works, disable the
+      workstation timer: `systemctl --user disable --now jobloop.timer`.
+- [ ] `~/Work/repos/ai-job-search` is retired; its final state is committed
+      locally (not pushed). Delete the directory when you are sure.
+- [ ] Darwinbox FDE (`2026-09-04-darwinbox-forward-deployed-engineer`): resume
+      built and verified, fit 80/100 by the rubric; cover letter and prep not
+      yet written — `/cover` and `/prep`.
+- [ ] TCS interview (2026-08-29) outcome unknown — `/j tcs ...` when you hear.
+
 Everything that was actionable in the previous list is done (2026-08-19).
 What remains needs Aditya, or needs a deploy.
 
