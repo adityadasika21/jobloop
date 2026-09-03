@@ -818,6 +818,57 @@ evidence:
       boundaries and Latin-hypercube sampling. Corpus: Android payment tracker,
       SMS and email ingestion, installed and working on his phone.'
 
+  - id: ev-phenom-mcp-tooling
+    role: phenom-ai-llm-eng-ii
+    claim: Worked extensively with MCP (Model Context Protocol) servers — ClickHouse,
+      Playwright, and Atlassian — as the tool layer in day-to-day agent development,
+      debugging, and issue tracking at Phenom.
+    skills: [mcp, model-context-protocol, mcp-servers, clickhouse, playwright,
+      atlassian, tool-integration, agent-tooling, browser-automation, developer-tooling]
+    metrics: {}
+    keywords: [mcp, mcp servers, model context protocol, agent tools, tool integration,
+      agent frameworks, browser automation, playwright, clickhouse, atlassian,
+      jira, developer productivity, ai tooling, agentic workflows]
+    strength: strong
+    emphasize: [MCP, MCP (Model Context Protocol) servers]
+    probe: What did each of those MCP servers give you that a direct API client
+      would not? Have you implemented an MCP server yourself, or only consumed
+      them — and what would you change about the protocol after using it?
+    on_master: false
+    added_at: '2026-09-03'
+    source_note: 'At Phenom I used MCP servers a lot: ClickHouse MCP, Playwright
+      MCP, Atlassian MCP. At Blueleaves I spoke directly to shareholders and company
+      VPs about projects and implementations, including partner companies like
+      Veratroniks (spelling unconfirmed) and farming companies. Hindi: knows it
+      very well. Told to Claude 2026-09-03 while tailoring the Darwinbox FDE application.'
+
+  - id: ev-blueleaves-stakeholder-discovery
+    role: blueleaves-fullstack
+    claim: Worked directly with shareholders, company VPs, and external partner
+      businesses (including farming companies) to scope projects and implementations,
+      translating their operational asks into technical designs and delivering
+      them end to end.
+    skills: [stakeholder-management, customer-discovery, requirements-gathering,
+      technical-translation, client-facing, executive-communication, solution-design,
+      partner-integration]
+    metrics: {}
+    keywords: [customer discovery, stakeholder management, customer-facing, client-facing,
+      senior stakeholders, executives, leadership, requirements gathering, discovery,
+      solution design, technical translation, consulting, forward deployed, partner
+        businesses, business stakeholders, translate business requirements, embedded]
+    strength: strong
+    emphasize: ['shareholders, company VPs']
+    probe: Give one example where a shareholder or VP asked for X and you built
+      Y instead — what was the real problem behind the ask, and how did you get
+      them to agree?
+    on_master: false
+    added_at: '2026-09-03'
+    source_note: 'At Phenom I used MCP servers a lot: ClickHouse MCP, Playwright
+      MCP, Atlassian MCP. At Blueleaves I spoke directly to shareholders and company
+      VPs about projects and implementations, including partner companies like
+      Veratroniks (spelling unconfirmed) and farming companies. Hindi: knows it
+      very well. Told to Claude 2026-09-03 while tailoring the Darwinbox FDE application.'
+
   # <<< jt evidence add
   # New units are spliced in immediately above this marker. It exists so
   # master.yaml can be appended to without a YAML round-trip, which would
