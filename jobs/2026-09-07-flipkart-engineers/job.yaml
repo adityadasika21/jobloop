@@ -1,0 +1,24 @@
+company: Flipkart
+role: engineers
+url: ''
+source: discord
+location: ''
+work_mode: ''
+status: queued
+priority: ''
+fit_score: null
+keyword_coverage: null
+stretch: false
+posted_at: ''
+intake_at: '2026-09-07T17:09:39+00:00'
+applied_at: ''
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-09-07T17:09:39+00:00'
+  kind: intake
+  detail: via discord
+  source: discord
+jd_fingerprint: bfe90d98495955d3
