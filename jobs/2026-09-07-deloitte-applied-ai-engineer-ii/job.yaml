@@ -1,0 +1,60 @@
+company: Deloitte
+role: Applied AI Engineer II
+url: https://apply.deloitte.com/en_US/careers/JobDetail/360900
+source: manual
+location: ''
+work_mode: ''
+status: analyzed
+priority: ''
+fit_score: 58
+keyword_coverage: 0.255
+stretch: false
+posted_at: ''
+intake_at: '2026-09-07T16:37:09+00:00'
+applied_at: ''
+closed_at: ''
+outcome: ''
+contacts: []
+notes: ''
+events:
+- ts: '2026-09-07T16:37:09+00:00'
+  kind: intake
+  detail: via manual — https://apply.deloitte.com/en_US/careers/JobDetail/360900
+  source: manual
+- ts: '2026-09-07T16:37:16+00:00'
+  kind: analyzed
+  detail: worksheet generated
+  source: jt
+- ts: '2026-09-07T16:37:54+00:00'
+  kind: screened
+  detail: fit 58
+  source: jt
+- ts: '2026-09-07T16:38:04+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-09-07T16:38:06+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-09-07T16:38:06+00:00'
+  kind: screened
+  detail: fit 57
+  source: jt
+- ts: '2026-09-07T16:38:50+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-09-07T16:38:52+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-09-07T16:38:52+00:00'
+  kind: screened
+  detail: fit 58
+  source: jt
+- ts: '2026-09-07T16:39:23+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+jd_fingerprint: 7bf430d2748cf107

@@ -1,0 +1,162 @@
+fit_score: 58
+keyword_coverage: 0.255
+summary:
+  required_total: 10
+  met: 8
+  partial: 2
+  gap: 0
+  nice_to_have: 0
+  responsibilities: 0
+seniority:
+  years_required: 1
+  years_have: 4.4
+  stretch: false
+requirements:
+- requirement: Serve as the technical advocate for products, ensuring code integrity, feasibility,
+    and alignment with business and customer goals. Participate in requirement analysis, component
+    design, development, testing, integrations, and support.
+  status: met
+  evidence: ev-phenom-analytics-service
+  caveat: null
+  matched_terms:
+  - analysis
+  - code
+  - development
+  - technical
+  - testing
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Develop lean engineering solutions through rapid, inexpensive experimentation
+    to solve customer needs. Engage with customers and product teams before, during, and after
+    delivery to ensure the right solution is delivered at the right time.
+  status: met
+  evidence: ev-phenom-fraud-policy-plane
+  caveat: null
+  matched_terms:
+  - engineering
+  - through
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Adopt a mindset that favors action and evidence over extensive planning. Utilize
+    a leaning-forward approach to navigate complexity and uncertainty, delivering lean, supportable,
+    and maintainable solutions.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - over
+  - planning
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Work collaboratively with empowered, cross-functional teams including product
+    management, experience, and delivery. Integrate diverse perspectives to make well-informed
+    decisions that balance feasibility, viability, usability, and value.
+  status: partial
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - management
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Engage and collaborate with product engineering teams at all organizational
+    levels, including customers as needed. Build and maintain constructive relationships,
+    fostering a culture of co-creation and shared momentum towards achieving product goals.
+  status: partial
+  evidence: ev-phenom-fraud-detection-engine
+  caveat: null
+  matched_terms:
+  - engineering
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: A bachelor's degree in computer science, software engineering, data science,
+    machine learning, or related discipline. Experience is the most relevant factor.
+  status: met
+  evidence: ev-phenom-fraud-policy-plane
+  caveat: null
+  matched_terms:
+  - engineering
+  - machine
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: '1-3 years of experience with most of the following: Angular, React, NodeJS,
+    Python, C#, .NET, Java, SQL/NoSQL, PyTorch, TensorFlow, LangChain, LangGraph, as well
+    as unit testing frameworks.'
+  status: met
+  evidence: ev-phenom-analytics-service
+  caveat: 'years-of-experience: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM
+    titled. Flag JDs requiring 6+ yrs so the application is a deliberate stretch.'
+  matched_terms:
+  - python
+  - testing
+  - unit
+  known_gap: years-of-experience
+  gap_note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+  kind: required
+- requirement: 1-3 years of experience building AI/ML and agentic applications, with hands-on
+    GenAI experience across LLM integration (OpenAI, Anthropic, or open-source models), RAG
+    pipelines, prompt engineering, vector databases, evaluations, and AI agent orchestration.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: 'years-of-experience: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM
+    titled. Flag JDs requiring 6+ yrs so the application is a deliberate stretch.'
+  matched_terms:
+  - agent
+  - agentic
+  - ai
+  - llm
+  - ml
+  - orchestration
+  - pipelines
+  - rag
+  known_gap: years-of-experience
+  gap_note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+  kind: required
+- requirement: Prior software engineering experience with the understanding of Business Context
+    Diagrams (BCD), sequence/activity/state/entity relationship/data flow diagrams, OOP/OOD,
+    data structures, algorithms, and code instrumentations, and AI-augmented spec-driven development.
+  status: met
+  evidence: ev-phenom-mcp-tooling
+  caveat: null
+  matched_terms:
+  - code
+  - context
+  - development
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Prior experience using methodologies and tools such as XP, Lean, DevSecOps,
+    SRE, ADO, GitHub, SonarQube, MLflow, and agentic AI frameworks (e.g. LangFuse, LangSmith,
+    or equivalent multi-agent orchestration tools) to deliver high-quality products rapidly.
+  status: met
+  evidence: ev-phenom-chatbotcx-architecture
+  caveat: null
+  matched_terms:
+  - agentic
+  - ai
+  - multi-agent
+  - orchestration
+  known_gap: null
+  gap_note: null
+  kind: required
+scan_checks:
+- check: Headline names the JD's own role language
+  pass: true
+- check: Top experience bullet answers a required item
+  pass: true
+- check: Every bullet carries a metric or a concrete system
+  pass: true
+- check: Keyword coverage of stated requirements >= 60%
+  pass: false
+- check: No required item is an unacknowledged gap
+  pass: true
+- check: Fits one page (built PDF is 1)
+  pass: true
+screened_at: '2026-09-07T16:38:52+00:00'

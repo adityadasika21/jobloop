@@ -1,0 +1,31 @@
+# Applied AI Engineer II — Deloitte
+
+Source: https://apply.deloitte.com/en_US/careers/JobDetail/360900
+
+Applied AI Engineer II — Deloitte (US Deloitte Technology Product Engineering), Hyderabad, Telangana, India. Requisition code 360900. Department: Product Engineering. Travel 10%.
+
+Role Overview: As an Applied AI Engineer II, you will actively engage in your engineering craft, taking a hands-on approach to building and enhancing high-visibility, full-stack products that serve the business and its users. Your expertise will be pivotal in delighting customers and users, while driving tangible value across Deloitte's product and AI investments. You will leverage your engineering craftsmanship across full-stack software engineering and modern frameworks, together with applied AI fluency that lets you build GenAI and agentic capabilities directly into the products you deliver, consistently demonstrating your strong track record in delivering high-quality, outcome-focused solutions. The ideal candidate will be a dependable team player, collaborating with cross-functional teams to design, build, and ship products end to end, from concept through production.
+
+Key Responsibilities:
+- Embrace and drive a culture of accountability for customer and business outcomes and for the cost of achieving them. Develop engineering solutions that solve complex problems with valuable outcomes, ensuring high-quality, lean designs and implementations, and owning the inference, token, and cloud cost of what you build.
+- Serve as the technical advocate for products, ensuring code integrity, feasibility, and alignment with business and customer goals. Participate in requirement analysis, component design, development, testing, integrations, and support.
+- Maintain accountability for code-design integrity, implementation fidelity to architecture and tech stack, quality, data, and ongoing maintenance and operations. Be hands-on, self-driven, and continuously learn new approaches, languages, and frameworks. Create technical specifications, and write high-quality, supportable, scalable code ensuring all quality KPIs are met or exceeded. Demonstrate collaborative skills to work effectively with diverse teams.
+- Develop lean engineering solutions through rapid, inexpensive experimentation to solve customer needs. Engage with customers and product teams before, during, and after delivery to ensure the right solution is delivered at the right time.
+- Adopt a mindset that favors action and evidence over extensive planning. Utilize a leaning-forward approach to navigate complexity and uncertainty, delivering lean, supportable, and maintainable solutions.
+- Work collaboratively with empowered, cross-functional teams including product management, experience, and delivery. Integrate diverse perspectives to make well-informed decisions that balance feasibility, viability, usability, and value.
+- Possess expertise in modern software engineering practices and principles, including AI and Agentic SSDLC to deliver daily product deployments using full automation from discovery to production to operations with all quality checks through SSDLC lifecycle. Demonstrate understanding of the full lifecycle product development, focusing on continuous improvement and learning.
+- Quickly acquire domain-specific knowledge relevant to the business or product. Translate business/user needs, architectures, and UX/UI designs into technical specifications and code. Be a valuable, flexible, and dedicated team member, supportive of teammates, and focused on quality and tech debt payoff.
+- Exhibit exceptional communication skills, capable of articulating complex technical concepts clearly and compellingly. Inspire and influence teammates and product teams through well-structured arguments and trade-offs supported by evidence. Create coherent narratives that align technical solutions with business objectives.
+- Engage and collaborate with product engineering teams at all organizational levels, including customers as needed. Build and maintain constructive relationships, fostering a culture of co-creation and shared momentum towards achieving product goals.
+
+The team: US Deloitte Technology Product Engineering has modernized software and product delivery, creating a scalable, cost-effective model that focuses on value and outcomes and leverages a progressive and responsive talent structure. As Deloitte's primary internal development team, Product Engineering delivers innovative digital solutions to businesses, service lines, and internal operations with proven bottom-line results and outcomes.
+
+Required Qualifications:
+- A bachelor's degree in computer science, software engineering, data science, machine learning, or related discipline. Experience is the most relevant factor.
+- 1-3 years of experience with most of the following: Angular, React, NodeJS, Python, C#, .NET, Java, SQL/NoSQL, PyTorch, TensorFlow, LangChain, LangGraph, as well as unit testing frameworks.
+- 1-3 years of experience building AI/ML and agentic applications, with hands-on GenAI experience across LLM integration (OpenAI, Anthropic, or open-source models), RAG pipelines, prompt engineering, vector databases, evaluations, and AI agent orchestration.
+- 1-3 years of experience with cloud-native engineering, using FaaS, PaaS, or micro-services on any of the cloud hyperscalers such as Azure, AWS, or GCP, including their AI/ML services such as Azure OpenAI, AWS Bedrock, or Vertex AI, plus application-level infrastructure-as-code and cost-aware engineering (FinOps accountability).
+- Prior software engineering experience with the understanding of Business Context Diagrams (BCD), sequence/activity/state/entity relationship/data flow diagrams, OOP/OOD, data structures, algorithms, and code instrumentations, and AI-augmented spec-driven development.
+- Prior experience using methodologies and tools such as XP, Lean, DevSecOps, SRE, ADO, GitHub, SonarQube, MLflow, and agentic AI frameworks (e.g. LangFuse, LangSmith, or equivalent multi-agent orchestration tools) to deliver high-quality products rapidly.
+
+Other: Ability to travel 10%, on average. Limited immigration sponsorship may be available.
