@@ -1,12 +1,12 @@
 # ATS parse audit
 
-**FAIL** — 0 critical, 1 high · 4696 chars extracted
+**FAIL** — 0 critical, 1 high · 4711 chars extracted
 
-Keyword coverage **on extracted text**: 27% exact · 31% allowing word-form variants
+Keyword coverage **on extracted text**: 28% exact · 31% allowing word-form variants
 
 | | Check | Result |
 |---|---|---|
-| ✅ | `text-extractable` | 4696 chars recovered by the text extractor |
+| ✅ | `text-extractable` | 4711 chars recovered by the text extractor |
 | ✅ | `name` | name found in extracted text |
 | ✅ | `email` | email found |
 | ✅ | `phone` | phone digits recovered |
@@ -22,7 +22,7 @@ Keyword coverage **on extracted text**: 27% exact · 31% allowing word-form vari
 | ✅ | `no-template-leakage` | no template artifacts |
 | ✅ | `ligatures` | 0 possible ligature splits |
 | ✅ | `content-fidelity` | 100.0% of intended terms survived extraction |
-| ❌ | `ats-keyword-coverage` _(HIGH)_ | 27% of JD requirement terms present in the EXTRACTED text |
+| ❌ | `ats-keyword-coverage` _(HIGH)_ | 28% of JD requirement terms present in the EXTRACTED text |
 | ✅ | `no-overlap` | no overlapping text |
 | ✅ | `page-count` | 1 page(s) |
 
@@ -34,10 +34,10 @@ Keyword coverage **on extracted text**: 27% exact · 31% allowing word-form vari
 
 The concept is on the resume under a different inflection. Literal ATS matching misses these, so adopt the JD's exact wording where the claim stays true.
 
-`customer`, `databases`, `decisions`, `frameworks`, `instrumentations`, `products`
+`customers`, `decisions`, `frameworks`, `instrumentations`, `products`
 
 ## JD terms genuinely absent
 
 Add only what is true; the rest are gaps for the ledger.
 
-`1-3`, `achieving`, `ado`, `adopt`, `advocate`, `after`, `ai-augmented`, `algorithms`, `alignment`, `analysis`, `angular`, `anthropic`, `approach`, `balance`, `bcd`, `before`, `co-creation`, `collaboratively`, `complexity`, `component`, `constructive`, `cross-functional`, `delivered`, `devsecops`, `diagrams`, `discipline`, `diverse`, `during`, `e.g`, `empowered`, `engage`, `entity`, `equivalent`, `experimentation`, `extensive`, `factor`, `favors`, `feasibility`, `flow`, `following`
+`1-3`, `achieving`, `ado`, `adopt`, `advocate`, `after`, `ai-augmented`, `algorithms`, `alignment`, `angular`, `anthropic`, `approach`, `balance`, `bcd`, `before`, `co-creation`, `collaboratively`, `complexity`, `component`, `constructive`, `cross-functional`, `data`, `delivered`, `devsecops`, `diagrams`, `discipline`, `diverse`, `during`, `e.g`, `empowered`, `engage`, `entity`, `equivalent`, `experimentation`, `extensive`, `factor`, `favors`, `feasibility`, `flow`, `following`

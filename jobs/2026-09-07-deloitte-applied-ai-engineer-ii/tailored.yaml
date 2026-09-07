@@ -40,7 +40,7 @@ experience:
           Building the detection and decisioning layer of an enterprise
           hiring-integrity platform — an LLM orchestration engine that
           investigates flagged activity, correlates evidence across signals and
-          produces reviewer-facing assessments with supporting rationale —
+          produces reviewer-facing decision support with supporting rationale —
           backed by a policy-driven rules engine and audited review workflows.
         provenance: [ev-phenom-fraud-detection-engine]
       - text: >-
@@ -54,7 +54,7 @@ experience:
       - text: >-
           Raised engineering quality across services: conversation analytics
           APIs migrated to FastAPI with automated testing coverage raised from
-          63% to over 90% and SonarQube static-analysis code smells cleared, and the self-hosted inference
+          63% to over 90% and SonarQube static analysis code smells cleared, and the self-hosted inference
           service packaged as Helm releases with OpenTelemetry code instrumentation
           feeding a production metrics dashboard, plus production support
           debugging from ClickHouse service logs.
@@ -81,7 +81,7 @@ experience:
           errors by roughly 90%.
         provenance: [ev-blueleaves-fullstack-delivery]
       - text: >-
-          Engaged customers and business stakeholders directly — shareholders, company VPs and external
+          Ran customer discovery directly with business stakeholders — shareholders, company VPs and external
           partner businesses — to scope projects and implementations,
           translating their operational asks into technical designs and
           delivering them end to end.
@@ -100,9 +100,11 @@ skill_groups:
     items: [Python, TypeScript, JavaScript, SQL, React, Vite, "Micro-Frontends",
             FastAPI, "Node.js", Express.js, "REST APIs", Microservices,
             "Design Systems", "Keycloak", "OAuth / SSO"]
-  - name: "Cloud, Delivery & Data"
+  - name: "Cloud & Delivery"
     items: ["AWS (EC2/S3/SageMaker)", Docker, Helm, Temporal, Kafka, "GitHub Actions",
-            "CI/CD", Linux, PostgreSQL, MongoDB, Neo4j, ClickHouse, Redis, Firebase]
+            "CI/CD", Linux]
+  - name: Databases
+    items: [PostgreSQL, MongoDB, Neo4j, ClickHouse, Redis, Firebase]
   - name: "ML & Serving"
     items: [PyTorch, vLLM, "Transformers (BERT/ModernBERT)", "HuggingFace PEFT",
             Unsloth, Ollama, "Production MLOps"]

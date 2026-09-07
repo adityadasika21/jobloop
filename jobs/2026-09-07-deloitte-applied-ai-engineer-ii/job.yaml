@@ -7,7 +7,7 @@ work_mode: ''
 status: analyzed
 priority: ''
 fit_score: 58
-keyword_coverage: 0.255
+keyword_coverage: 0.261
 stretch: false
 posted_at: ''
 intake_at: '2026-09-07T16:37:09+00:00'
@@ -56,5 +56,17 @@ events:
 - ts: '2026-09-07T16:39:23+00:00'
   kind: verified
   detail: provenance clean
+  source: jt
+- ts: '2026-09-07T16:40:18+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-09-07T16:40:18+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
+- ts: '2026-09-07T16:40:19+00:00'
+  kind: screened
+  detail: fit 58
   source: jt
 jd_fingerprint: 7bf430d2748cf107

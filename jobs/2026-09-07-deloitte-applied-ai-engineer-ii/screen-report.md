@@ -34,4 +34,4 @@ Experience asked: 1y · actual: 4.4y → within range
 
 Only add one if it is genuinely true — otherwise it is a gap, not a keyword to stuff.
 
-`1-3`, `achieving`, `ado`, `adopt`, `advocate`, `after`, `ai-augmented`, `algorithms`, `alignment`, `analysis`, `angular`, `anthropic`, `approach`, `balance`, `bcd`, `before`, `co-creation`, `collaboratively`, `complexity`, `component`, `constructive`, `cross-functional`, `customer`, `data`, `databases`, `decisions`, `delivered`, `devsecops`, `diagrams`, `discipline`, `diverse`, `during`, `e.g`, `empowered`, `engage`, `entity`, `equivalent`, `experimentation`, `extensive`, `factor`
+`1-3`, `achieving`, `ado`, `adopt`, `advocate`, `after`, `ai-augmented`, `algorithms`, `alignment`, `angular`, `anthropic`, `approach`, `balance`, `bcd`, `before`, `co-creation`, `collaboratively`, `complexity`, `component`, `constructive`, `cross-functional`, `customers`, `data`, `databases`, `decisions`, `delivered`, `devsecops`, `diagrams`, `discipline`, `diverse`, `during`, `e.g`, `empowered`, `engage`, `entity`, `equivalent`, `experimentation`, `extensive`, `factor`, `favors`

@@ -1,5 +1,5 @@
 fit_score: 58
-keyword_coverage: 0.255
+keyword_coverage: 0.261
 summary:
   required_total: 10
   met: 8
@@ -159,4 +159,4 @@ scan_checks:
   pass: true
 - check: Fits one page (built PDF is 1)
   pass: true
-screened_at: '2026-09-07T16:38:52+00:00'
+screened_at: '2026-09-07T16:40:19+00:00'
