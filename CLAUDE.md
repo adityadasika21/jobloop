@@ -19,45 +19,37 @@ worse — the whole point is being *un-rejectable when probed*.
 
 ## Architecture
 
+**There are no scheduled routines any more (removed 2026-09-08).** The systemd
+timers, `scripts/run-routine.sh`, `scripts/routine-prompt.md` and
+`.github/workflows/routine.yml` are all gone, and the Claude cloud routine is
+disabled. They failed constantly for two compounding reasons worth remembering:
+
+1. `jobloop-inbox.service` ran the **full** routine every 3 minutes, not a
+   lightweight inbox drain (`drain-inbox.sh` was referenced everywhere but never
+   existed). Its gate, `jt work`, returns "work" for any untailored JD — so one
+   untailored job started Claude every 3 minutes, indefinitely.
+2. That burned the Claude subscription session limit. Once limited, the run
+   exits 1 without tailoring, so the job stays untailored, so it fires again.
+   A permanent failure loop that also posted a Discord failure every time.
+   The Actions copy failed the same way for a simpler reason: its
+   `CLAUDE_CODE_OAUTH_TOKEN` secret was never set.
+
+**Judgment is interactive now.** Run `/apply <jd>` (or the individual commands)
+in a Claude Code session, or work from `profile/` in Claude web. What survives
+is the deterministic half, which needs no model and costs nothing:
+
 ```
-Discord ──▶ discordBot (Cloud Run) ──▶ repository_dispatch ──▶ GitHub Actions
-                                                                     │
-   Claude cloud routine (every 3h, Gmail attached) ──────────────────┤
-   GitHub Actions routine.yml (after each Discord command + 3h cron) ┤
-   systemd timer on the workstation (fallback, hourly :53) ──────────┤
-                                                                     ▼
-                                    tailor → verify → build → ats → screen
-                                    → commit → push → build.yml → Discord
+Discord ──▶ discordBot (Cloud Run) ──▶ repository_dispatch ──▶ discord.yml
+                                                            (jt intake, scaffolds, inbox)
+                                       git push ──▶ build.yml (pdflatex/xelatex, jt ats) ──▶ Discord
 ```
 
-**Judgment runs in the cloud now (2026-09-04).** Two paths, either is enough;
-both use the Claude subscription, neither needs an API key:
+The paste page for long JDs is `GET /jd?k=<JD_FORM_KEY>` on the discordbot
+Cloud Run service; the key lives in Secret Manager.
 
-1. **Claude cloud routine** — `jobloop routine (cloud)` at
-   https://claude.ai/code/routines (id `trig_01HsVsc8q3YNSLY5pYUqmeUr`). The
-   2026-08-19 finding that a cloud routine gets 403 on this private repo no
-   longer holds — creating one against `adityadasika21/jobloop` returned 200.
-   It has the Gmail connector attached, so `kind: mail` requests can be
-   answered there. Manage it with `/schedule`.
-2. **`.github/workflows/routine.yml`** — `claude-code-action` with
-   `claude_code_oauth_token` (from `claude setup-token`, stored as the
-   `CLAUDE_CODE_OAUTH_TOKEN` secret). Fires after every Discord command lands,
-   on a 3-hourly cron, and by hand. Has the TeX toolchain, so it builds and
-   audits the real PDF. No Gmail.
-
-Both are gated by `jt work`: Claude does not start unless a Discord request is
-queued or a JD is untailored. `scripts/run-routine.sh` + `scripts/routine-prompt.md`
-remain the workstation fallback; `systemctl --user list-timers jobloop.timer`
-shows it. Running two of the three at once is safe but wasteful — they take
-the same `jobloop-write` concurrency group in Actions and rebase before
-pushing, but the workstation timer does not know about the others. Disable it
-(`systemctl --user disable --now jobloop.timer`) once a cloud path is
-confirmed working.
-
-`discord.yml` still does only the deterministic half (intake, scaffolds,
-inbox). Keep it that way — the test `test_the_discord_workflow_does_no_thinking`
-pins it — so a Discord command answers in seconds and the judgment run
-follows.
+If you ever reinstate a routine: gate on the inbox alone for the frequent tick,
+back off when the model reports a usage limit, and never post the same failure
+to Discord more than once.
 
 ## State model
 

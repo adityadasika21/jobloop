@@ -4,7 +4,7 @@ url: ''
 source: discord
 location: ''
 work_mode: ''
-status: queued
+status: analyzed
 priority: ''
 fit_score: null
 keyword_coverage: null
@@ -21,4 +21,16 @@ events:
   kind: intake
   detail: via discord
   source: discord
+- ts: '2026-09-07T17:13:20+00:00'
+  kind: analyzed
+  detail: worksheet generated
+  source: jt
+- ts: '2026-09-08T16:53:46+00:00'
+  kind: verified
+  detail: provenance clean
+  source: jt
+- ts: '2026-09-08T16:53:55+00:00'
+  kind: tailored
+  detail: resume rendered
+  source: jt
 jd_fingerprint: bfe90d98495955d3

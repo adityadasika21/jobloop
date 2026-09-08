@@ -168,12 +168,15 @@ jt sql "SELECT * FROM pipeline"
 jt sql "SELECT * FROM open_weaknesses"
 ```
 
-## Running in the cloud
+## No routines
 
-Nothing needs the laptop on. A Claude cloud routine (manage at
-https://claude.ai/code/routines) and `.github/workflows/routine.yml` both run
-the same gated routine against the Claude subscription. The Actions path
-needs one secret: `claude setup-token`, then `gh secret set CLAUDE_CODE_OAUTH_TOKEN`.
+Scheduled runs were removed on 2026-09-08 — they looped on the subscription's
+session limit and posted a failure to Discord every few minutes. Tailoring is
+interactive: `/apply <jd>` in Claude Code, or hand `profile/master.yaml` and
+`profile/preferences.md` to Claude on the web.
+
+Intake and PDF building still run themselves in GitHub Actions, because neither
+needs a model.
 
 ## Setup
 

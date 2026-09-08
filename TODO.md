@@ -1,5 +1,20 @@
 # TODO
 
+## 2026-09-08 — routines removed
+
+- [x] ~~Cloud routine~~ — all scheduled routines deleted: systemd timers and
+      units, `run-routine.sh`, `routine-prompt.md`, `.github/workflows/routine.yml`.
+      The Claude cloud routine `trig_01HsVsc8q3YNSLY5pYUqmeUr` is disabled
+      (the API cannot delete it). Cause is written up in CLAUDE.md.
+- [ ] `jobs/2026-09-07-flipkart-engineers` is a **half-finished draft** — the
+      routine wrote `tailored.yaml` and hit the session limit before trimming.
+      It verifies clean but builds to 2 pages; needs a cut to one. Also its
+      role parsed as "engineers" (the JD never states a title; it is SDE-2).
+      Flipkart SDE-2 is not an AI-central role — check `preferences.md` before
+      spending time on it.
+- [ ] Raw context goes in `profile/notes-inbox.md`; turn it into evidence units
+      with `jt evidence draft` / `jt evidence add` before it can reach a resume.
+
 ## 2026-09-04 — merge + cloud
 
 - [ ] **Cloud is parked.** The Claude cloud routine

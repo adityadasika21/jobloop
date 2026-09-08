@@ -1,0 +1,676 @@
+_instructions: 'Write tailored.yaml from this worksheet. RULES: (1) every bullet needs `provenance:
+  [evidence-id]`; (2) never state a number that is not in the cited unit''s claim/metrics;
+  (3) never name a technology the cited units don''t mention; (4) rephrase in the JD''s vocabulary
+  but do not upgrade scope, seniority, or ownership; (5) unmatched requirements stay gaps
+  — report them, don''t invent; (6) `emphasize:` on a bullet bolds load-bearing terms, but
+  only terms the cited units contain — default to the unit''s own list. Run `jt verify 2026-09-07-flipkart-engineers`
+  until clean.'
+job:
+  company: Flipkart
+  role: engineers
+  url: ''
+  work_mode: ''
+requirements:
+- requirement: Design components by translating product requirements, break down project into
+    tasks and provide accurate estimates
+  status: met
+  evidence: ev-proj-northstar
+  caveat: null
+  matched_terms:
+  - product
+  - project
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Independently come up with different solutions, extensibile Low level design.
+    Write modular, extensible, readable and performant code
+  status: met
+  evidence: ev-proj-northstar-protocol
+  caveat: null
+  matched_terms:
+  - level
+  - low
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Choose the right Data Structures, tools  and tech stacks and be able to do
+    High Level Designing with guidance.
+  status: met
+  evidence: ev-phenom-toolcalling-guardrails
+  caveat: null
+  matched_terms:
+  - data
+  - tech
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Build, develop, mentor and coach junior team members
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: Collaborate with teams by contributing to the shared vision and working closely
+    with cross-functional stakeholders.
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: responsibility
+- requirement: B.Tech or M.Tech or equivalent with at least 2.5 year of experience
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Build abstractions and contracts with separation of concerns for a larger scope.
+  status: partial
+  evidence: ev-phenom-frm-service
+  caveat: null
+  matched_terms:
+  - scope
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Extensive programming experience in any one programming language like Java,
+    Ruby, Clojure, Scala,C or C++, SQL etc
+  status: partial
+  evidence: ev-phenom-toolcalling-guardrails
+  caveat: null
+  matched_terms:
+  - sql
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Strong object-oriented programming skills.
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience with multi-threading and concurrency programming
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Ability to work with complex business flows and dealing with huge amounts of
+    data.
+  status: partial
+  evidence: ev-phenom-toolcalling-guardrails
+  caveat: null
+  matched_terms:
+  - data
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Prior work experience in an agile environment or continuous integration and
+    continuous delivery (CI or CD)
+  status: met
+  evidence: ev-blueleaves-fullstack-delivery
+  caveat: null
+  matched_terms:
+  - cd
+  - ci
+  - integration
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Experience of building robust and scalable web-application is good to have.
+  status: gap
+  evidence: null
+  caveat: null
+  matched_terms: []
+  known_gap: null
+  gap_note: null
+  kind: required
+- requirement: Must be actively using agentic tools for development work.
+  status: met
+  evidence: ev-phenom-mcp-tooling
+  caveat: null
+  matched_terms:
+  - agentic
+  - development
+  - tools
+  known_gap: null
+  gap_note: null
+  kind: required
+known_gaps:
+- topic: dspy
+  status: aware-not-used
+  note: Seen in JDs alongside LangChain. Evaluated, not shipped.
+- topic: llamaindex
+  status: aware-not-used
+  note: Comparable to LangChain work but not used in production.
+- topic: gcp-vertex-ai
+  status: adjacent
+  note: AWS-based (EC2/S3/SageMaker/g5). Vertex is transferable but unused.
+- topic: kubernetes
+  status: adjacent
+  note: Docker in production; orchestration was not owned.
+- topic: csharp-dotnet
+  status: structural
+  note: Python/JS/TS. Blackbaud's AI Platform Engineer hard-requires 'Proficient in C# .NET'
+    — flag any JD that names a .NET stack.
+- topic: vendor-agent-platforms
+  status: aware-not-used
+  note: Microsoft Copilot Studio, Azure AI Foundry, Agentforce, IBM watsonx Orchestrate. Agent
+    orchestration built on LangGraph/Temporal instead; the concepts transfer, the vendor consoles
+    were never used.
+- topic: cs-degree
+  status: structural
+  note: B.Tech Mechanical. Flag when a JD hard-requires CS/related degree.
+- topic: years-of-experience
+  status: structural
+  note: ~4.3 yrs total (since 2022-05), ~1.4 yrs explicitly AI/LLM titled. Flag JDs requiring
+    6+ yrs so the application is a deliberate stretch.
+- topic: mcp-server-implementation
+  status: adjacent
+  note: Consumes MCP servers daily (ClickHouse, Playwright, Atlassian) but has not implemented
+    one. Flag JDs that prefer MCP *server implementation*.
+- topic: hcm-system-integrations
+  status: adjacent
+  note: REST/webhook-style integrations at Blueleaves (POS/CRM/inventory) and WhatsApp at
+    Phenom; no payroll, ATS, SSO/IDP-as-integration, LMS or ERP integration on record. Keycloak/OAuth
+    used for app auth only.
+evidence_ranked:
+- id: ev-phenom-mcp-tooling
+  score: 0.857
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Worked extensively with MCP (Model Context Protocol) servers — ClickHouse, Playwright,
+    and Atlassian — as the tool layer in day-to-day agent development, debugging, and issue
+    tracking at Phenom.
+  metrics: {}
+  allowed_skills:
+  - claude-code
+  - mcp
+  - model-context-protocol
+  - mcp-servers
+  - clickhouse
+  - playwright
+  - atlassian
+  - tool-integration
+  - agent-tooling
+  - browser-automation
+  - developer-tooling
+  emphasize:
+  - MCP
+  - MCP (Model Context Protocol) servers
+  jd_overlap:
+  - agentic
+  - code
+  - development
+  - integration
+  - tech
+  - tools
+  probe: What did each of those MCP servers give you that a direct API client would not? Have
+    you implemented an MCP server yourself, or only consumed them — and what would you change
+    about the protocol after using it?
+- id: ev-blueleaves-analytics
+  score: 0.627
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Built data-driven analytics on large-scale transactional and stock-movement data
+    — demand forecasting, sales-trend, and inventory models that surfaced discrepancies and
+    improved procurement/replenishment decisions across 5+ locations and 10,000+ monthly transactions.
+  metrics:
+    locations: 5+
+    monthly_transactions: 10,000+
+  allowed_skills:
+  - data-analytics
+  - demand-forecasting
+  - time-series
+  - inventory-modeling
+  - sql
+  - anomaly-detection
+  - business-intelligence
+  - python
+  emphasize: []
+  jd_overlap:
+  - data
+  - decisions
+  - impact
+  - sql
+  - time
+  probe: What forecasting method, and what did you measure it against?
+- id: ev-phenom-toolcalling-guardrails
+  score: 0.62
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Engineered tool-calling agents that execute governed actions — database queries and
+    structured extraction from unstructured documents — under XGrammar constrained decoding
+    and schema-validated JSON guardrails, raising tool-routing accuracy to 91.9% and eliminating
+    malformed tool calls in live traffic.
+  metrics:
+    tool_routing_accuracy: 91.9%
+    malformed_tool_calls: eliminated in live traffic
+  allowed_skills:
+  - tool-calling
+  - function-calling
+  - constrained-decoding
+  - xgrammar
+  - json-schema
+  - schema-validation
+  - guardrails
+  - structured-extraction
+  - sql
+  - agent-reliability
+  emphasize:
+  - XGrammar constrained decoding
+  - XGrammar
+  - 91.9%
+  jd_overlap:
+  - data
+  - reliability
+  - sql
+  - tech
+  probe: How did you measure routing accuracy? What was the baseline? Why XGrammar over plain
+    JSON mode or retry-on-parse-failure?
+- id: ev-proj-northstar-protocol
+  score: 0.596
+  strength: strong
+  role: project
+  claim: Reverse-engineered the dash's undocumented wire protocol — an RSA-1024 plus AES-256
+    handshake over UDP with auto-discovery of any dash advertising itself on the local network,
+    and an H.264 over RTP video plane on a separate port.
+  metrics: {}
+  allowed_skills:
+  - reverse-engineering
+  - network-protocols
+  - udp
+  - rtp
+  - h264
+  - video-streaming
+  - cryptography
+  - rsa
+  - aes
+  - packet-analysis
+  - embedded-integration
+  - android
+  emphasize:
+  - RSA-1024
+  - AES-256
+  - H.264
+  jd_overlap:
+  - integration
+  - level
+  - low
+  - over
+  probe: How did you recover the handshake without a spec — traffic capture, firmware, or
+    both? What happens if a second phone tries to pair while you are connected?
+- id: ev-blueleaves-fullstack-delivery
+  score: 0.595
+  strength: supporting
+  role: blueleaves-fullstack
+  claim: Owned end-to-end delivery of production systems (POS, CRM, inventory, procurement,
+    e-commerce) on Node.js, Firebase Cloud Functions, and REST APIs — with role-based access
+    control and CI/CD — integrating multiple internal systems and cutting manual operational
+    errors by roughly 90%.
+  metrics:
+    manual_error_reduction: ~90%
+  allowed_skills:
+  - nodejs
+  - firebase
+  - cloud-functions
+  - rest-api
+  - rbac
+  - ci-cd
+  - system-integration
+  - full-stack
+  - serverless
+  - product-ownership
+  - e-commerce
+  - crm
+  emphasize: []
+  jd_overlap:
+  - cd
+  - ci
+  - development
+  - integration
+  - stack
+  probe: What did 'owned end-to-end' include — did you handle on-call and incidents?
+- id: ev-phenom-analytics-service
+  score: 0.571
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Built conversation analytics APIs covering both live-agent and WhatsApp channels,
+    raised the service's test coverage from 63% to over 90% while clearing static-analysis
+    code smells, and migrated the service to FastAPI.
+  metrics:
+    test_coverage_before: 63%
+    test_coverage_after: over 90%
+  allowed_skills:
+  - python
+  - fastapi
+  - rest-api
+  - api-design
+  - analytics
+  - testing
+  - test-coverage
+  - pytest
+  - static-analysis
+  - code-quality
+  - refactoring
+  - service-migration
+  emphasize:
+  - 63% to over 90%
+  - FastAPI
+  jd_overlap:
+  - code
+  - development
+  - over
+  - tech
+  probe: What was untested at 63%, and did raising coverage actually catch anything? Why migrate
+    to FastAPI rather than leave it?
+- id: ev-blueleaves-frontend
+  score: 0.53
+  strength: strong
+  role: blueleaves-fullstack
+  claim: Sole engineer on the whole stack — built the CRM and the other internal tools as
+    React and Vite web applications, owning the interface as well as the services behind it.
+  metrics: {}
+  allowed_skills:
+  - react
+  - vite
+  - javascript
+  - frontend
+  - full-stack
+  - ui-development
+  - crm
+  - internal-tools
+  - sole-ownership
+  - spa
+  emphasize:
+  - React
+  - Vite
+  - Sole engineer
+  jd_overlap:
+  - stack
+  - tools
+  - well
+  probe: What did you get wrong building a CRM alone that a second engineer would have caught?
+    How did you keep the UI maintainable without review?
+- id: ev-blueleaves-stakeholder-discovery
+  score: 0.452
+  strength: strong
+  role: blueleaves-fullstack
+  claim: Worked directly with shareholders, company VPs, and external partner businesses (including
+    farming companies) to scope projects and implementations, translating their operational
+    asks into technical designs and delivering them end to end.
+  metrics: {}
+  allowed_skills:
+  - stakeholder-management
+  - customer-discovery
+  - requirements-gathering
+  - technical-translation
+  - client-facing
+  - executive-communication
+  - solution-design
+  - partner-integration
+  emphasize:
+  - shareholders, company VPs
+  jd_overlap:
+  - into
+  - scope
+  - translating
+  probe: Give one example where a shareholder or VP asked for X and you built Y instead —
+    what was the real problem behind the ask, and how did you get them to agree?
+- id: ev-phenom-chatbotcx-architecture
+  score: 0.442
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Architected chatbotCXAgent, a production multi-agent system on LangGraph (12 orchestrated
+    nodes) spanning intent recognition, planning, dialogue-state management, and tool routing
+    — with Graph RAG retrieval over enterprise knowledge and document repositories via FAISS
+    vector search and a Neo4j graph for multi-hop, policy-aware grounding.
+  metrics:
+    orchestrated_nodes: '12'
+  allowed_skills:
+  - langgraph
+  - multi-agent-systems
+  - agent-orchestration
+  - intent-recognition
+  - planning
+  - dialogue-state-management
+  - tool-routing
+  - graph-rag
+  - rag
+  - faiss
+  - neo4j
+  - vector-search
+  - production-systems
+  emphasize:
+  - chatbotCXAgent
+  - LangGraph
+  - Graph RAG
+  jd_overlap:
+  - agentic
+  - over
+  - tech
+  probe: Why 12 nodes? How does dialogue state survive a tool failure mid-turn? Why a graph
+    alongside vectors instead of vectors alone?
+- id: ev-phenom-eval-framework
+  score: 0.442
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Built an LLM evaluation framework (pass@k, LLM-as-judge rubric) gating every release
+    across all 12 nodes, instrumented with LiteLLM + Langfuse for per-node cost, latency,
+    and full-trace auditability — continuously monitoring agent behaviour and curbing hallucinations.
+  metrics:
+    nodes_covered: '12'
+  allowed_skills:
+  - llm-evaluation
+  - llm-as-judge
+  - pass-at-k
+  - eval-harness
+  - langfuse
+  - litellm
+  - observability
+  - tracing
+  - cost-monitoring
+  - latency-monitoring
+  - regression-testing
+  - hallucination-mitigation
+  - ci-gating
+  emphasize:
+  - LLM evaluation framework
+  - LiteLLM + Langfuse
+  jd_overlap:
+  - cd
+  - ci
+  - tech
+  probe: What does your judge rubric look like and how did you validate the judge itself?
+    What happens on a release that regresses one node out of twelve?
+- id: ev-phenom-frm-decides-what-runs
+  score: 0.435
+  strength: core
+  role: phenom-ai-llm-eng-ii
+  claim: Merged fraud-risk resolve into the interview-intelligence Temporal workflows and
+    removed the Policy Engine gating that had decided which checks to run, making the configuration
+    service the single source of truth for fraud enablement and replacing hardcoded per-tenant
+    flags with audience rules resolved per candidate.
+  metrics: {}
+  allowed_skills:
+  - temporal
+  - workflow-orchestration
+  - system-integration
+  - refactoring
+  - backend-architecture
+  - feature-flags
+  - policy-engine
+  - cross-repo-migration
+  - single-source-of-truth
+  emphasize:
+  - single source of truth
+  - Temporal
+  - Policy Engine
+  jd_overlap:
+  - integration
+  - into
+  - tech
+  probe: What broke when you took the Policy Engine out of that path, and how did you roll
+    it out without stopping live interviews? How do you know a tenant's behaviour did not
+    change silently?
+- id: ev-phenom-frm-admin-ui
+  score: 0.408
+  strength: strong
+  role: phenom-ai-llm-eng-ii
+  claim: Built the fraud administration front end in React — feature store, audience rules,
+    tenant provisioning, and a case and action centre for reviewers — authenticated through
+    the chatbot authentication service with Keycloak, and built to an existing design system
+    and Figma specs.
+  metrics: {}
+  allowed_skills:
+  - react
+  - javascript
+  - frontend
+  - ui-development
+  - design-systems
+  - keycloak
+  - oauth
+  - authentication
+  - sso
+  - csp
+  - full-stack
+  - figma
+  emphasize:
+  - React
+  - Keycloak
+  jd_overlap:
+  - stack
+  - tech
+  - tools
+  probe: How does the front end get a token, and what happens when it expires mid-session?
+    What did the Content-Security-Policy and iframe work actually fix?
+- id: ev-phenom-widget-frontend
+  score: 0.389
+  strength: supporting
+  role: phenom-ai-llm-eng-ii
+  claim: Built candidate-facing surfaces in the micro-frontend widget — a conversation summary
+    API and view, an integrity-check modal, live-signal aggregation, location typeahead, and
+    in-modal video playback.
+  metrics: {}
+  allowed_skills:
+  - react
+  - micro-frontend
+  - frontend
+  - javascript
+  - typescript
+  - ui-development
+  - rest-api
+  - component-design
+  - video-playback
+  emphasize:
+  - micro-frontend
+  jd_overlap:
+  - components
+  - stack
+  - tech
+  probe: Why a micro-frontend rather than a component in the host app, and how do you keep
+    the widget's bundle from bloating the page it embeds into?
+- id: ev-proj-northstar-traction
+  score: 0.371
+  strength: strong
+  role: project
+  claim: Traction drew Royal Enfield's attention directly, leading to an on-site visit at
+    their HQ and a continuing relationship — they have since approached him about a role and
+    about collaborating on other motorcycle-accessory work.
+  metrics: {}
+  allowed_skills:
+  - product-shipping
+  - stakeholder-communication
+  - industry-partnership
+  emphasize:
+  - Royal Enfield
+  jd_overlap:
+  - development
+  - impact
+  probe: What did they actually want from the visit, and where did the app itself end up?
+    Be ready to say plainly that you were asked to stop distributing it and why that did not
+    end the relationship.
+skill_inventory:
+- name: Languages
+  items:
+  - Python
+  - JavaScript
+  - TypeScript
+  - SQL
+  - Bash
+- name: GenAI & Agentic
+  items:
+  - Agentic / Multi-Agent Systems
+  - LangGraph
+  - LangChain
+  - Tool/Function Calling
+  - Prompt Engineering
+  - Model Routing
+  - Context-Window Management
+  - RAG & Graph RAG
+  - LLM Fine-Tuning (QLoRA, SFT)
+  - MCP Servers
+- name: Eval, Observability & Guardrails
+  items:
+  - LLM Evaluation (LLM-as-judge, pass@k)
+  - OpenTelemetry
+  - Constrained Decoding (XGrammar)
+  - Schema Validation
+  - Langfuse
+  - LiteLLM
+  - Model Monitoring
+  - Hallucination Mitigation
+  - Role-Based Access Control
+- name: ML & Serving
+  items:
+  - PyTorch
+  - Transformers (BERT/ModernBERT)
+  - HuggingFace PEFT
+  - Unsloth
+  - Physics-Informed Neural Networks
+  - vLLM
+  - Embeddings / Vector Search (FAISS)
+  - Neo4j
+  - Ollama
+  - Production MLOps
+- name: Backend & Infra
+  items:
+  - FastAPI
+  - Node.js
+  - Express.js
+  - REST APIs
+  - Microservices
+  - Docker
+  - Helm
+  - Temporal
+  - Kafka
+  - AWS (EC2/S3/SageMaker)
+  - GitHub Actions
+  - CI/CD
+  - Linux
+- name: Frontend & Auth
+  items:
+  - React
+  - Vite
+  - Micro-Frontends
+  - Keycloak
+  - OAuth / SSO
+  - Design Systems
+  - Role-Based Access Control
+- name: Databases
+  items:
+  - PostgreSQL
+  - Neo4j
+  - MongoDB
+  - ClickHouse
+  - Redis
+  - Firebase
